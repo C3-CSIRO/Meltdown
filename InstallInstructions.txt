@@ -1,0 +1,58 @@
+  (  `            (       )    (                            
+  )\))(      (    )\   ( /(    )\ )         (  (            
+ ((_)()\    ))\  ((_)  )\())  (()/(    (    )\))(     (     
+ (_()((_)  /((_)  _   (_))/    ((_))   )\  ((_)()\    )\ )  
+ |  \/  | (_))   | |  | |_     _| |   ((_) _(()((_)  _(_/(  
+ | |\/| | / -_)  | |  |  _|  / _` |  / _ \ \ V  V / | ' \)) 
+ |_|  |_| \___|  |_|   \__|  \__,_|  \___/  \_/\_/  |_||_| 
+
+
+Installing Meldown
+===============================================================================
+1.
+	Goto continuum.io/downloads and download the appropriate Anaconda 
+	distribution for your computer.
+
+2.	
+	Install Anaconda by double clicking on the installer. Make sure you select
+	to install Anaconda for all users and let it install in the default
+	directory and with all the default settings.
+
+3.
+	Install ReportLab by
+	
+	a. Open a command promt by typing "cmd" into the start menu and pressing
+	   enter.
+	
+	b. Type the command "conda install reportlab" and press enter.
+
+	c. Type "y" and press enter to continue when asked if you want to proceed.
+
+
+
+Running Meltdown
+===============================================================================
+
+1.
+	Open the DSF .pcrd file that you want to analyse in the CFX Manager
+
+2. 	
+	Export the pcrd file to excel files.
+
+	For version 3.1.
+		Click the "Export" menu, select "Export All Data Sheets" and select
+		either "Excel 2007" or "Excel 2003"
+
+	For version 3.0.
+		Click the "Export" menu an select "Export All Data Sheets to Excel"
+
+3.	
+	Run Meltdown by double clicking on "RunMeltdown.bat"
+
+4. 
+	Windows will pop up asking you to select the "RFU results" and the 
+	"Contents Map" select the appropriate files from your export.
+
+5. 
+	Meltdown will now run. The results will be outputted to a .pdf file in
+	the Meltdown directory.
