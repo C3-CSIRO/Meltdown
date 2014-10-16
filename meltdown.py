@@ -76,19 +76,16 @@ CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein",
 
 
 class DSFAnalysis:
-    """I envision typical programatic usage of this class to be something like:
-    #TODO this comment, and all others in this class
-    >>> mydsf = DSFAnalysis("parameters.xml")
-    >>> mydsf.loadMeltCurves("rfudata.csv", "labeldata.csv")
-    >>> mydsf.analyzeCurves(relevent_options_here)
-    >>> mydsf.generateReport("myoutput.pdf", formatting_options_here)
+    """
+    Class used for performing the analysis of a DSF plate, methods will
+    remove outliers, find mean curves, find tm's and check for monotenicity
+    along with produce the final report
     """
     
     def __init__(self):
         """Load parameters needed to analyze curves including thresholds and classifiers"""
         # if we choose to use xml for our parameters, we will need to choose an xml parser
         # below are some possible parameter attributes we may use
-        self.outlierThreshold = 8.10785059623e-05   #TODO this shouldnt be used, there is a global var for it
         self.excludeTm = []
         self.interpolationOrder = 4 #if we use spline interpolation to calculate derivatives
         self.modelCurves = []
@@ -212,15 +209,9 @@ class DSFAnalysis:
         thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
         for well in self.wells:
             if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
-                if self.wells[well].monoThresh > thresholdm/1.5:
+                if self.wells[well].monoThresh > thresholdm/1.10:
                     #self.wells[well].fluorescence = None
                     self.delCurves.append(well)
-                    print well, self.wells[well].contents.name, self.wells[well].contents.salt
-                    print self.wells[well].monoThresh
-                    # plt.plot(self.wells[well].fluorescence)
-                    # plt.title(well)
-                    # plt.show()
-                    # plt.close()
         return
     
     def analyseCurves(self):
@@ -333,6 +324,13 @@ class DSFAnalysis:
                         maxi = val
                     if val < mini:
                         mini = val
+            for val in badTms:
+                if val != None:
+                    if val > maxi:
+                        maxi = val
+                    if val < mini:
+                        mini = val
+
             handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
             if badTms:
@@ -429,7 +427,6 @@ class DSFAnalysis:
         pdf.drawString(8*cm,22.75*cm,"Full interpretation of the results requires you to look ")
         pdf.drawString(8*cm,22.25*cm,"at the individual melt curves.")
 
-        #TODO if summary graph is unreliable
         avTmError = 0
         count = 0
         tmCount = 0
@@ -843,7 +840,6 @@ class DSFWell:
         highestIndex = None
         signChangeCount = 0
         previous = None
-        count = 0
         for i, value in enumerate(self.fluorescence[:-1]):
             if value > highestPoint:
                 highestPoint = value
@@ -1062,6 +1058,7 @@ def fixPcrdXlsxFile(xlsx):
     will fix this, along with keeping the original file saved with '.BAK' appended to its name
     """
     #rename original file, and create new one with same name of the first one
+    #delete the backup if it exists already
     if os.path.exists(xlsx+".BAK"):
         os.remove(xlsx+".BAK")
     os.rename(xlsx, xlsx+".BAK")
@@ -1146,6 +1143,12 @@ def main():
         # generates the report
         name = rfuFilepath.split("/")[-1]
         mydsf.generateReport(name+".pdf")
+        
+        #delete temporary backup files if all ran correctly
+        if os.path.exists(rfuFilepath+".BAK"):
+            os.remove(rfuFilepath+".BAK")
+        if os.path.exists(contentsMapFilepath+".BAK"):
+            os.remove(contentsMapFilepath+".BAK")
     except:
         errors = open("error_log.txt",'w')
         etype, value, tb = sys.exc_info()
@@ -1158,19 +1161,22 @@ def main():
 
 #excecutes main() on file run
 if __name__ == "__main__":
-   main()
+    main()
 
-
+"""
 #TODO TEMP DELETE WHEN DONE
-#files = os.listdir("../../data/bufferscreen9/rfuResults/xlsx")
-#total = len(files)
-#for i, bsc9 in enumerate(files):
-#    mydsf = DSFAnalysis()
-#    filepath = "../../data/bufferscreen9/rfuResults/xlsx/" + bsc9
-#    mydsf.loadMeltCurves(filepath,"../../data/Content_map.xlsx")
-#    mydsf.analyseCurves()
-#    mydsf.generateReport("reports/"+bsc9+".pdf")
-#    print i
-#    break`
+<<<<<<< HEAD
+files = os.listdir("../../data/bufferscreen9/rfuResults/xlsx")
+total = len(files)
+for i, bsc9 in enumerate(files):
+    mydsf = DSFAnalysis()
+    filepath = "../../data/bufferscreen9/rfuResults/xlsx/" + bsc9
+    mydsf.loadMeltCurves(filepath,"../../data/Content_map.xlsx")
+    mydsf.analyseCurves()
+    mydsf.generateReport("reports/"+bsc9+".pdf")
+    print i
+    break
+    # `
+"""
 
 
