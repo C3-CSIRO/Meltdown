@@ -224,7 +224,7 @@ class DSFAnalysis:
                     self.delCurves.append(well)
 
             x = [x for x in self.wells[well].temperatures]
-            if self.fluorescence == None:
+            if self.wells[well].fluorescence == None:
                 self.Tm = None
                 return
             y = [y for y in self.wells[well].fluorescence]
@@ -238,9 +238,10 @@ class DSFAnalysis:
                 if val<mini:
                     mini = val
 
-            if mini > -0.0005:
-                if well not in self.delCurves:
+            if mini > -0.00005:
+                if well not in self.delCurves and well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
                     self.delCurves.append(well)
+                    print self.wells[well].contents.name, self.wells[well].contents.salt, mini
         return
     
     def analyseCurves(self):
