@@ -83,20 +83,19 @@ class DSFAnalysis:
     """
     
     def __init__(self):
-        """Load parameters needed to analyze curves including thresholds and classifiers"""
-        # if we choose to use xml for our parameters, we will need to choose an xml parser
-        # below are some possible parameter attributes we may use
-        self.excludeTm = []
-        self.interpolationOrder = 4 #if we use spline interpolation to calculate derivatives
-        self.modelCurves = []
-        self.modelCentroids = []
-        self.modelVariances = []
+        """
+        Initialises an empty list of deleted curves which is filled with unused curves
+        when removing outliers from replicates
+        """
         self.delCurves = []
         return
     
     def loadMeltCurves(self, fluorescenceXLS, labelsXLS):
-        """Load fluorescence data into a Plate object as well as labels for buffer contents"""
-        # Check formatting of input files
+        """
+        Loads the two XLS or XLSX files and takes from them the information
+        needed to start the analysis.
+        """
+        #populates the relevant instance variables
         self.name = fluorescenceXLS
         self.plate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.wells = self.plate.wells
@@ -104,12 +103,15 @@ class DSFAnalysis:
         self.removeOutliers()
         self.removeInsignificant()
         self.findMeanCurves()
-
-        # Call whatever functions are needed to clean up data for analysis (i.e. self.removeOutliers)
         return
     
     def findMeanCurves(self):
-        """Averages all the replicates after the outliers are removed"""
+        """
+        Of the two plates created, we turn one (self.plate) into its own mean plate.
+        Every group of retained replicates (remove outliers has already been called) is
+        averaged out, and place in a well of the appropriate mean well name.
+        well group A4, A5, A6 in a 3 replicate well would have mean well name A2
+        """
         meanWells = {}
         visited = []
         numcount = 1
@@ -180,7 +182,11 @@ class DSFAnalysis:
 
     
     def removeOutliers(self):
-        """Remove outliers using values from lysozyme calibration data"""
+        """
+        Removes curves from analysis by adding them to self.delCurves. The removal of
+        a curve is decided by it similarity to its replicates. This is further described 
+        in replicateHnadling.py
+        """
         #With the DSFPlate object, we can just use self.wells.pop() to remove outliers
         visited = []
         discard = []
@@ -205,7 +211,11 @@ class DSFAnalysis:
         return
 
     def removeInsignificant(self):
-        """ Remove curves that are below the significance level """
+        """
+        Curves which were normalised with too large of a factor, are considered too 
+        noise for any  sort of useful analysis. These carves are found and added to
+        self.delCurves (removed from analysis)
+        """
         thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
         for well in self.wells:
             if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
@@ -215,12 +225,19 @@ class DSFAnalysis:
         return
     
     def analyseCurves(self):
-        """Call curve fitting, Tm calculation, and curve classification"""
+        """
+        Calculate the Tms of all the curves in the plate, and also
+        check that the controls on the plate are within the expected range
+        """
         self.computeTms()
         self.returnControlCheck()
         return
         
     def returnControlCheck(self):
+        """
+        Returns a dictionary of the different controls, with values True or False
+        depending on if the control passed or not. This is used when creating the report
+        """
         #initialises all controls to fail
         result = {CONTROL_WELL_NAMES[0]:False,  #lysozyme Tm check
                   CONTROL_WELL_NAMES[1]:False,  #no dye similarity check
@@ -254,7 +271,11 @@ class DSFAnalysis:
         return result
     
     def generateReport(self, outFile):
-        """Generate a pdf report with the appropriate summary information"""
+        """
+        Generate a pdf report with the appropriate summary information.
+        
+        Input: Outfile is the name of the file to which the report is saved
+        """
         pdf = canvas.Canvas(outFile,pagesize=A4) 
         pdf.setFont("Helvetica-Bold",16)
         pdf.drawString(cm,28*cm,"MELTDOWN")
@@ -583,11 +604,15 @@ class DSFAnalysis:
         return
     
     def computeTms(self):
-        #The are Tm of the mean curves, which are stored in case needed, but not
-        #used in pdf output, instead, the mean of the replicates from originalPlate
-        #below are used
-
-                
+        """
+        To find the Tm of a mean curve we look at the curves that ocmprised it 
+        (not including the discarded curves ofcourse) and find the Tm of each of
+        those. We then find the mean and sd of these Tms which gives us a Tm estimate, 
+        along with an error estimate
+        
+        When finding the Tm of a curve that is not a mean curve, the error is set to 
+        None
+        """
         #most calculating is done by getting the mean and sd of replicate Tms,
         #making this the useful part
         for well in self.originalPlate.names:
