@@ -241,7 +241,6 @@ class DSFAnalysis:
             if mini > -0.00005:
                 if well not in self.delCurves and well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
                     self.delCurves.append(well)
-                    print self.wells[well].contents.name, self.wells[well].contents.salt, mini
         return
     
     def analyseCurves(self):
