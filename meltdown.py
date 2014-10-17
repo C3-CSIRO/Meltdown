@@ -1198,6 +1198,8 @@ def main():
         folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
         proteinName = rfuFilepath.split('/')[-1].split()[0]
         for fl in os.listdir(folder):
+            if '.pdf' in fl:
+                continue
             if proteinName in fl:
                 os.remove(folder+'/'+fl)
             
