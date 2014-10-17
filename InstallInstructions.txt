@@ -29,6 +29,11 @@ Installing Meldown
 	c. Type "y" and press enter to continue when asked if you want to proceed.
 
 
+4.
+	Go to the meltdown github and press 'Download zip' in the lower right
+	section of the page. Extract the the zip to a location of your choice
+
+
 
 Running Meltdown
 ===============================================================================
