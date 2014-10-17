@@ -219,7 +219,7 @@ class DSFAnalysis:
         thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
         for well in self.wells:
             if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
-                if self.wells[well].monoThresh > thresholdm/1.10:
+                if self.wells[well].monoThresh > thresholdm/1.15:
                     #self.wells[well].fluorescence = None
                     self.delCurves.append(well)
 
@@ -234,7 +234,7 @@ class DSFAnalysis:
             #the derivative series, has one less index since there is one fewer differences than points
             seriesDeriv = pandas.Series(dydx, x[:-1])
             mini = 0
-            for val in seriesDeriv:
+            for val in seriesDeriv[:-20]:
                 if val<mini:
                     mini = val
 
@@ -1185,7 +1185,7 @@ def main():
         mydsf.analyseCurves()
         
         # generates the report
-        name = rfuFilepath.split("/")[-1]
+        name = rfuFilepath.split(".")[0]
         mydsf.generateReport(name+".pdf")
         
         #delete temporary backup files if all ran correctly
