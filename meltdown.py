@@ -222,6 +222,25 @@ class DSFAnalysis:
                 if self.wells[well].monoThresh > thresholdm/1.10:
                     #self.wells[well].fluorescence = None
                     self.delCurves.append(well)
+
+            x = [x for x in self.wells[well].temperatures]
+            if self.fluorescence == None:
+                self.Tm = None
+                return
+            y = [y for y in self.wells[well].fluorescence]
+        
+            xdiff = np.diff(x)
+            dydx = -np.diff(y)/xdiff
+            #the derivative series, has one less index since there is one fewer differences than points
+            seriesDeriv = pandas.Series(dydx, x[:-1])
+            mini = 0
+            for val in seriesDeriv:
+                if val<mini:
+                    mini = val
+
+            if mini > -0.0005:
+                if well not in self.delCurves:
+                    self.delCurves.append(well)
         return
     
     def analyseCurves(self):
