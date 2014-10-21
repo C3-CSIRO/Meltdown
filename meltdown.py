@@ -223,24 +223,22 @@ class DSFAnalysis:
                     #self.wells[well].fluorescence = None
                     self.delCurves.append(well)
 
-            x = [x for x in self.wells[well].temperatures]
-            if self.wells[well].fluorescence == None:
-                self.Tm = None
-                return
-            y = [y for y in self.wells[well].fluorescence]
-        
-            xdiff = np.diff(x)
-            dydx = -np.diff(y)/xdiff
-            #the derivative series, has one less index since there is one fewer differences than points
-            seriesDeriv = pandas.Series(dydx, x[:-1])
-            mini = 0
-            for val in seriesDeriv[:-20]:
-                if val<mini:
-                    mini = val
+            if self.wells[well].fluorescence:
+                x = [x for x in self.wells[well].temperatures]
+                y = [y for y in self.wells[well].fluorescence]
+                xdiff = np.diff(x)
+                dydx = -np.diff(y)/xdiff
 
-            if mini > -0.00005:
-                if well not in self.delCurves and well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
-                    self.delCurves.append(well)
+                #the derivative series, has one less index since there is one fewer differences than points
+                seriesDeriv = pandas.Series(dydx, x[:-1])
+                mini = 0
+                for ind in seriesDeriv.index[:-20]:
+                    if seriesDeriv[ind]<mini:
+                        mini = seriesDeriv[ind]
+
+                if mini > -0.00005:
+                    if well not in self.delCurves and well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
+                        self.delCurves.append(well)
         return
     
     def analyseCurves(self):
@@ -265,8 +263,8 @@ class DSFAnalysis:
         #only test the control if the control is present in the plate
         if len(self.plate.lysozyme)>0:
             #lysozyme Tm check
-            if self.plate.wells[self.plate.lysozyme[0]].Tm > LYSOZYME_TM_THRESHOLD[0] - LYSOZYME_TM_THRESHOLD[1] and\
-               self.plate.wells[self.plate.lysozyme[0]].Tm < LYSOZYME_TM_THRESHOLD[0] + LYSOZYME_TM_THRESHOLD[1]:
+            if self.plate.wells[self.plate.lysozyme[0]].Tm > LYSOZYME_TM_THRESHOLD[0] - 2*LYSOZYME_TM_THRESHOLD[1] and\
+               self.plate.wells[self.plate.lysozyme[0]].Tm < LYSOZYME_TM_THRESHOLD[0] + 2*LYSOZYME_TM_THRESHOLD[1]:
                     result[CONTROL_WELL_NAMES[0]] = True
                 
         #only test the control if the control is present in the plate
@@ -1193,13 +1191,13 @@ def main():
             os.remove(rfuFilepath+".BAK")
         if os.path.exists(contentsMapFilepath+".BAK"):
             os.remove(contentsMapFilepath+".BAK")
-        #also remove the exported xls/xlsx files after meltdown has been run on them
-        #find the protein name, then all the files with that name in it, then delete them
-        folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
-        proteinName = rfuFilepath.split('/')[-1].split()[0]
-        for fl in os.listdir(folder):
-            if proteinName in fl:
-                os.remove(folder+'/'+fl)
+        # #also remove the exported xls/xlsx files after meltdown has been run on them
+        # #find the protein name, then all the files with that name in it, then delete them
+        # folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
+        # proteinName = rfuFilepath.split('/')[-1].split()[0]
+        # for fl in os.listdir(folder):
+        #     if proteinName in fl:
+        #         os.remove(folder+'/'+fl)
             
         
     except:
@@ -1217,8 +1215,7 @@ if __name__ == "__main__":
     main()
 
 """
-#TODO TEMP DELETE WHEN DONE
-<<<<<<< HEAD
+# Short piece of code for batch analysis of experiments
 files = os.listdir("../../data/bufferscreen9/rfuResults/xlsx")
 total = len(files)
 for i, bsc9 in enumerate(files):
@@ -1227,9 +1224,6 @@ for i, bsc9 in enumerate(files):
     mydsf.loadMeltCurves(filepath,"../../data/Content_map.xlsx")
     mydsf.analyseCurves()
     mydsf.generateReport("reports/"+bsc9+".pdf")
-    print i
-    break
-    # `
 """
 
 
