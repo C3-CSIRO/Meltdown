@@ -1191,6 +1191,7 @@ def main():
             os.remove(rfuFilepath+".BAK")
         if os.path.exists(contentsMapFilepath+".BAK"):
             os.remove(contentsMapFilepath+".BAK")
+<<<<<<< HEAD
         # #also remove the exported xls/xlsx files after meltdown has been run on them
         # #find the protein name, then all the files with that name in it, then delete them
         # folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
@@ -1198,6 +1199,17 @@ def main():
         # for fl in os.listdir(folder):
         #     if proteinName in fl:
         #         os.remove(folder+'/'+fl)
+=======
+        #also remove the exported xls/xlsx files after meltdown has been run on them
+        #find the protein name, then all the files with that name in it, then delete them
+        folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
+        proteinName = rfuFilepath.split('/')[-1].split()[0]
+        for fl in os.listdir(folder):
+            if '.pdf' in fl:
+                continue
+            if proteinName in fl:
+                os.remove(folder+'/'+fl)
+>>>>>>> FETCH_HEAD
             
         
     except:
