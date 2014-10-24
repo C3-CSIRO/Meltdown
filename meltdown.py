@@ -62,8 +62,7 @@ import replicateHandling as rh
 
 ##====GLOBAL VARIABLES====##
 #discard bad threshold, mean difference between any two normalised lysozyme curves
-#TODO LOG
-#SIMILARITY_THRESHOLD = 8.10785059623e-05
+SIMILARITY_THRESHOLD = 1.72570084974
 #lysozyme tm over all of our files: (mean,std_dev)
 LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
 #Monotenicity threshold forgive value on non-normalised curves
@@ -1050,11 +1049,11 @@ def determineOutlierThreshold(listOfLysozymeWellNames):
     lysozyme=[]
     results = []
     # TODO should not be hardcoded
-    pathrfu = "../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx"
+    pathrfu = "../DsfExperiments/data/bufferscreen9/rfuResults/xlsx"
     files = os.listdir(pathrfu)
     pathrfu = pathrfu + "/"
     for data in files:
-        plate = DSFPlate(pathrfu+data,"../UropCrystallisation/data/Content_map.xlsx")
+        plate = DSFPlate(pathrfu+data,"../DsfExperiments/data/Content_map.xlsx")
         for well in listOfLysozymeWellNames:
             lysozyme.append(plate.wells[well].fluorescence)
     for pair in combinations(lysozyme,2):
@@ -1219,13 +1218,11 @@ def main():
     return
 
 #excecutes main() on file run
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
-#TODO LOG
-SIMILARITY_THRESHOLD = determineOutlierThreshold(["A1","A2","A3"])
-print SIMILARITY_THRESHOLD;
 
+"""
 # Short piece of code for batch analysis of experiments
 files = os.listdir("../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx")
 total = len(files)
@@ -1236,6 +1233,6 @@ for i, bsc9 in enumerate(files):
     mydsf.analyseCurves()
     mydsf.generateReport("reports/"+bsc9+".pdf")
     print str(round(i/float(total)* 100,2))  +"%"
-
+"""
 
 
