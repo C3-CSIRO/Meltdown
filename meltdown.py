@@ -105,7 +105,8 @@ class DSFAnalysis:
         self.wells = self.plate.wells
         self.originalPlate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.removeOutliers()
-        self.removeInsignificant()
+        #TODO
+        #self.removeInsignificant()
         self.findMeanCurves()
         return
     
@@ -349,7 +350,7 @@ class DSFAnalysis:
             for well in self.plate.names:
                 if self.wells[well].contents.salt == saltConcentration:
                     curves.append(well)
-            tms = []#[self.wells[x].Tm for x in curves]
+            tms = []
             badTms = []
 
             for well in curves:
@@ -372,7 +373,7 @@ class DSFAnalysis:
                         maxi = val
                     if val < mini:
                         mini = val
-
+            print curves, saltConcentration, [x for x in range(len(labels))],tms, Contents.name
             handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
             if badTms:
@@ -600,7 +601,7 @@ class DSFAnalysis:
                     pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,20*cm - (ypos % 3)*9*cm,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
                     pdf.setFillColor("black")
                     if drawdpH ==False:
-                        pdf.drawString(2*cm+(xpos % 2)*9.5*cm,20.5*cm - (ypos % 3)*9*cm,"Adjusted pH at Tm: "+self.wells[meanWellDictionary[i]].contents.pH+" at 20C")
+                        pdf.drawString(2*cm+(xpos % 2)*9.5*cm,20.5*cm - (ypos % 3)*9*cm,"Adjusted pH at Tm: "+str(self.wells[meanWellDictionary[i]].contents.pH)+" at 20C")
                         drawdpH = True
             drawdpH = False
             xpos +=1
@@ -735,7 +736,6 @@ class DSFPlate:
                 #if we find another well with the same name, ph and salt, it is a replicate
                 if conditionTuple == zip(conditionNames, conditionSalts, conditionPhs)[i]:
                     self.repDict[well].append(conditionWellNames[j])
-        print self.repDict
         
         for i,name in enumerate(conditionWellNames):
             #creates a pandas series of each well, with index being temperature, and values fluorescence
@@ -981,9 +981,9 @@ class Contents:
         self.dpH = conditiondpHdT
         
         #add names and salts to the static lists if not already present
-        if self.name not in Contents.name:
+        if self.name not in Contents.name and self.name != "" and self.name.lower() not in CONTROL_WELL_NAMES:
             Contents.name.append(self.name)
-        if self.salt not in Contents.salt:
+        if self.salt not in Contents.salt and self.salt != "":
             Contents.salt.append(self.salt)
         return
 
