@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/nick/Documents/Meltdown/meltdown.py", line 1130, in main
+    mydsf.loadMeltCurves(rfuFilepath,contentsMapFilepath)
+  File "/Users/nick/Documents/Meltdown/meltdown.py", line 103, in loadMeltCurves
+    self.removeOutliers()
+  File "/Users/nick/Documents/Meltdown/meltdown.py", line 203, in removeOutliers
+    keep = rh.discardBad(reps,distMatrix,SIMILARITY_THRESHOLD)
+  File "/Users/nick/Documents/Meltdown/replicateHandling.py", line 127, in discardBad
+    if choose != "":
+UnboundLocalError: local variable 'choose' referenced before assignment
