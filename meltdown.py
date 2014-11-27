@@ -715,15 +715,16 @@ class DSFPlate:
 
         #TODO get controls from contents map
         #control names when given a custom summary xls file
-        for wellName in conditionWellNames:
-            if wellName.lower() == CONTROL_WELL_NAMES[0]:#"lysozyme":
-                self.lysozyme.append(wellName)
-            elif wellName.lower() == CONTROL_WELL_NAMES[1]:#"no dye":
-                self.noDye.append(wellName)
-            elif wellName.lower() == CONTROL_WELL_NAMES[2]:#"protein as supplied":
-                self.proteinAsSupplied.append(wellName)
-            elif wellName.lower() == CONTROL_WELL_NAMES[3]:#"no protein":
-                self.noProtein.append(wellName)
+        for i,condition in enumerate(conditionNames):
+            if condition.lower() == CONTROL_WELL_NAMES[0]:#"lysozyme":
+                self.lysozyme.append(conditionWellNames[i])
+            elif condition.lower() == CONTROL_WELL_NAMES[1]:#"no dye":
+                self.noDye.append(conditionWellNames[i])
+            elif condition.lower() == CONTROL_WELL_NAMES[2]:#"protein as supplied":
+                self.proteinAsSupplied.append(conditionWellNames[i])
+            elif condition.lower() == CONTROL_WELL_NAMES[3]:#"no protein":
+                self.noProtein.append(conditionWellNames[i])
+                
         
         #TODO FIX DAS ONE
         #dictionary keys are a single well, with value a list of its reps and itself, e.g. 'A2':['A1','A2','A3']
