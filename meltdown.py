@@ -40,7 +40,7 @@ import xlrd
 import Tkinter, tkFileDialog, tkMessageBox
 import cStringIO
 import os
-import re , sys, traceback
+import sys, traceback
 import zipfile as zf
 import matplotlib.pyplot as plt
 import numpy as np
@@ -72,8 +72,12 @@ DEFAULT_MONO_THRESH = 10
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
 #NOTE first 4 are from custom input, second 4 are the oldnames  from default pcrd export
 #individual order is also important:
-CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein",
-                      "machine control","protein only","sample control","dye only"]
+CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein"]
+
+##====DEBUGGING====##
+#set this to false if you do not wish for the exported data files to be deleted after being analysed
+deleteInputFiles = False
+
 
 
 class DSFAnalysis:
@@ -720,17 +724,19 @@ class DSFPlate:
                 self.proteinAsSupplied.append(wellName)
             elif wellName.lower() == CONTROL_WELL_NAMES[3]:#"no protein":
                 self.noProtein.append(wellName)
-            
+        
+        #TODO FIX DAS ONE
         #dictionary keys are a single well, with value a list of its reps and itself, e.g. 'A2':['A1','A2','A3']
         self.repDict = {}
-        for i,name in enumerate(conditionWellNames):
+        for i, well in enumerate(conditionWellNames):
             #create and entry is one doesnt exist already
-            if name not in self.repDict.keys():
-                self.repDict[name] = []
-            for j, fullCondition in enumerate(zip(conditionNames, conditionSalts, conditionPhs)):
+            if well not in self.repDict.keys():
+                self.repDict[well] = []
+            for j, conditionTuple in enumerate(zip(conditionNames, conditionSalts, conditionPhs)):
                 #if we find another well with the same name, ph and salt, it is a replicate
-                if fullCondition == zip(conditionNames, conditionPhs, conditionSalts)[i]:
-                    self.repDict[name].append(conditionWellNames[j])
+                if conditionTuple == zip(conditionNames, conditionSalts, conditionPhs)[i]:
+                    self.repDict[well].append(conditionWellNames[j])
+        print self.repDict
         
         for i,name in enumerate(conditionWellNames):
             #creates a pandas series of each well, with index being temperature, and values fluorescence
@@ -1111,15 +1117,14 @@ def main():
     """
     parse arguments and call classes/functions needed for DSF analysis
     """
-
+    #opens up windows for user to selec files
+    root = Tkinter.Tk()
+    root.withdraw()
+    #DSF results file
+    rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
+    # contents map, or default cfx manager summary file
+    contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
     try:
-        #opens up windows for user to selec files
-        root = Tkinter.Tk()
-        root.withdraw()
-        #DSF results file
-        rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
-        # contents map, or default cfx manager summary file
-        contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
         #if the files supplied are xlsx as opposed to xls file the pcrd naming error
         if ".xlsx" in rfuFilepath:
             fixPcrdXlsxFile(rfuFilepath)
@@ -1134,22 +1139,17 @@ def main():
         # generates the report
         name = rfuFilepath.split(".")[0]
         mydsf.generateReport(name+".pdf")
-        
-        #delete temporary backup files if all ran correctly
-        if os.path.exists(rfuFilepath+".BAK"):
-            os.remove(rfuFilepath+".BAK")
-        if os.path.exists(contentsMapFilepath+".BAK"):
-            os.remove(contentsMapFilepath+".BAK")
 
         #also remove the exported xls/xlsx files after meltdown has been run on them
         #find the protein name, then all the files with that name in it, then delete them
-        folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
-        proteinName = rfuFilepath.split('/')[-1].split()[0]
-        for fl in os.listdir(folder):
-            if '.pdf' in fl:
-                continue
-            if proteinName in fl:
-                os.remove(folder+'/'+fl)
+        if deleteInputFiles:
+            folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
+            proteinName = rfuFilepath.split('/')[-1].split()[0]
+            for fl in os.listdir(folder):
+                if '.pdf' in fl:
+                    continue
+                if proteinName in fl:
+                    os.remove(folder+'/'+fl)
             
         
     except:
@@ -1160,16 +1160,25 @@ def main():
         root.withdraw()
         tkMessageBox.showwarning("Error", "Check error log")
         errors.close()
+        
+    finally:
+        #delete temporary backup files
+        if os.path.exists(rfuFilepath+".BAK"):
+            os.remove(rfuFilepath+".BAK")
+        if os.path.exists(contentsMapFilepath+".BAK"):
+            os.remove(contentsMapFilepath+".BAK")
+        
     return
 
 #excecutes main() on file run
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+     main()
 
 #TODO LOG
 SIMILARITY_THRESHOLD = determineOutlierThreshold(["A1","A2","A3"])
 print SIMILARITY_THRESHOLD;
 
+"""
 # Short piece of code for batch analysis of experiments
 files = os.listdir("../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx")
 total = len(files)
@@ -1180,6 +1189,6 @@ for i, bsc9 in enumerate(files):
     mydsf.analyseCurves()
     mydsf.generateReport("reports/"+bsc9+".pdf")
     print str(round(i/float(total)* 100,2))  +"%"
-
+"""
 
 

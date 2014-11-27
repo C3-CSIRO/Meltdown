@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:/Users/Mr/Documents/GitHub/Meltdown/meltdown.py", line 1136, in main
+    mydsf.loadMeltCurves(rfuFilepath,contentsMapFilepath)
+  File "C:/Users/Mr/Documents/GitHub/Meltdown/meltdown.py", line 108, in loadMeltCurves
+    self.removeOutliers()
+  File "C:/Users/Mr/Documents/GitHub/Meltdown/meltdown.py", line 208, in removeOutliers
+    keep = rh.discardBad(reps,distMatrix,SIMILARITY_THRESHOLD)
+NameError: global name 'SIMILARITY_THRESHOLD' is not defined
