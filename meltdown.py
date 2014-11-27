@@ -1171,7 +1171,6 @@ def main():
 
 #excecutes main() on file run
 if __name__ == "__main__":
-<<<<<<< HEAD
     main()
 
 
@@ -1185,26 +1184,5 @@ if __name__ == "__main__":
 #     mydsf.analyseCurves()
 #     mydsf.generateReport("reports/"+bsc9+".pdf")
 #     print str(round(i/float(total)* 100,2))  +"%"
-
-=======
-     main()
-
-#TODO LOG
-SIMILARITY_THRESHOLD = determineOutlierThreshold(["A1","A2","A3"])
-print SIMILARITY_THRESHOLD;
-
-"""
-# Short piece of code for batch analysis of experiments
-files = os.listdir("../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx")
-total = len(files)
-for i, bsc9 in enumerate(files):
-    mydsf = DSFAnalysis()
-    filepath = "../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx/" + bsc9
-    mydsf.loadMeltCurves(filepath,"../UropCrystallisation/data/Content_map.xlsx")
-    mydsf.analyseCurves()
-    mydsf.generateReport("reports/"+bsc9+".pdf")
-    print str(round(i/float(total)* 100,2))  +"%"
-"""
->>>>>>> FETCH_HEAD
 
 
