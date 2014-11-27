@@ -12,16 +12,14 @@
 #
 #  meltdown.py
 #
-#  Authors:  Nicholas Rosa, Marko Ristic, Shane A. Seabrook, David Lovell, Del Lucent and Janet Newman
+#  Authors: Nicholas Rosa, Marko Ristic, Shane A. Seabrook, David Lovell, Del Lucent and Janet Newman
 #
 #  Website: TBD.github.com
 #
 #  License: XXX
 #
 # This software will generate automated reports from high-throughput thermofluor protein
-# stability measurements.  Although originally designed to provide a report for the Buffer Screen 9
-# experiment at the Collaborative Crystalisation Centre (C3), this can be extended to analyse any
-# similar experiment in 96 well format.  Given two input xls files (one for fluorescence in
+# stability measurements. Given two input xls/xlsx files (one for fluorescence in
 # each well as a function of temperature, and one describing the buffer formulation of each well in
 # a standardized format) the following tasks are performed:
 #
@@ -61,15 +59,16 @@ except:
 import replicateHandling as rh
 
 ##====GLOBAL VARIABLES====##
-#discard bad threshold, mean difference between any two normalised lysozyme curves
+#discard bad threshold, mean difference between any two of 168 normalised lysozyme curves
 SIMILARITY_THRESHOLD = 1.72570084974
 #lysozyme tm over all of our files: (mean,std_dev)
 LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
-#Monotenicity threshold forgive value on non-normalised curves
+#Monotenicity threshold forgive value on non-normalised curves (experimentally derived)
 DEFAULT_MONO_THRESH = 10
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
-#NOTE first 4 are from custom input, second 4 are the oldnames  from default pcrd export
+#names of the control wells that we check for
+#NOTE first 4 are from custom input, second 4 are the names from default pcrd export
 #individual order is also important:
 CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein",
                       "machine control","protein only","sample control","dye only"]
