@@ -682,44 +682,23 @@ class DSFPlate:
         #creating a dictionary that references every mean plate well, to those that it came from
         self.meandict = {}
         #Read rows containing names and conditions
-        conditions = shContents.col_values(5, start_rowx=1, end_rowx=None)
-        wellNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
+        conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
+        conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
+        conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
+        conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
         
-        #checks whether summary file is a custom one with pH or default pcrd export
-        #if there is a d(pH)/dT column, then the input is custom, otherwise
-        #the dpHdT is set to None for every well
-        dpHdT=[]
+        
+        #checks whether summary for a d(pH)/dT column
+        conditiondpHdT=[]
         try:
-            customInput = True
-            for i in range(len(wellNames)):
-                dpHdT.append(shContents.cell(i,7).value)
+            for i in range(len(conditionWellNames)):
+                conditiondpHdT.append(shContents.cell(i,4).value)
         except IndexError:
-            customInput = False
-            for i in range(len(wellNames)):
-                dpHdT.append(None)
-            
-        #small fix for names turning A01 -> A1 as this is consistent with other files
-        for ind,well in enumerate(wellNames):
-            wellNames[ind] = well[0]+str(int(well[1:]))
-            
-        #pcrd output has duplicate rows sometimes, and this ensures they are all unique
-        wellData = zip(wellNames, conditions, dpHdT)
-        names=[]
-        conds=[]
-        dpH=[]
-        for group in wellData:
-            if group[0] not in names:
-                names.append(group[0])
-                conds.append(group[1])
-                dpH.append(group[2])
-        #assigning the duplicate-less lists to the originals, ready to be used
-        #by other things in the method
-        wellNames = names
-        conditions = conds
-        dpHdT = dpH
+            for i in range(len(conditionWellNames)):
+                conditiondpHdT.append(None)
         
         #saves the list of names in the Plate for future use
-        self.names = wellNames
+        self.names = conditionWellNames
         
         #control well locations, filled when creating replicate dictionary
         #uses names of controls from global list CONTROL_WELL_NAMES
@@ -728,53 +707,43 @@ class DSFPlate:
         self.proteinAsSupplied = []
         self.noProtein = []
         #the names of the controls are gotten from the global list at the top of the file,
-        #note that the order in that lit is important
-        if customInput:
-            #control names when given a custom summary xls file
-            for i,name in enumerate(wellNames):
-                if conditions[i].lower() == CONTROL_WELL_NAMES[0]:#"lysozyme":
-                    self.lysozyme.append(name)
-                elif conditions[i].lower() == CONTROL_WELL_NAMES[1]:#"no dye":
-                    self.noDye.append(name)
-                elif conditions[i].lower() == CONTROL_WELL_NAMES[2]:#"protein as supplied":
-                    self.proteinAsSupplied.append(name)
-                elif conditions[i].lower() == CONTROL_WELL_NAMES[3]:#"no protein":
-                    self.noProtein.append(name)
-        else:
-            #control names when default pcrd summary file is used
-            for i,name in enumerate(wellNames):
-                if conditions[i].lower() in [CONTROL_WELL_NAMES[0], CONTROL_WELL_NAMES[4]]:
-                    self.lysozyme.append(name)
-                elif conditions[i].lower() in [CONTROL_WELL_NAMES[1], CONTROL_WELL_NAMES[5]]:
-                    self.noDye.append(name)
-                elif conditions[i].lower() in [CONTROL_WELL_NAMES[2], CONTROL_WELL_NAMES[6]]:
-                    self.proteinAsSupplied.append(name)
-                elif conditions[i].lower() in [CONTROL_WELL_NAMES[3], CONTROL_WELL_NAMES[7]]:
-                    self.noProtein.append(name)
+        #note that the order in that list is important
+
+        #TODO get controls from contents map
+        #control names when given a custom summary xls file
+        for wellName in conditionWellNames:
+            if wellName.lower() == CONTROL_WELL_NAMES[0]:#"lysozyme":
+                self.lysozyme.append(wellName)
+            elif wellName.lower() == CONTROL_WELL_NAMES[1]:#"no dye":
+                self.noDye.append(wellName)
+            elif wellName.lower() == CONTROL_WELL_NAMES[2]:#"protein as supplied":
+                self.proteinAsSupplied.append(wellName)
+            elif wellName.lower() == CONTROL_WELL_NAMES[3]:#"no protein":
+                self.noProtein.append(wellName)
             
         #dictionary keys are a single well, with value a list of its reps and itself, e.g. 'A2':['A1','A2','A3']
         self.repDict = {}
-        for i,name in enumerate(wellNames):            
+        for i,name in enumerate(conditionWellNames):
+            #create and entry is one doesnt exist already
             if name not in self.repDict.keys():
                 self.repDict[name] = []
-            for j,cond in enumerate(conditions):
-                if cond == conditions[i]:
-                    self.repDict[name].append(wellNames[j])
+            for j, fullCondition in enumerate(zip(conditionNames, conditionSalts, conditionPhs)):
+                #if we find another well with the same name, ph and salt, it is a replicate
+                if fullCondition == zip(conditionNames, conditionPhs, conditionSalts)[i]:
+                    self.repDict[name].append(conditionWellNames[j])
         
-        for i,name in enumerate(wellNames):
+        for i,name in enumerate(conditionWellNames):
             #creates a pandas series of each well, with index being temperature, and values fluorescence
             fluoroSeries = pandas.Series(shData.col_values(i+2,start_rowx=1,end_rowx=None),shData.col_values(1,start_rowx=1,end_rowx=None))
-            #tuple of the condition string and the dpHdT, (dpHdT which is None for the pcrd file)
-            dataLabels = (conditions[i],dpHdT[i])
-
             #populate the well dictionary of labels and values
-            self.wells[name] = DSFWell(fluoroSeries, dataLabels)
+            self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i])
+            
         return
               
 
 class DSFWell:
     
-    def __init__(self, fluorescenceSeries, dataLabels):
+    def __init__(self, fluorescenceSeries, conditionName, conditionSalt, conditionPh, conditiondpHdT):
         """
         A well class that holds all of the data to characterize
         a well in a buffer plate.
@@ -802,7 +771,7 @@ class DSFWell:
         self.Tm = None   
         self.TmError = None
         #the contents of the well is contained in an object of Contents inside well
-        self.contents = Contents(dataLabels[0],dataLabels[1])
+        self.contents = Contents(conditionName, conditionSalt, conditionPh, conditiondpHdT)
         return  
 
     def isMonotonic(self):
@@ -992,7 +961,7 @@ class Contents:
     """
     salt = []
     name = []
-    def __init__(self, sampleName,dpH):
+    def __init__(self, conditionName, conditionSalt, conditionPh, conditiondpHdT):
         """
         Struct class for the contents of a well, stores the name, pH, salt, and
         dpH of each well.
@@ -1001,36 +970,11 @@ class Contents:
         
         +dpH is the dph as given in the contents file, otherwise its set to None
         """
-        #use regular expressions to look for the appropriate parts of the contents
-        name = re.compile("[\S\s]+(?=,)")
-        pH = re.compile("(?<=pH=)[\d.]+")
-        salt = re.compile("\d+mM[\s\S]+")
-        nameMatch = name.search(sampleName)
-        pHMatch = pH.search(sampleName)
-        saltMatch = salt.search(sampleName)
-        if sampleName.lower() in CONTROL_WELL_NAMES:
-            self.name = sampleName
-            self.pH = None
-            self.salt = None
-            self.dpH = None
-            return
-        #if a name was found, give the contents its name
-        if nameMatch:
-            self.name = nameMatch.group(0)
-        else:
-            #if not, it is a sal only well
-            self.name = "Salt Only"
-        #if a pH was found, give he contents a ph, otherwise set to None
-        if pHMatch:
-            self.pH = pHMatch.group(0)
-        else:
-            self.pH = None
-        #if a salt was found, give he contents a salt, otherwise set to None
-        if saltMatch:
-            self.salt = saltMatch.group(0)
-        else:
-            self.salt = None
-        self.dpH = dpH
+        self.name = conditionName
+        self.salt = conditionSalt
+        self.pH = conditionPh
+        self.dpH = conditiondpHdT
+        
         #add names and salts to the static lists if not already present
         if self.name not in Contents.name:
             Contents.name.append(self.name)
