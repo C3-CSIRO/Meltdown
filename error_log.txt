@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/Users/nick/Documents/Meltdown/meltdown.py", line 1140, in main
-    mydsf.generateReport(name+".pdf")
-  File "/Users/nick/Documents/Meltdown/meltdown.py", line 604, in generateReport
-    pdf.drawString(2*cm+(xpos % 2)*9.5*cm,20.5*cm - (ypos % 3)*9*cm,"Adjusted pH at Tm: "+self.wells[meanWellDictionary[i]].contents.pH+" at 20C")
-TypeError: cannot concatenate 'str' and 'float' objects

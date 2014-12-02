@@ -362,7 +362,6 @@ class DSFAnalysis:
                 found = False
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition:
-                        print "yaya"
                         if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
@@ -387,8 +386,6 @@ class DSFAnalysis:
                             maxi = val
                         if val < mini:
                             mini = val
-            print saltConcentration, len(labels),tms, len(tms)
-            print Contents.name, Contents.salt
             handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
             if badTms:
@@ -409,7 +406,7 @@ class DSFAnalysis:
 
         plt.axhline(originalProteinMeanSd[0],0,1,linestyle="--",color="red")
         plt.xticks([x for x in range(len(labels))],labels,rotation="vertical")
-        plt.legend(tmHandles,Contents.salt)
+        plt.legend(tmHandles,Contents.salt,loc='upper center', bbox_to_anchor=(0.5, 1.05),ncol=3, fancybox=True, shadow=False)
 
         imgdata = cStringIO.StringIO()
         fig1.savefig(imgdata, format='png',dpi=180)

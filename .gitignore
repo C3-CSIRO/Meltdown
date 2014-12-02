@@ -216,3 +216,5 @@ pip-log.txt
 .mr.developer.cfg
 
 data/HeV_buffer screen SEC_Pearce_020514 -  Melt Curve RFU Results.xls
+
+error_log.txt
