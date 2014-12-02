@@ -71,7 +71,7 @@ DEFAULT_MONO_THRESH = 10
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
 #NOTE first 4 are from custom input, second 4 are the oldnames  from default pcrd export
 #individual order is also important:
-CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein"]
+CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein","machine control","protein control","sample control","dye control"]
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
@@ -344,21 +344,25 @@ class DSFAnalysis:
                     labels.append(item)
         labels = Contents.name
         tmHandles = []
-        # plotting the lines for each salt concentration
+
         for i, saltConcentration in enumerate(Contents.salt):
-            curves = []
-            for well in self.plate.names:
-                if self.wells[well].contents.salt == saltConcentration:
-                    curves.append(well)
             tms = []
             badTms = []
-
-            for well in curves:
-                if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
+            for condition in Contents.name:
+                found = False
+                for well in self.plate.names:
+                    if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition:
+                        print "yaya"
+                        if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
+                            tms.append(None)
+                            badTms.append(self.wells[well].Tm)
+                        else:
+                            tms.append(self.wells[well].Tm)
+                            badTms.append(None)
+                        found = True
+                        break
+                if not found:
                     tms.append(None)
-                    badTms.append(self.wells[well].Tm)
-                else:
-                    tms.append(self.wells[well].Tm)
                     badTms.append(None)
 
             for val in tms:
@@ -367,19 +371,19 @@ class DSFAnalysis:
                         maxi = val
                     if val < mini:
                         mini = val
-            for val in badTms:
-                if val != None:
-                    if val > maxi:
-                        maxi = val
-                    if val < mini:
-                        mini = val
-            print curves, saltConcentration, [x for x in range(len(labels))],tms, Contents.name
+                for val in badTms:
+                    if val != None:
+                        if val > maxi:
+                            maxi = val
+                        if val < mini:
+                            mini = val
+            print saltConcentration, len(labels),tms, len(tms)
+            print Contents.name, Contents.salt
             handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
             if badTms:
                 crosses = True
             tmHandles.append(handle)
-
 
         originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied])
         if originalProteinMeanSd[0]!= None:
@@ -536,12 +540,12 @@ class DSFAnalysis:
             complexDictionary = {}
             meanWellDictionary = {}
             for i, saltConcentration in enumerate(Contents.salt):
+                meanWellDictionary[i] = None
+                complexDictionary[i] = False
                 for well in curves:
                     if self.originalPlate.wells[well].contents.salt == saltConcentration:
                         if self.originalPlate.wells[well].complex:
                             complexDictionary[i] = True
-                        elif i not in complexDictionary:
-                            complexDictionary[i] = False
                         if well in self.delCurves:
                             plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
                             , 'grey')
@@ -582,7 +586,7 @@ class DSFAnalysis:
 
                 pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21.5*cm -(i/3)*cm - (ypos % 3)*9*cm,Contents.salt[i])
                 if complexDictionary[i]:
-                    if self.wells[meanWellDictionary[i]].Tm != None:
+                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
                         if self.wells[meanWellDictionary[i]].TmError != None:
                             pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
                         else:
@@ -590,14 +594,14 @@ class DSFAnalysis:
                     else:
                         pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,"None")
                 else:
-                    if self.wells[meanWellDictionary[i]].Tm != None:
+                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
                         if self.wells[meanWellDictionary[i]].TmError != None:
                             pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
                         else:
                             pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
                     else:
                         pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,"None")
-                if self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None:
+                if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None:
                     pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,20*cm - (ypos % 3)*9*cm,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
                     pdf.setFillColor("black")
                     if drawdpH ==False:
