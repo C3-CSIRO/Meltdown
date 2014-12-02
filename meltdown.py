@@ -70,8 +70,9 @@ DEFAULT_MONO_THRESH = 10
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
 #NOTE first 4 are from custom input, second 4 are the oldnames  from default pcrd export
+#TODO remove
 #individual order is also important:
-CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein","machine control","protein control","sample control","dye control"]
+#CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein","machine control","protein control","sample control","dye control"]
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
@@ -701,6 +702,7 @@ class DSFPlate:
         conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
         conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
         conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
+        conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
         
         
         #checks whether summary for a d(pH)/dT column
@@ -727,17 +729,16 @@ class DSFPlate:
         #TODO get controls from contents map
         #control names when given a custom summary xls file
         for i,condition in enumerate(conditionNames):
-            if condition.lower() == CONTROL_WELL_NAMES[0]:#"lysozyme":
+            if condition.lower() == "lysozyme":
                 self.lysozyme.append(conditionWellNames[i])
-            elif condition.lower() == CONTROL_WELL_NAMES[1]:#"no dye":
+            elif condition.lower() == "no dye":
                 self.noDye.append(conditionWellNames[i])
-            elif condition.lower() == CONTROL_WELL_NAMES[2]:#"protein as supplied":
+            elif condition.lower() == "protein as supplied":
                 self.proteinAsSupplied.append(conditionWellNames[i])
-            elif condition.lower() == CONTROL_WELL_NAMES[3]:#"no protein":
+            elif condition.lower() == "no protein":
                 self.noProtein.append(conditionWellNames[i])
                 
         
-        #TODO FIX DAS ONE
         #dictionary keys are a single well, with value a list of its reps and itself, e.g. 'A2':['A1','A2','A3']
         self.repDict = {}
         for i, well in enumerate(conditionWellNames):
@@ -753,14 +754,14 @@ class DSFPlate:
             #creates a pandas series of each well, with index being temperature, and values fluorescence
             fluoroSeries = pandas.Series(shData.col_values(i+2,start_rowx=1,end_rowx=None),shData.col_values(1,start_rowx=1,end_rowx=None))
             #populate the well dictionary of labels and values
-            self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i])
+            self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i], conditionIsControl[i])
             
         return
               
 
 class DSFWell:
     
-    def __init__(self, fluorescenceSeries, conditionName, conditionSalt, conditionPh, conditiondpHdT):
+    def __init__(self, fluorescenceSeries, conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl):
         """
         A well class that holds all of the data to characterize
         a well in a buffer plate.
@@ -774,19 +775,29 @@ class DSFWell:
         self.name = fluorescenceSeries.name
         self.temperatures = fluorescenceSeries.index
         self.fluorescence = [x for x in fluorescenceSeries]
+        
         #the curve is then normalised to have an area below the curve of 1
         count = 0
         for height in self.fluorescence:
             count += height
         self.fluorescence = [x / count for x in self.fluorescence]
+        
         #the forgive monotonic threshold depends on the normalisation of the curve
         self.monoThresh = DEFAULT_MONO_THRESH / count
+        
+        #whether or not the well is a control is saved as a boolean in each well
+        if conditionIsControl != 0:
+            self.isControl = True
+        else:
+            self.isControl = False
+        
         #other attributes of the curve are set to false/none until later analysis of the curve
         self.complex = False
         self.mono = False
         #tm and tm error are calulated upon calling the computeTm() method
         self.Tm = None   
         self.TmError = None
+        
         #the contents of the well is contained in an object of Contents inside well
         self.contents = Contents(conditionName, conditionSalt, conditionPh, conditiondpHdT)
         return  
@@ -1112,7 +1123,6 @@ def sqrDiffWellFluoro(fluoro1,fluoro2):
     """
     Gets the sum of squared differences between every pair of points in two fuorescence curves
     """
-    #TODO LOG
     dist = 0
     count = 0
     x1 = [math.log(x) for x in fluoro1]
