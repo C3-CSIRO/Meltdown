@@ -257,38 +257,48 @@ class DSFAnalysis:
         
     def returnControlCheck(self):
         """
-        Returns a dictionary of the different controls, with values True or False
-        depending on if the control passed or not. This is used when creating the report
+        Returns a dictionary of the different controls, with values Passed, Failed, or Not found
+        depending on if the control passed or wasn't present on the plate. This method is called
+        in generate report
         """
-        #initialises all controls to fail
-        result = {CONTROL_WELL_NAMES[0]:False,  #lysozyme Tm check
-                  CONTROL_WELL_NAMES[1]:False,  #no dye similarity check
-                  CONTROL_WELL_NAMES[3]:False}  #no protein check
+        #initialises all controls to failed
+        result = {"lysozyme": "Failed",  #lysozyme Tm check
+                  "no dye": "Failed",  #no dye similarity check
+                  "no protein": "Failed"}  #no protein similarity check
                
-        #only test the control if the control is present in the plate
+        #test the control if the control is present in the plate
         if len(self.plate.lysozyme)>0:
             #lysozyme Tm check
             if self.plate.wells[self.plate.lysozyme[0]].Tm > LYSOZYME_TM_THRESHOLD[0] - 2*LYSOZYME_TM_THRESHOLD[1] and\
                self.plate.wells[self.plate.lysozyme[0]].Tm < LYSOZYME_TM_THRESHOLD[0] + 2*LYSOZYME_TM_THRESHOLD[1]:
-                    result[CONTROL_WELL_NAMES[0]] = True
+                    result["lysozyme"] = "Passed"
+        #control not found
+        else:
+            result["lysozyme"] = "Not found"
                 
-        #only test the control if the control is present in the plate
+        #test the control if the control is present in the plate
         if len(self.plate.noDye)>0:
             #get the curves to compare as series
-            noDyeControl = pandas.Series.from_csv("data/noDyeControl.csv")
+            noDyeExpected = pandas.Series.from_csv("data/noDyeControl.csv")
             noDyeReal = pandas.Series(self.plate.wells[self.plate.noDye[0]].fluorescence, self.plate.wells[self.plate.noDye[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
-            if rh.sqrdiff(noDyeReal, noDyeControl) < SIMILARITY_THRESHOLD:
-                result[CONTROL_WELL_NAMES[1]] = True
+            if rh.sqrdiff(noDyeReal, noDyeExpected) < SIMILARITY_THRESHOLD:
+                result["no dye"] = "Passed"
+        #control not found
+        else:
+            result["no dye"] = "Not found"
                 
-        #only test the control if the control is present in the plate
+        #test the control if the control is present in the plate
         if len(self.plate.noProtein)>0:
             #get the curves to compare as series
-            noProteinControl = pandas.Series.from_csv("data/noProteinControl.csv")
+            noProteinExpected = pandas.Series.from_csv("data/noProteinControl.csv")
             noProteinReal = pandas.Series(self.plate.wells[self.plate.noProtein[0]].fluorescence, self.plate.wells[self.plate.noProtein[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
-            if rh.sqrdiff(noProteinReal, noProteinControl) < SIMILARITY_THRESHOLD:
-                result[CONTROL_WELL_NAMES[3]] = True
+            if rh.sqrdiff(noProteinReal, noProteinExpected) < SIMILARITY_THRESHOLD:
+                result["no protein"] = "Passed"
+        #control not found
+        else:
+                result["no protein"] = "Not Found"
             
         return result
     
