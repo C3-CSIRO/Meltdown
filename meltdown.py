@@ -246,11 +246,9 @@ class DSFAnalysis:
     
     def analyseCurves(self):
         """
-        Calculate the Tms of all the curves in the plate, and also
-        check that the controls on the plate are within the expected range
+        Calculate the Tms of all the curves in the plate
         """
         self.computeTms()
-        self.returnControlCheck()
         return
         
     def returnControlCheck(self):
@@ -258,6 +256,9 @@ class DSFAnalysis:
         Returns a dictionary of the different controls, with values Passed, Failed, or Not found
         depending on if the control passed or wasn't present on the plate. This method is called
         in generate report
+        
+        The mean of the replicates of each control is what is tested, as this is called after the
+        mean plate is created (which updates the 4 control well lists in the plate)
         """
         #initialises all controls to failed
         result = {"lysozyme": "Failed",  #lysozyme Tm check
@@ -297,7 +298,7 @@ class DSFAnalysis:
         #control not found
         else:
                 result["no protein"] = "Not Found"
-            
+        
         return result
     
     def generateReport(self, outFile):
@@ -360,7 +361,7 @@ class DSFAnalysis:
                 found = False
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
-                        print "yay"
+
                         if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
@@ -428,21 +429,20 @@ class DSFAnalysis:
 
         controlChecks = self.returnControlCheck()
 
-        #TODO Change position
-        # Lysozyme Tm Control Check
+        #control checks
+        #set colour of the controls
         pdf.setFillColor("blue")
-        pdf.drawString(3*cm,9.5*cm,"Lysozyme Control: "+controlChecks["lysozyme"])
+        
+        # lysozyme Tm control check
+        pdf.drawString(1*cm,16.5*cm,"Lysozyme Control: "+controlChecks["lysozyme"])
+        # no dye control check 
+        pdf.drawString(1*cm,16*cm,"No Dye Control:"+controlChecks["no dye"])
+        # no protein control check
+        pdf.drawString(1*cm,15.5*cm,"No Protein Control:"+controlChecks["no protein"])
+        
+        #return to normal colour
         pdf.setFillColor("black")
-
-        # No dye control check 
-        pdf.setFillColor("blue")
-        pdf.drawString(3*cm,9*cm,"No Dye Control:"+controlChecks["no dye"])
-        pdf.setFillColor("black")
-            
-        # No Protein control check
-        pdf.setFillColor("blue")
-        pdf.drawString(3*cm,8.5*cm,"No Protein Control:"+controlChecks["no protein"])
-        pdf.setFillColor("black")
+        
 
         fig2 = plt.figure(num=1,figsize=(5,4))
         for well in self.originalPlate.proteinAsSupplied:
