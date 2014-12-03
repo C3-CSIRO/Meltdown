@@ -430,22 +430,19 @@ class DSFAnalysis:
 
         #TODO Change position
         # Lysozyme Tm Control Check
-        if controlChecks["lysozyme"] == False:
-            pdf.setFillColor("red")
-            pdf.drawString(3*cm,9.5*cm,"Lysozyme Control: Failed")
-            pdf.setFillColor("black")
+        pdf.setFillColor("blue")
+        pdf.drawString(3*cm,9.5*cm,"Lysozyme Control: "+controlChecks["lysozyme"])
+        pdf.setFillColor("black")
 
         # No dye control check 
-        if controlChecks["no dye"] == False:
-            pdf.setFillColor("red")
-            pdf.drawString(3*cm,9*cm,"No Dye Control: Failed")
-            pdf.setFillColor("black")
+        pdf.setFillColor("blue")
+        pdf.drawString(3*cm,9*cm,"No Dye Control:"+controlChecks["no dye"])
+        pdf.setFillColor("black")
             
         # No Protein control check
-        if controlChecks["no protein"] == False:
-            pdf.setFillColor("red")
-            pdf.drawString(3*cm,8.5*cm,"Dye Only Control: Failed")
-            pdf.setFillColor("black")
+        pdf.setFillColor("blue")
+        pdf.drawString(3*cm,8.5*cm,"No Protein Control:"+controlChecks["no protein"])
+        pdf.setFillColor("black")
 
         fig2 = plt.figure(num=1,figsize=(5,4))
         for well in self.originalPlate.proteinAsSupplied:
