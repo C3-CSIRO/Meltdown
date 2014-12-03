@@ -361,7 +361,8 @@ class DSFAnalysis:
             for condition in Contents.name:
                 found = False
                 for well in self.plate.names:
-                    if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition:
+                    if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
+                        print "yay"
                         if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
@@ -539,10 +540,11 @@ class DSFAnalysis:
         ypos = 3
         newpage = 1
 
-        for sampleContents in Contents.name:
+        for sampleContentspH in Contents.name:
+            sampleContents = sampleContentspH[0]
             curves = []
             for well in self.originalPlate.names:
-                if self.originalPlate.wells[well].contents.name == sampleContents:
+                if self.originalPlate.wells[well].contents.name == sampleContents and self.originalPlate.wells[well].contents.pH == sampleContentspH[1]:
                     curves.append(well)
             complexDictionary = {}
             meanWellDictionary = {}
@@ -583,7 +585,7 @@ class DSFAnalysis:
             pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 3)*9*cm , 8*cm, 6*cm)
             pdf.setFillColor("black")
             pdf.setFont("Helvetica",12)
-            pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9*cm ,"Condition: " + sampleContents)
+            pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9*cm ,"Condition: " + sampleContents + " (" + str(sampleContentspH[1])+")")
             pdf.drawString(cm+(xpos % 2)*9.5*cm,21.5*cm - (ypos % 3)*9*cm ,"Salt:")
             pdf.drawString(cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm ,"Tm: ")
             drawdpH = False
@@ -993,8 +995,9 @@ class Contents:
         self.dpH = conditiondpHdT
         
         #add names and salts to the static lists if not already present
-        if self.name not in Contents.name and self.name != "" and self.name.lower() not in CONTROL_WELL_NAMES:
-            Contents.name.append(self.name)
+        key = (self.name, self.pH)
+        if key not in Contents.name and self.name != "" and self.name.lower() not in CONTROL_WELL_NAMES:
+            Contents.name.append(key)
         if self.salt not in Contents.salt and self.salt != "":
             Contents.salt.append(self.salt)
         return
