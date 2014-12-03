@@ -721,7 +721,7 @@ class DSFPlate:
         #================ reading in from the contents map ====================#
         #well names e.g. A1,A2,etc are imported
         conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
-        #fixes names in files from A01 -> A1 if they are not in the required for already
+        #fixes names in files from A01 -> A1 if they are not in the required format already
         conditionWellNames = [name[0]+str(int(name[1:])) for name in conditionWellNames]
         
         #condition names (the buffer solutions) are imported
