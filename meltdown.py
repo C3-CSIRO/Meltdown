@@ -355,7 +355,8 @@ class DSFAnalysis:
         mini = 100
 
         # Labels for the summary graph
-        labels = [x[0]+","+str(x[1]) for x in Contents.name]
+        names = sorted(Contents.name, key=lambda x: x[1])
+        labels = [x[0]+","+str(x[1]) for x in names]
         tmHandles = []
         for i, saltConcentration in enumerate(Contents.salt):
             # Tms to be drawn regularly 
@@ -363,7 +364,7 @@ class DSFAnalysis:
             # Tms to be drawn as unreliable
             badTms = []
 
-            for condition in Contents.name:
+            for condition in names:
                 found = False
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
@@ -1256,12 +1257,12 @@ if __name__ == "__main__":
 
 
 # # Short piece of code for batch analysis of experiments
-# files = os.listdir("../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx")
+# files = os.listdir("../UropCrystallisation/data/bufferscreen9/xlsx")
 # total = len(files)
 # for i, bsc9 in enumerate(files):
 #     mydsf = DSFAnalysis()
-#     filepath = "../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx/" + bsc9
-#     mydsf.loadMeltCurves(filepath,"../UropCrystallisation/data/Content_map.xlsx")
+#     filepath = "../UropCrystallisation/data/bufferscreen9/xlsx/" + bsc9
+#     mydsf.loadMeltCurves(filepath,"data/Content_map.xlsx")
 #     mydsf.analyseCurves()
 #     mydsf.generateReport("reports/"+bsc9+".pdf")
 #     print str(round(i/float(total)* 100,2))  +"%"
