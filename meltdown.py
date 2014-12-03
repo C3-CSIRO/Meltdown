@@ -395,7 +395,11 @@ class DSFAnalysis:
                         mini = val
 
             # Handle for the legend
-            handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
+            try:
+                handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
+            except IndexError:
+                tkMessageBox.showwarning("Error", "Only up to 6 types of each condition are supported.\n(there is no limit to the number of conditions)\n\ne.g. 6 different salt concentrations per buffer")
+                sys.exit(1)
 
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
             unreliableDrawn = False
@@ -714,8 +718,12 @@ class DSFPlate:
         
         
         #================ reading in from the contents map ====================#
-        #Read rows containing wellnames and names of conditions
+        #well names e.g. A1,A2,etc are imported
         conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
+        #fixes names in files from A01 -> A1 if they are not in the required for already
+        conditionWellNames = [name[0]+str(int(name[1:])) for name in conditionWellNames]
+        
+        #condition names (the buffer solutions) are imported
         conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
         
         #checks contents map for a salt column
@@ -754,12 +762,6 @@ class DSFPlate:
                 #all conditions have empty string for control if column isnt given
                 conditionIsControl.append('')        
                 
-                
-        print conditionPhs, len(conditionPhs)
-        print
-        print conditionSalts, len(conditionSalts)
-        print
-        print conditionIsControl, len(conditionIsControl)
         #==================================================================#     
                 
         
@@ -775,16 +777,21 @@ class DSFPlate:
         #the names of the controls are gotten from the global list at the top of the file,
         #note that the order in that list is important
 
-        #control names when given a custom summary xls file
+        #checks if wells are the controls that we know to check for, and forces a 
+        #1 in the isControl column if they are
         for i,condition in enumerate(conditionNames):
             if condition.lower() == "lysozyme":
                 self.lysozyme.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
             elif condition.lower() == "no dye":
                 self.noDye.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
             elif condition.lower() == "protein as supplied":
                 self.proteinAsSupplied.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
             elif condition.lower() == "no protein":
                 self.noProtein.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
                 
         
         #dictionary keys are a single well, with value a list of its reps and itself, e.g. 'A2':['A1','A2','A3']
