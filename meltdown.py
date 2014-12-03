@@ -697,18 +697,27 @@ class DSFPlate:
         #Read rows containing names and conditions
         conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
         conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
-        conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
         conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
         conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
         
-        #checks whether summary for a d(pH)/dT column
-        conditiondpHdT=[]
+        #checks contents map for a salt column
         try:
-            for i in range(len(conditionWellNames)):
-                conditiondpHdT.append(shContents.cell(i,4).value)
+            conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
         except IndexError:
+            conditionSalts = []
             for i in range(len(conditionWellNames)):
+                #all conditions have empty string for salt if no salts are given
+                conditionSalts.append('')
+        
+        #checks contents map for a d(pH)/dT column
+        try:
+            conditiondpHdT = shContents.col_values(4, start_rowx=1, end_rowx=None)
+        except IndexError:
+            conditiondpHdT=[]
+            for i in range(len(conditionWellNames)):
+                #all conditions have 'None' for dpH/dT if no dphdt values are given
                 conditiondpHdT.append(None)
+        
         
         #saves the list of names in the Plate for future use
         self.names = conditionWellNames
@@ -1143,6 +1152,7 @@ def main():
     #DSF results file
     rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
     # contents map, or default cfx manager summary file
+    #TODO close the contents map if its open
     contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
     try:
         #if the files supplied are xlsx as opposed to xls file the pcrd naming error
