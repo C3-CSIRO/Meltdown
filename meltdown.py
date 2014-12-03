@@ -360,7 +360,7 @@ class DSFAnalysis:
                 found = False
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
-                        if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
+                        if (self.wells[well].Tm != None and len(self.plate.meandict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
                         else:
@@ -964,7 +964,6 @@ class DSFWell:
 
         averagePoint = (lowestPoint2 +highestPoint) / 2
         i = lowestIndex2
-        print (self.fluorescence[i]-averagePoint)**2
         while self.fluorescence[i]<averagePoint:
             i += 1;
 
