@@ -1063,7 +1063,7 @@ class Contents:
         
 
 #==============Functions that can be used to replicate thresholds==============#
-def determineOutlierThreshold(listOfLysozymeWellNames):
+def determineOutlierThreshold(listOfLysozymeWellNames, pathrfu):
     """
     Used to reproduce the threshold when determining what curves
     are outliers from a group of replicates
@@ -1072,7 +1072,6 @@ def determineOutlierThreshold(listOfLysozymeWellNames):
     lysozyme=[]
     results = []
     # set this to be the path to a directory of RFU result files exported
-    pathrfu = "../UropCrystallisation/data/bufferscreen9/xlsx"
     files = os.listdir(pathrfu)
     pathrfu = pathrfu + "/"
     for data in files:
