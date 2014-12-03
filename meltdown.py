@@ -361,8 +361,12 @@ class DSFAnalysis:
                 found = False
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
+<<<<<<< HEAD
 
                         if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
+=======
+                        if (self.wells[well].Tm != None and len(self.plate.meandict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
+>>>>>>> origin/generalising
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
                         else:
@@ -593,19 +597,19 @@ class DSFAnalysis:
                 if complexDictionary[i]:
                     if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
                         if self.wells[meanWellDictionary[i]].TmError != None:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
                         else:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm -(i/3)*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
                     else:
-                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,"None")
+                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,"None")
                 else:
                     if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
                         if self.wells[meanWellDictionary[i]].TmError != None:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
                         else:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm -(i/3)*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
                     else:
-                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,"None")
+                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,"None")
                 if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None:
                     pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,20*cm - (ypos % 3)*9*cm,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
                     pdf.setFillColor("black")
@@ -960,8 +964,11 @@ class DSFWell:
         #again check for complex shape before returning
         if signChangeCount > 0:
                 self.complex = True
+
+
+
         averagePoint = (lowestPoint2 +highestPoint) / 2
-        i = 0
+        i = lowestIndex2
         while self.fluorescence[i]<averagePoint:
             i += 1;
 
