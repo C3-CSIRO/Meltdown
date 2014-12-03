@@ -711,11 +711,12 @@ class DSFPlate:
         self.repDict = {}
         #creating a dictionary that references every mean plate well, to those that it came from
         self.meanDict = {}
-        #Read rows containing names and conditions
+        
+        
+        #================ reading in from the contents map ====================#
+        #Read rows containing wellnames and names of conditions
         conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
         conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
-        conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
-        conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
         
         #checks contents map for a salt column
         try:
@@ -726,6 +727,15 @@ class DSFPlate:
                 #all conditions have empty string for salt if no salts are given
                 conditionSalts.append('')
         
+        #checks contents map for a pH column
+        try:
+            conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
+        except IndexError:
+            conditionPhs = []
+            for i in range(len(conditionWellNames)):
+                #all conditions have empty string for pH if no Phs are given
+                conditionPhs.append('')        
+        
         #checks contents map for a d(pH)/dT column
         try:
             conditiondpHdT = shContents.col_values(4, start_rowx=1, end_rowx=None)
@@ -733,8 +743,25 @@ class DSFPlate:
             conditiondpHdT=[]
             for i in range(len(conditionWellNames)):
                 #all conditions have 'None' for dpH/dT if no dphdt values are given
-                conditiondpHdT.append(None)
-        
+                conditiondpHdT.append('')
+                
+        #checks contents map for a control column
+        try:
+            conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
+        except IndexError:
+            conditionIsControl = []
+            for i in range(len(conditionWellNames)):
+                #all conditions have empty string for control if column isnt given
+                conditionIsControl.append('')        
+                
+                
+        print conditionPhs, len(conditionPhs)
+        print
+        print conditionSalts, len(conditionSalts)
+        print
+        print conditionIsControl, len(conditionIsControl)
+        #==================================================================#     
+                
         
         #saves the list of names in the Plate for future use
         self.names = conditionWellNames
