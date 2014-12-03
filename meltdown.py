@@ -312,6 +312,8 @@ class DSFAnalysis:
         pdf.drawString(cm,28*cm,"MELTDOWN")
         pdf.setFont("Helvetica",16)
         pdf.drawString(6*cm,28*cm,"Melt Curve Analysis")
+
+        # Remove the file path from the name
         for i in range(1,len(self.name)):
             if self.name[-i] == '/' or self.name[-i] == '\\':
                 if -i+40 < 0:
@@ -323,15 +325,21 @@ class DSFAnalysis:
             pdf.drawString(cm,27*cm, nameMatch)
         else:
             pdf.drawString(cm,27*cm, "..."+self.name[-70:])
+
         pdf.setFont("Helvetica-Bold",12)
         pdf.drawImage("data/CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
+
+        # For finding the best Tm
         best = ""
         maxi = 0
-        mini = 100
+
         for well in self.plate.names:
+            # Finding the maximum Tm
             if self.wells[well].contents.isControl == False and self.wells[well].Tm != None and self.wells[well].mono == False and self.wells[well].Tm > maxi:
                 maxi = self.wells[well].Tm
                 best = well
+
+        # This checks if a maximum Tm has being found. If none it is most likely because no Tms could be calculated
         if best != "":
             if self.wells[best].TmError != None:
                 pdf.drawString(3*cm,3.6*cm,"Highest Tm = " + str(round(self.wells[best].Tm,2)) + " +/- " + str(round(self.wells[best].TmError,2)))
@@ -341,27 +349,24 @@ class DSFAnalysis:
 
         pdf.setFont("Helvetica",12)
         fig1 = plt.figure(num=1,figsize=(10,8))
-        maxi = 0
 
-        conditions = [self.wells[x].contents.name+" ("+str(self.wells[x].contents.pH)+")" for x in self.plate.names if self.wells[x].contents.isControl == False]
-        labels = []
-        for item in conditions:
-            if item not in labels and item[:-7] not in labels:
-                if "None" in item:
-                    labels.append(item[:-7])
-                else:
-                    labels.append(item)
+        # Maximum and minimum for the y axis of the summary graph
+        maxi = 0
+        mini = 100
+
+        # Labels for the summary graph
         labels = [x[0]+","+str(x[1]) for x in Contents.name]
         tmHandles = []
-
         for i, saltConcentration in enumerate(Contents.salt):
+            # Tms to be drawn regularly 
             tms = []
+            # Tms to be drawn as unreliable
             badTms = []
+
             for condition in Contents.name:
                 found = False
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
-
                         if (self.wells[well].Tm != None and len(self.plate.meanDict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
@@ -370,32 +375,39 @@ class DSFAnalysis:
                             badTms.append(None)
                         found = True
                         break
+                # If the particular combination of buffer, salt and pH is not found
                 if not found:
                     tms.append(None)
                     badTms.append(None)
 
+            # Figuring out the scale of the y axis for the summary graph
             for val in tms:
                 if val != None:
                     if val > maxi:
                         maxi = val
                     if val < mini:
                         mini = val
-                for val in badTms:
-                    if val != None:
-                        if val > maxi:
-                            maxi = val
-                        if val < mini:
-                            mini = val
+            for val in badTms:
+                if val != None:
+                    if val > maxi:
+                        maxi = val
+                    if val < mini:
+                        mini = val
+
+            # Handle for the legend
             handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
+
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
-            crosses = False
+            unreliableDrawn = False
             if badTms:
-                crosses = True
+                unreliableDrawn = True
             tmHandles.append(handle)
 
         originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied])
+        
+        
+        # Setting the scale of the y axis
         if originalProteinMeanSd[0]!= None:
-            
             if(originalProteinMeanSd[0]-mini > maxi - originalProteinMeanSd[0]):
                 plt.axis([-1,len(labels),mini-5,2*originalProteinMeanSd[0]-mini +10])
             else:
@@ -405,10 +417,14 @@ class DSFAnalysis:
         plt.gcf().subplots_adjust(bottom=0.35)
         plt.ylabel('Tm')
 
+        # Drawing the Tm of the protein as supplied as a horizontal line on the summary graph
         plt.axhline(originalProteinMeanSd[0],0,1,linestyle="--",color="red")
+        # Setting x axis labels
         plt.xticks([x for x in range(len(labels))],labels,rotation="vertical")
+        # Putting the legend for the summary graph at the top
         plt.legend(tmHandles,Contents.salt,loc='upper center', bbox_to_anchor=(0.5, 1.05),ncol=3, fancybox=True, shadow=False)
 
+        # Saving the summary graph as an image and drawing it on the page
         imgdata = cStringIO.StringIO()
         fig1.savefig(imgdata, format='png',dpi=180)
         imgdata.seek(0)  # rewind the data
@@ -417,19 +433,17 @@ class DSFAnalysis:
         plt.close()
 
         pdf.setFont("Helvetica",10)
-        if crosses:
+        if unreliableDrawn:
             pdf.drawString(7.9*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
-        crosses = False
+        unreliableDrawn = False
         
-        if originalProteinMeanSd[0]!=None:
-            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied")
+
 
         pdf.setFillColor("black")
 
 
         controlChecks = self.returnControlCheck()
 
-        #control checks
         #set colour of the controls
         pdf.setFillColor("blue")
         
@@ -440,11 +454,13 @@ class DSFAnalysis:
         # no protein control check
         pdf.drawString(1*cm,15.5*cm,"No Protein Control: "+controlChecks["no protein"])
         
-        #return to normal colour
         pdf.setFillColor("black")
         
-
+        if originalProteinMeanSd[0]!=None:
+            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
         fig2 = plt.figure(num=1,figsize=(5,4))
+
+        # Plotting the protein as supplied as a control check
         for well in self.originalPlate.proteinAsSupplied:
             if well in self.delCurves:
                 plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
@@ -468,6 +484,7 @@ class DSFAnalysis:
         try:
             originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied])
         except:
+            # If there is no protein as supplied
             originalProteinMeanSd = (None, None)
         if originalProteinMeanSd[0]!= None:
             pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = " +str(round(originalProteinMeanSd[0],2))+"(+/-"+str(round(originalProteinMeanSd[1],2))+")")
@@ -478,6 +495,7 @@ class DSFAnalysis:
         pdf.drawString(8*cm,22.75*cm,"Full interpretation of the results requires you to look ")
         pdf.drawString(8*cm,22.25*cm,"at the individual melt curves.")
 
+        # Summary box
         avTmError = 0
         count = 0
         tmCount = 0
@@ -506,37 +524,42 @@ class DSFAnalysis:
         pdf.setFont("Helvetica-Bold",13)
         wellBehaved = True
 
-        for well in self.originalPlate.proteinAsSupplied:
-            if self.originalPlate.wells[well].Tm == None or self.originalPlate.wells[well].mono == True or well in self.delCurves:
-                wellBehaved = False
-        if originalProteinMeanSd[1] > 1.5:
-            wellBehaved = False
-        if wellBehaved:
-            pdf.drawString(12.5*cm,18.5*cm,"well behaved")
+        # If the protein as supplied is not found as a control
+        if len(self.originalPlate.proteinAsSupplied) == 0:
+            pdf.drawString(12.5*cm,18.5*cm,"not found")
         else:
-            pdf.drawString(12.5*cm,18.5*cm,"not well behaved")
+            # Else find whether it is well behaved or not
+            for well in self.originalPlate.proteinAsSupplied:
+                if self.originalPlate.wells[well].Tm == None or self.originalPlate.wells[well].mono == True or well in self.delCurves:
+                    wellBehaved = False
+            if originalProteinMeanSd[1] > 1.5:
+                wellBehaved = False
+            if wellBehaved:
+                pdf.drawString(12.5*cm,18.5*cm,"well behaved")
+            else:
+                pdf.drawString(12.5*cm,18.5*cm,"not well behaved")
 
         if wellBehaved == False or avTmError >=1.5 or tmCount <= 50:
             pdf.drawString(8*cm,21.5*cm,"The summary graph appears to be unreliable")
 
         pdf.rect(7.75*cm,18.05*cm,12*cm,5.4*cm)
 
-        # Saving the first page and moving onto the second page
-        pdf.showPage()
-        pdf.setFont("Helvetica",12)    
-        
-        pdf.setFont("Helvetica",9)
-        pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
-        pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
-        pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
-        pdf.setFont("Helvetica",12)
+        # Moving on to the in depth graphs
         fig3 = plt.figure(num=1,figsize=(5,4))
 
+        # Variables used to keep track of where to draw the current graph
         xpos=2
         ypos = 3
         newpage = 1
 
         for sampleContentspH in Contents.name:
+            if (newpage-1) % 6 == 0:
+                pdf.showPage()
+                pdf.setFont("Helvetica",9)
+                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
+                pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
+                pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
+                pdf.setFont("Helvetica",12)
             sampleContents = sampleContentspH[0]
             curves = []
             for well in self.originalPlate.names:
@@ -616,13 +639,7 @@ class DSFAnalysis:
             xpos +=1
             if newpage % 2 == 0:
                 ypos +=1
-            if newpage % 6 == 0:
-                pdf.showPage()
-                pdf.setFont("Helvetica",9)
-                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
-                pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
-                pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
-                pdf.setFont("Helvetica",12)
+            
             newpage += 1 
             plt.close()
             fig3 = plt.figure(num=1,figsize=(5,4))
