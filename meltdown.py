@@ -361,12 +361,8 @@ class DSFAnalysis:
                 found = False
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
-<<<<<<< HEAD
 
-                        if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
-=======
                         if (self.wells[well].Tm != None and len(self.plate.meandict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
->>>>>>> origin/generalising
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
                         else:
