@@ -436,9 +436,9 @@ class DSFAnalysis:
         # lysozyme Tm control check
         pdf.drawString(1*cm,16.5*cm,"Lysozyme Control: "+controlChecks["lysozyme"])
         # no dye control check 
-        pdf.drawString(1*cm,16*cm,"No Dye Control:"+controlChecks["no dye"])
+        pdf.drawString(1*cm,16*cm,"No Dye Control: "+controlChecks["no dye"])
         # no protein control check
-        pdf.drawString(1*cm,15.5*cm,"No Protein Control:"+controlChecks["no protein"])
+        pdf.drawString(1*cm,15.5*cm,"No Protein Control: "+controlChecks["no protein"])
         
         #return to normal colour
         pdf.setFillColor("black")
