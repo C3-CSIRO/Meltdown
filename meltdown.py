@@ -351,7 +351,7 @@ class DSFAnalysis:
                     labels.append(item[:-7])
                 else:
                     labels.append(item)
-        labels = Contents.name
+        labels = [x[0]+","+str(x[1]) for x in Contents.name]
         tmHandles = []
 
         for i, saltConcentration in enumerate(Contents.salt):
