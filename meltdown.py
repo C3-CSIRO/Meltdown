@@ -154,7 +154,7 @@ class DSFAnalysis:
                 
                 #creates a dictionary allowing you to find which wells created which mean well
                 #e.g. 'A2': ["A4","A5","A6"]
-                self.plate.meandict[chr(65+letcount) + str(numcount)] = self.originalPlate.repDict[well]
+                self.plate.meanDict[chr(65+letcount) + str(numcount)] = self.originalPlate.repDict[well]
                 
                 #numcount increased for naming mean wells
                 numcount += 1
@@ -362,7 +362,7 @@ class DSFAnalysis:
                 for well in self.plate.names:
                     if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
 
-                        if (self.wells[well].Tm != None and len(self.plate.meandict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
+                        if (self.wells[well].Tm != None and len(self.plate.meanDict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
                             tms.append(None)
                             badTms.append(self.wells[well].Tm)
                         else:
@@ -570,7 +570,7 @@ class DSFAnalysis:
                             plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
                             , COLOURS[i],linestyle="--")
                             
-                        meanWellDictionary[i] = findKey(well,self.plate.meandict)
+                        meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                         
             plt.axis([20,100,0.001,0.015])
             plt.gca().axes.get_yaxis().set_visible(False)
@@ -653,8 +653,8 @@ class DSFAnalysis:
                 self.originalPlate.wells[well].computeTm()
 
         for well in self.plate.names:
-                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meandict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
-                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meandict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
+                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
+                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
                 for data in complexs:
                     if data:
                         self.wells[well].complex = True
@@ -693,7 +693,7 @@ class DSFPlate:
         #creating dictionary corresponding to replicates on this plate
         self.repDict = {}
         #creating a dictionary that references every mean plate well, to those that it came from
-        self.meandict = {}
+        self.meanDict = {}
         #Read rows containing names and conditions
         conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
         conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
