@@ -70,8 +70,6 @@ DEFAULT_MONO_THRESH = 10
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
 #NOTE first 4 are from custom input, second 4 are the oldnames  from default pcrd export
-#individual order is also important:
-CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein","machine control","protein control","sample control","dye control"]
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
@@ -330,7 +328,7 @@ class DSFAnalysis:
         maxi = 0
         mini = 100
         for well in self.plate.names:
-            if self.wells[well].contents.name.lower() not in CONTROL_WELL_NAMES and self.wells[well].Tm != None and self.wells[well].mono == False and self.wells[well].Tm > maxi:
+            if self.wells[well].contents.isControl == False and self.wells[well].Tm != None and self.wells[well].mono == False and self.wells[well].Tm > maxi:
                 maxi = self.wells[well].Tm
                 best = well
         if best != "":
@@ -344,7 +342,7 @@ class DSFAnalysis:
         fig1 = plt.figure(num=1,figsize=(10,8))
         maxi = 0
 
-        conditions = [self.wells[x].contents.name+" ("+str(self.wells[x].contents.pH)+")" for x in self.plate.names if self.wells[x].contents.name.lower() not in CONTROL_WELL_NAMES]
+        conditions = [self.wells[x].contents.name+" ("+str(self.wells[x].contents.pH)+")" for x in self.plate.names if self.wells[x].contents.isControl == False]
         labels = []
         for item in conditions:
             if item not in labels and item[:-7] not in labels:
@@ -389,6 +387,7 @@ class DSFAnalysis:
                             mini = val
             handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
+            crosses = False
             if badTms:
                 crosses = True
             tmHandles.append(handle)
@@ -703,7 +702,7 @@ class DSFPlate:
         conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
         conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
         conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
-        
+        conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
         
         #checks whether summary for a d(pH)/dT column
         conditiondpHdT=[]
@@ -726,20 +725,18 @@ class DSFPlate:
         #the names of the controls are gotten from the global list at the top of the file,
         #note that the order in that list is important
 
-        #TODO get controls from contents map
         #control names when given a custom summary xls file
         for i,condition in enumerate(conditionNames):
-            if condition.lower() == CONTROL_WELL_NAMES[0]:#"lysozyme":
+            if condition.lower() == "lysozyme":
                 self.lysozyme.append(conditionWellNames[i])
-            elif condition.lower() == CONTROL_WELL_NAMES[1]:#"no dye":
+            elif condition.lower() == "no dye":
                 self.noDye.append(conditionWellNames[i])
-            elif condition.lower() == CONTROL_WELL_NAMES[2]:#"protein as supplied":
+            elif condition.lower() == "protein as supplied":
                 self.proteinAsSupplied.append(conditionWellNames[i])
-            elif condition.lower() == CONTROL_WELL_NAMES[3]:#"no protein":
+            elif condition.lower() == "no protein":
                 self.noProtein.append(conditionWellNames[i])
                 
         
-        #TODO FIX DAS ONE
         #dictionary keys are a single well, with value a list of its reps and itself, e.g. 'A2':['A1','A2','A3']
         self.repDict = {}
         for i, well in enumerate(conditionWellNames):
@@ -755,14 +752,14 @@ class DSFPlate:
             #creates a pandas series of each well, with index being temperature, and values fluorescence
             fluoroSeries = pandas.Series(shData.col_values(i+2,start_rowx=1,end_rowx=None),shData.col_values(1,start_rowx=1,end_rowx=None))
             #populate the well dictionary of labels and values
-            self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i])
+            self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i], conditionIsControl[i])
             
         return
               
 
 class DSFWell:
     
-    def __init__(self, fluorescenceSeries, conditionName, conditionSalt, conditionPh, conditiondpHdT):
+    def __init__(self, fluorescenceSeries, conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl):
         """
         A well class that holds all of the data to characterize
         a well in a buffer plate.
@@ -776,21 +773,25 @@ class DSFWell:
         self.name = fluorescenceSeries.name
         self.temperatures = fluorescenceSeries.index
         self.fluorescence = [x for x in fluorescenceSeries]
+        
         #the curve is then normalised to have an area below the curve of 1
         count = 0
         for height in self.fluorescence:
             count += height
         self.fluorescence = [x / count for x in self.fluorescence]
+        
         #the forgive monotonic threshold depends on the normalisation of the curve
         self.monoThresh = DEFAULT_MONO_THRESH / count
+        
         #other attributes of the curve are set to false/none until later analysis of the curve
         self.complex = False
         self.mono = False
         #tm and tm error are calulated upon calling the computeTm() method
         self.Tm = None   
         self.TmError = None
+        
         #the contents of the well is contained in an object of Contents inside well
-        self.contents = Contents(conditionName, conditionSalt, conditionPh, conditiondpHdT)
+        self.contents = Contents(conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl)
         return  
 
     def isMonotonic(self):
@@ -980,7 +981,7 @@ class Contents:
     """
     salt = []
     name = []
-    def __init__(self, conditionName, conditionSalt, conditionPh, conditiondpHdT):
+    def __init__(self, conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl):
         """
         Struct class for the contents of a well, stores the name, pH, salt, and
         dpH of each well.
@@ -993,10 +994,14 @@ class Contents:
         self.salt = conditionSalt
         self.pH = conditionPh
         self.dpH = conditiondpHdT
-        
+        #whether or not the well is a control is saved as a boolean in each well
+        self.isControl = True
+        if conditionIsControl != 1:
+            self.isControl = False
+            
         #add names and salts to the static lists if not already present
         key = (self.name, self.pH)
-        if key not in Contents.name and self.name != "" and self.name.lower() not in CONTROL_WELL_NAMES:
+        if key not in Contents.name and self.name != "" and self.isControl == False:
             Contents.name.append(key)
         if self.salt not in Contents.salt and self.salt != "":
             Contents.salt.append(self.salt)
@@ -1013,11 +1018,13 @@ def determineOutlierThreshold(listOfLysozymeWellNames):
     """
     lysozyme=[]
     results = []
-    # TODO should not be hardcoded
+    # set this to be the path to a directory of RFU result files exported
     pathrfu = "../UropCrystallisation/data/bufferscreen9/xlsx"
     files = os.listdir(pathrfu)
     pathrfu = pathrfu + "/"
     for data in files:
+        #set the second paramiter to be the location of the contents map for all the files
+        #in the directory specified above
         plate = DSFPlate(pathrfu+data,"data/Content_map.xlsx")
         for well in listOfLysozymeWellNames:
             lysozyme.append(plate.wells[well].fluorescence)
@@ -1115,7 +1122,6 @@ def sqrDiffWellFluoro(fluoro1,fluoro2):
     """
     Gets the sum of squared differences between every pair of points in two fuorescence curves
     """
-    #TODO LOG
     dist = 0
     count = 0
     x1 = [math.log(x) for x in fluoro1]
