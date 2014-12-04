@@ -21,7 +21,7 @@
 # This software will generate automated reports from high-throughput thermofluor protein
 # stability measurements.  Although originally designed to provide a report for the Buffer Screen 9
 # experiment at the Collaborative Crystalisation Centre (C3), this can be extended to analyse any
-# similar experiment in 96 well format.  Given two input xls files (one for fluorescence in
+# similar experiment.  Given two input xlsx files (one for fluorescence in
 # each well as a function of temperature, and one describing the buffer formulation of each well in
 # a standardized format) the following tasks are performed:
 #
@@ -30,8 +30,8 @@
 #  + report generation summarizing protein thermal stability as a function of buffer formulation,
 #    Tm graph, formulation plots, control well checking, etc.
 # 
-# Additionally, given a suitable set of training data, the parameters used for outlier detection,
-# Tm calculation, and curve classification can be recomputed.
+# Additionally, given a suitable set of training data, the parameters used for outlier detection
+# and Tm calculationcan be recomputed.
 #
 
 import math
@@ -56,6 +56,7 @@ except:
     root = Tkinter.Tk()
     root.withdraw()
     tkMessageBox.showwarning("ReportLab not found", "You must use Anaconda to install reportlab before Meltdown can be run")
+    sys.exit(1)
 
 #files from directory
 import replicateHandling as rh
@@ -69,11 +70,10 @@ LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
 DEFAULT_MONO_THRESH = 10
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
-#NOTE first 4 are from custom input, second 4 are the oldnames  from default pcrd export
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-deleteInputFiles = False
+DELETE_INPUT_FILES = False
 
 
 
@@ -94,16 +94,20 @@ class DSFAnalysis:
     
     def loadMeltCurves(self, fluorescenceXLS, labelsXLS):
         """
-        Loads the two XLS or XLSX files and takes from them the information
+        Loads the two XLSX files and takes from them the information
         needed to start the analysis.
+        
+        +fluorescenceXLS is the xlsx file that stores all the melt curve data
+        
+        +labelsXLS is the xlsx file that stores the conditions
         """
-        #populates the relevant instance variables
+        #populates the relevant instance variables for the analysis
         self.name = fluorescenceXLS
         self.plate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.wells = self.plate.wells
         self.originalPlate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.removeOutliers()
-        #TODO
+        #TODO -
         #self.removeInsignificant()
         self.findMeanCurves()
         return
@@ -112,8 +116,8 @@ class DSFAnalysis:
         """
         Of the two plates created, we turn one (self.plate) into its own mean plate.
         Every group of retained replicates (remove outliers has already been called) is
-        averaged out, and place in a well of the appropriate mean well name.
-        well group A4, A5, A6 in a 3 replicate well would have mean well name A2
+        averaged out, and placed in a well of the appropriate mean well name.
+        e.g. well group (A4, A5, A6) in a 3 replicate plate would have mean well name A2
         """
         meanWells = {}
         visited = []
@@ -215,10 +219,11 @@ class DSFAnalysis:
 
     def removeInsignificant(self):
         """
-        Curves which were normalised with too large of a factor, are considered too 
-        noise for any  sort of useful analysis. These carves are found and added to
-        self.delCurves (removed from analysis)
+        Curves which were normalised with too large of a factor, are considered to
+        be within the noise of the experiment, and not used for any  sort of useful 
+        analysis. These carves are found and added to self.delCurves (removed from analysis)
         """
+        #TODO this isnt used
         thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
         for well in self.wells:
             if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
@@ -254,7 +259,7 @@ class DSFAnalysis:
     def returnControlCheck(self):
         """
         Returns a dictionary of the different controls, with values Passed, Failed, or Not found
-        depending on if the control passed or wasn't present on the plate. This method is called
+        depending on if the control passed or wasn't present on the plate. This method is used
         in generate report
         
         The mean of the replicates of each control is what is tested, as this is called after the
@@ -267,7 +272,7 @@ class DSFAnalysis:
                
         #test the control if the control is present in the plate
         if len(self.plate.lysozyme)>0:
-            #lysozyme Tm check
+            #lysozyme Tm check, indexed at 0 since control list has only one item
             if self.plate.wells[self.plate.lysozyme[0]].Tm > LYSOZYME_TM_THRESHOLD[0] - 2*LYSOZYME_TM_THRESHOLD[1] and\
                self.plate.wells[self.plate.lysozyme[0]].Tm < LYSOZYME_TM_THRESHOLD[0] + 2*LYSOZYME_TM_THRESHOLD[1]:
                     result["lysozyme"] = "Passed"
@@ -279,6 +284,7 @@ class DSFAnalysis:
         if len(self.plate.noDye)>0:
             #get the curves to compare as series
             noDyeExpected = pandas.Series.from_csv("data/noDyeControl.csv")
+            #indexed at 0 since control list has only one item
             noDyeReal = pandas.Series(self.plate.wells[self.plate.noDye[0]].fluorescence, self.plate.wells[self.plate.noDye[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
             if rh.sqrdiff(noDyeReal, noDyeExpected) < SIMILARITY_THRESHOLD:
@@ -291,6 +297,7 @@ class DSFAnalysis:
         if len(self.plate.noProtein)>0:
             #get the curves to compare as series
             noProteinExpected = pandas.Series.from_csv("data/noProteinControl.csv")
+            #indexed at 0 since control list has only one item
             noProteinReal = pandas.Series(self.plate.wells[self.plate.noProtein[0]].fluorescence, self.plate.wells[self.plate.noProtein[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
             if rh.sqrdiff(noProteinReal, noProteinExpected) < SIMILARITY_THRESHOLD:
@@ -658,7 +665,7 @@ class DSFAnalysis:
     
     def computeTms(self):
         """
-        To find the Tm of a mean curve we look at the curves that ocmprised it 
+        To find the Tm of a mean curve we look at the curves that comprised it 
         (not including the discarded curves ofcourse) and find the Tm of each of
         those. We then find the mean and sd of these Tms which gives us a Tm estimate, 
         along with an error estimate
@@ -693,13 +700,18 @@ class DSFPlate:
         A container class that keeps all of the data for a DSF experiment
         organized in an ordered format.  This can be used to quickly
         pull out melt curves for wells, along with their contents.
-        Lists of replicate can be found from dictionaries, with key 
+        Lists of replicates can be found from 2 dictionaries, with key 
         replicate well->mean well or key mean well->replicate wells
         
-        +fluorescenceXLS is the .xls file that stores all the melt curve data
+        repDict, where key is a normal well, and value is all of its replicates
+        including itself, e.g. 'A2':['A1','A2','A3']
         
-        +labelsXLS is the .xls file that stores the conditions, and pH if given a custom
-        input file
+        and meanDict, where key is a mean well, and value is the wells that
+        created it, e.g. 'A2':['A4','A5','A6']
+
+        +fluorescenceXLS is the xlsx file that stores all the melt curve data
+        
+        +labelsXLS is the xlsx file that stores the conditions
         """
             
         #Open excel workbook and first sheet for both the RFU file and the summary/contents file
@@ -751,7 +763,7 @@ class DSFPlate:
         except IndexError:
             conditiondpHdT=[]
             for i in range(len(conditionWellNames)):
-                #all conditions have 'None' for dpH/dT if no dphdt values are given
+                #all conditions have emty string for dpH/dT if no dph/dt values are given
                 conditiondpHdT.append('')
                 
         #checks contents map for a control column
@@ -779,7 +791,7 @@ class DSFPlate:
         #note that the order in that list is important
 
         #checks if wells are the controls that we know to check for, and forces a 
-        #1 in the isControl column if they are
+        #1 in the control column if they are
         for i,condition in enumerate(conditionNames):
             if condition.lower() == "lysozyme":
                 self.lysozyme.append(conditionWellNames[i])
@@ -824,7 +836,11 @@ class DSFWell:
         
         +fluorescenceSeries is a pandas Series describing the melt curve for a single well
         
-        +dataLabels is a dictionary specifying formulation of the well.
+        +conditionName is a buffer condition.
+        +conditionSalt is a salt concentration.
+        +conditionPh is a pH value.
+        +conditiondpHdT is a dPh/dT value.
+        +conditionIsControl is a control flag, where '1' signifies the well is a control.
         
         From the series a well is given a name, its list of temperatures, and its curve"""
         #name, temperatures, and curve from data
@@ -1044,12 +1060,8 @@ class Contents:
     name = []
     def __init__(self, conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl):
         """
-        Struct class for the contents of a well, stores the name, pH, salt, and
-        dpH of each well.
-        
-        +sample name  is the contents as given by the contents map, or pcrd summary file
-        
-        +dpH is the dph as given in the contents file, otherwise its set to None
+        Struct class for the contents of a well, stores the name, pH, salt, 
+        dpH, and whether it is a control for each well.
         """
         self.name = conditionName
         self.salt = conditionSalt
@@ -1071,7 +1083,7 @@ class Contents:
         
 
 #==============Functions that can be used to replicate thresholds==============#
-def determineOutlierThreshold(listOfLysozymeWellNames, pathrfu):
+def determineOutlierThreshold(listOfLysozymeWellNames, pathrfu, pathContentsMap):
     """
     Used to reproduce the threshold when determining what curves
     are outliers from a group of replicates
@@ -1079,13 +1091,12 @@ def determineOutlierThreshold(listOfLysozymeWellNames, pathrfu):
     """
     lysozyme=[]
     results = []
-    # set this to be the path to a directory of RFU result files exported
+    #the path to a directory of exported RFU result files
     files = os.listdir(pathrfu)
     pathrfu = pathrfu + "/"
     for data in files:
-        #set the second paramiter to be the location of the contents map for all the files
-        #in the directory specified above
-        plate = DSFPlate(pathrfu+data,"data/Content_map.xlsx")
+        #creates each  plate
+        plate = DSFPlate(pathrfu+data, pathContentsMap)
         for well in listOfLysozymeWellNames:
             lysozyme.append(plate.wells[well].fluorescence)
     for pair in combinations(lysozyme,2):
@@ -1223,7 +1234,7 @@ def main():
 
         #also remove the exported xls/xlsx files after meltdown has been run on them
         #find the protein name, then all the files with that name in it, then delete them
-        if deleteInputFiles:
+        if DELETE_INPUT_FILES:
             folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
             proteinName = rfuFilepath.split('/')[-1].split()[0]
             for fl in os.listdir(folder):
