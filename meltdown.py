@@ -74,7 +74,7 @@ COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = True
+DELETE_INPUT_FILES = False
 
 
 
@@ -364,7 +364,7 @@ class DSFAnalysis:
 
         # Labels for the summary graph
         names = sorted(Contents.name, key=lambda x: x[1])
-        labels = [x[0]+","+str(x[1]) for x in names]
+        labels = [x[0] for x in names]
         tmHandles = []
         for i, saltConcentration in enumerate(Contents.salt):
             # Tms to be drawn regularly 
@@ -643,7 +643,7 @@ class DSFAnalysis:
                     else:
                         pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,"None")
                 if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None:
-                    pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,20*cm - (ypos % 3)*9*cm,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
+                    pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,20*cm - (ypos % 3)*9*cm,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+str((self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2))))
                     pdf.setFillColor("black")
                     if drawdpH ==False:
                         pdf.drawString(2*cm+(xpos % 2)*9.5*cm,20.5*cm - (ypos % 3)*9*cm,"Adjusted pH at Tm: "+str(self.wells[meanWellDictionary[i]].contents.pH)+" at 20C")
@@ -743,6 +743,7 @@ class DSFPlate:
         #checks contents map for a salt column
         try:
             conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
+            conditionSalts = [str(x) for x in conditionSalts]
         except IndexError:
             conditionSalts = []
             for i in range(len(conditionWellNames)):
@@ -756,7 +757,7 @@ class DSFPlate:
             conditionPhs = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for pH if no Phs are given
-                conditionPhs.append('')        
+                conditionPhs.append(0)        
         
         #checks contents map for a d(pH)/dT column
         try:
