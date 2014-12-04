@@ -215,4 +215,5 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
+#SPECIFIC TO US
 error_log.txt

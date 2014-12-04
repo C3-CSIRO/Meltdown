@@ -19,7 +19,9 @@
 #  License: XXX
 #
 # This software will generate automated reports from high-throughput thermofluor protein
-# stability measurements. Given two input xls/xlsx files (one for fluorescence in
+# stability measurements.  Although originally designed to provide a report for the Buffer Screen 9
+# experiment at the Collaborative Crystalisation Centre (C3), this can be extended to analyse any
+# similar experiment.  Given two input xlsx files (one for fluorescence in
 # each well as a function of temperature, and one describing the buffer formulation of each well in
 # a standardized format) the following tasks are performed:
 #
@@ -28,8 +30,8 @@
 #  + report generation summarizing protein thermal stability as a function of buffer formulation,
 #    Tm graph, formulation plots, control well checking, etc.
 # 
-# Additionally, given a suitable set of training data, the parameters used for outlier detection,
-# Tm calculation, and curve classification can be recomputed.
+# Additionally, given a suitable set of training data, the parameters used for outlier detection
+# and Tm calculationcan be recomputed.
 #
 
 import math
@@ -38,7 +40,7 @@ import xlrd
 import Tkinter, tkFileDialog, tkMessageBox
 import cStringIO
 import os
-import re , sys, traceback
+import sys, traceback
 import zipfile as zf
 import matplotlib.pyplot as plt
 import numpy as np
@@ -54,6 +56,7 @@ except:
     root = Tkinter.Tk()
     root.withdraw()
     tkMessageBox.showwarning("ReportLab not found", "You must use Anaconda to install reportlab before Meltdown can be run")
+    sys.exit(1)
 
 #files from directory
 import replicateHandling as rh
@@ -65,13 +68,14 @@ SIMILARITY_THRESHOLD = 1.72570084974
 LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
 #Monotenicity threshold forgive value on non-normalised curves (experimentally derived)
 DEFAULT_MONO_THRESH = 10
+SIGN_CHANGE_THRESH = 0.00001
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
-#names of the control wells that we check for
-#NOTE first 4 are from custom input, second 4 are the names from default pcrd export
-#individual order is also important:
-CONTROL_WELL_NAMES = ["lysozyme","no dye","protein as supplied","no protein",
-                      "machine control","protein only","sample control","dye only"]
+
+##====DEBUGGING====##
+#set this to false if you do not wish for the exported data files to be deleted after being analysed
+DELETE_INPUT_FILES = True
+
 
 
 class DSFAnalysis:
@@ -91,16 +95,21 @@ class DSFAnalysis:
     
     def loadMeltCurves(self, fluorescenceXLS, labelsXLS):
         """
-        Loads the two XLS or XLSX files and takes from them the information
+        Loads the two XLSX files and takes from them the information
         needed to start the analysis.
+        
+        +fluorescenceXLS is the xlsx file that stores all the melt curve data
+        
+        +labelsXLS is the xlsx file that stores the conditions
         """
-        #populates the relevant instance variables
+        #populates the relevant instance variables for the analysis
         self.name = fluorescenceXLS
         self.plate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.wells = self.plate.wells
         self.originalPlate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.removeOutliers()
-        self.removeInsignificant()
+        #TODO -
+        #self.removeInsignificant()
         self.findMeanCurves()
         return
     
@@ -108,8 +117,8 @@ class DSFAnalysis:
         """
         Of the two plates created, we turn one (self.plate) into its own mean plate.
         Every group of retained replicates (remove outliers has already been called) is
-        averaged out, and place in a well of the appropriate mean well name.
-        well group A4, A5, A6 in a 3 replicate well would have mean well name A2
+        averaged out, and placed in a well of the appropriate mean well name.
+        e.g. well group (A4, A5, A6) in a 3 replicate plate would have mean well name A2
         """
         meanWells = {}
         visited = []
@@ -150,7 +159,7 @@ class DSFAnalysis:
                 
                 #creates a dictionary allowing you to find which wells created which mean well
                 #e.g. 'A2': ["A4","A5","A6"]
-                self.plate.meandict[chr(65+letcount) + str(numcount)] = self.originalPlate.repDict[well]
+                self.plate.meanDict[chr(65+letcount) + str(numcount)] = self.originalPlate.repDict[well]
                 
                 #numcount increased for naming mean wells
                 numcount += 1
@@ -211,10 +220,11 @@ class DSFAnalysis:
 
     def removeInsignificant(self):
         """
-        Curves which were normalised with too large of a factor, are considered too 
-        noise for any  sort of useful analysis. These carves are found and added to
-        self.delCurves (removed from analysis)
+        Curves which were normalised with too large of a factor, are considered to
+        be within the noise of the experiment, and not used for any  sort of useful 
+        analysis. These carves are found and added to self.delCurves (removed from analysis)
         """
+        #TODO this isnt used
         thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
         for well in self.wells:
             if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
@@ -242,48 +252,61 @@ class DSFAnalysis:
     
     def analyseCurves(self):
         """
-        Calculate the Tms of all the curves in the plate, and also
-        check that the controls on the plate are within the expected range
+        Calculate the Tms of all the curves in the plate
         """
         self.computeTms()
-        self.returnControlCheck()
         return
         
     def returnControlCheck(self):
         """
-        Returns a dictionary of the different controls, with values True or False
-        depending on if the control passed or not. This is used when creating the report
+        Returns a dictionary of the different controls, with values Passed, Failed, or Not found
+        depending on if the control passed or wasn't present on the plate. This method is used
+        in generate report
+        
+        The mean of the replicates of each control is what is tested, as this is called after the
+        mean plate is created (which updates the 4 control well lists in the plate)
         """
-        #initialises all controls to fail
-        result = {CONTROL_WELL_NAMES[0]:False,  #lysozyme Tm check
-                  CONTROL_WELL_NAMES[1]:False,  #no dye similarity check
-                  CONTROL_WELL_NAMES[3]:False}  #no protein check
+        #initialises all controls to failed
+        result = {"lysozyme": "Failed",  #lysozyme Tm check
+                  "no dye": "Failed",  #no dye similarity check
+                  "no protein": "Failed"}  #no protein similarity check
                
-        #only test the control if the control is present in the plate
+        #test the control if the control is present in the plate
         if len(self.plate.lysozyme)>0:
-            #lysozyme Tm check
+            #lysozyme Tm check, indexed at 0 since control list has only one item
             if self.plate.wells[self.plate.lysozyme[0]].Tm > LYSOZYME_TM_THRESHOLD[0] - 2*LYSOZYME_TM_THRESHOLD[1] and\
                self.plate.wells[self.plate.lysozyme[0]].Tm < LYSOZYME_TM_THRESHOLD[0] + 2*LYSOZYME_TM_THRESHOLD[1]:
-                    result[CONTROL_WELL_NAMES[0]] = True
+                    result["lysozyme"] = "Passed"
+        #control not found
+        else:
+            result["lysozyme"] = "Not found"
                 
-        #only test the control if the control is present in the plate
+        #test the control if the control is present in the plate
         if len(self.plate.noDye)>0:
             #get the curves to compare as series
-            noDyeControl = pandas.Series.from_csv("data/noDyeControl.csv")
+            noDyeExpected = pandas.Series.from_csv("data/noDyeControl.csv")
+            #indexed at 0 since control list has only one item
             noDyeReal = pandas.Series(self.plate.wells[self.plate.noDye[0]].fluorescence, self.plate.wells[self.plate.noDye[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
-            if rh.sqrdiff(noDyeReal, noDyeControl) < SIMILARITY_THRESHOLD:
-                result[CONTROL_WELL_NAMES[1]] = True
+            if rh.sqrdiff(noDyeReal, noDyeExpected) < SIMILARITY_THRESHOLD:
+                result["no dye"] = "Passed"
+        #control not found
+        else:
+            result["no dye"] = "Not found"
                 
-        #only test the control if the control is present in the plate
+        #test the control if the control is present in the plate
         if len(self.plate.noProtein)>0:
             #get the curves to compare as series
-            noProteinControl = pandas.Series.from_csv("data/noProteinControl.csv")
+            noProteinExpected = pandas.Series.from_csv("data/noProteinControl.csv")
+            #indexed at 0 since control list has only one item
             noProteinReal = pandas.Series(self.plate.wells[self.plate.noProtein[0]].fluorescence, self.plate.wells[self.plate.noProtein[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
-            if rh.sqrdiff(noProteinReal, noProteinControl) < SIMILARITY_THRESHOLD:
-                result[CONTROL_WELL_NAMES[3]] = True
-            
+            if rh.sqrdiff(noProteinReal, noProteinExpected) < SIMILARITY_THRESHOLD:
+                result["no protein"] = "Passed"
+        #control not found
+        else:
+                result["no protein"] = "Not Found"
+        
         return result
     
     def generateReport(self, outFile):
@@ -297,6 +320,8 @@ class DSFAnalysis:
         pdf.drawString(cm,28*cm,"MELTDOWN")
         pdf.setFont("Helvetica",16)
         pdf.drawString(6*cm,28*cm,"Melt Curve Analysis")
+
+        # Remove the file path from the name
         for i in range(1,len(self.name)):
             if self.name[-i] == '/' or self.name[-i] == '\\':
                 if -i+40 < 0:
@@ -308,15 +333,21 @@ class DSFAnalysis:
             pdf.drawString(cm,27*cm, nameMatch)
         else:
             pdf.drawString(cm,27*cm, "..."+self.name[-70:])
+
         pdf.setFont("Helvetica-Bold",12)
         pdf.drawImage("data/CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
+
+        # For finding the best Tm
         best = ""
         maxi = 0
-        mini = 100
+
         for well in self.plate.names:
-            if self.wells[well].contents.name.lower() not in CONTROL_WELL_NAMES and self.wells[well].Tm != None and self.wells[well].mono == False and self.wells[well].Tm > maxi:
+            # Finding the maximum Tm
+            if self.wells[well].contents.isControl == False and self.wells[well].Tm != None and self.wells[well].mono == False and self.wells[well].Tm > maxi:
                 maxi = self.wells[well].Tm
                 best = well
+
+        # This checks if a maximum Tm has being found. If none it is most likely because no Tms could be calculated
         if best != "":
             if self.wells[best].TmError != None:
                 pdf.drawString(3*cm,3.6*cm,"Highest Tm = " + str(round(self.wells[best].Tm,2)) + " +/- " + str(round(self.wells[best].TmError,2)))
@@ -326,35 +357,39 @@ class DSFAnalysis:
 
         pdf.setFont("Helvetica",12)
         fig1 = plt.figure(num=1,figsize=(10,8))
-        maxi = 0
 
-        conditions = [self.wells[x].contents.name+" ("+str(self.wells[x].contents.pH)+")" for x in self.plate.names if self.wells[x].contents.name.lower() not in CONTROL_WELL_NAMES]
-        labels = []
-        for item in conditions:
-            if item not in labels and item[:-7] not in labels:
-                if "None" in item:
-                    labels.append(item[:-7])
-                else:
-                    labels.append(item)
-        labels = Contents.name
+        # Maximum and minimum for the y axis of the summary graph
+        maxi = 0
+        mini = 100
+
+        # Labels for the summary graph
+        names = sorted(Contents.name, key=lambda x: x[1])
+        labels = [x[0]+","+str(x[1]) for x in names]
         tmHandles = []
-        # plotting the lines for each salt concentration
         for i, saltConcentration in enumerate(Contents.salt):
-            curves = []
-            for well in self.plate.names:
-                if self.wells[well].contents.salt == saltConcentration:
-                    curves.append(well)
-            tms = []#[self.wells[x].Tm for x in curves]
+            # Tms to be drawn regularly 
+            tms = []
+            # Tms to be drawn as unreliable
             badTms = []
 
-            for well in curves:
-                if self.wells[well].Tm != None and self.wells[well].TmError == None or self.wells[well].complex == True:
+            for condition in names:
+                found = False
+                for well in self.plate.names:
+                    if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
+                        if (self.wells[well].Tm != None and len(self.plate.meanDict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
+                            tms.append(None)
+                            badTms.append(self.wells[well].Tm)
+                        else:
+                            tms.append(self.wells[well].Tm)
+                            badTms.append(None)
+                        found = True
+                        break
+                # If the particular combination of buffer, salt and pH is not found
+                if not found:
                     tms.append(None)
-                    badTms.append(self.wells[well].Tm)
-                else:
-                    tms.append(self.wells[well].Tm)
                     badTms.append(None)
 
+            # Figuring out the scale of the y axis for the summary graph
             for val in tms:
                 if val != None:
                     if val > maxi:
@@ -368,16 +403,24 @@ class DSFAnalysis:
                     if val < mini:
                         mini = val
 
-            handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
+            # Handle for the legend
+            try:
+                handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
+            except IndexError:
+                tkMessageBox.showwarning("Error", "Only up to 6 types of each condition are supported.\n(there is no limit to the number of conditions)\n\ne.g. 6 different salt concentrations per buffer")
+                sys.exit(1)
+
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
+            unreliableDrawn = False
             if badTms:
-                crosses = True
+                unreliableDrawn = True
             tmHandles.append(handle)
 
-
         originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied])
+        
+        
+        # Setting the scale of the y axis
         if originalProteinMeanSd[0]!= None:
-            
             if(originalProteinMeanSd[0]-mini > maxi - originalProteinMeanSd[0]):
                 plt.axis([-1,len(labels),mini-5,2*originalProteinMeanSd[0]-mini +10])
             else:
@@ -387,10 +430,14 @@ class DSFAnalysis:
         plt.gcf().subplots_adjust(bottom=0.35)
         plt.ylabel('Tm')
 
+        # Drawing the Tm of the protein as supplied as a horizontal line on the summary graph
         plt.axhline(originalProteinMeanSd[0],0,1,linestyle="--",color="red")
+        # Setting x axis labels
         plt.xticks([x for x in range(len(labels))],labels,rotation="vertical")
-        plt.legend(tmHandles,Contents.salt)
+        # Putting the legend for the summary graph at the top, and show only 1 dot instead of 2
+        plt.legend(tmHandles,Contents.salt,loc='upper center', bbox_to_anchor=(0.5, 1.05),ncol=3, fancybox=True, shadow=False, numpoints=1)
 
+        # Saving the summary graph as an image and drawing it on the page
         imgdata = cStringIO.StringIO()
         fig1.savefig(imgdata, format='png',dpi=180)
         imgdata.seek(0)  # rewind the data
@@ -399,38 +446,34 @@ class DSFAnalysis:
         plt.close()
 
         pdf.setFont("Helvetica",10)
-        if crosses:
+        if unreliableDrawn:
             pdf.drawString(7.9*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
-        crosses = False
+        unreliableDrawn = False
         
-        if originalProteinMeanSd[0]!=None:
-            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied")
+
 
         pdf.setFillColor("black")
 
 
         controlChecks = self.returnControlCheck()
 
-        #TODO Change position
-        # Lysozyme Tm Control Check
-        if controlChecks["lysozyme"] == False:
-            pdf.setFillColor("red")
-            pdf.drawString(3*cm,9.5*cm,"Lysozyme Control: Failed")
-            pdf.setFillColor("black")
-
-        # No dye control check 
-        if controlChecks["no dye"] == False:
-            pdf.setFillColor("red")
-            pdf.drawString(3*cm,9*cm,"No Dye Control: Failed")
-            pdf.setFillColor("black")
-            
-        # No Protein control check
-        if controlChecks["no protein"] == False:
-            pdf.setFillColor("red")
-            pdf.drawString(3*cm,8.5*cm,"Dye Only Control: Failed")
-            pdf.setFillColor("black")
-
+        #set colour of the controls
+        pdf.setFillColor("blue")
+        
+        # lysozyme Tm control check
+        pdf.drawString(1*cm,16.5*cm,"Lysozyme Control: "+controlChecks["lysozyme"])
+        # no dye control check 
+        pdf.drawString(1*cm,16*cm,"No Dye Control: "+controlChecks["no dye"])
+        # no protein control check
+        pdf.drawString(1*cm,15.5*cm,"No Protein Control: "+controlChecks["no protein"])
+        
+        pdf.setFillColor("black")
+        
+        if originalProteinMeanSd[0]!=None:
+            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
         fig2 = plt.figure(num=1,figsize=(5,4))
+
+        # Plotting the protein as supplied as a control check
         for well in self.originalPlate.proteinAsSupplied:
             if well in self.delCurves:
                 plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
@@ -454,6 +497,7 @@ class DSFAnalysis:
         try:
             originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied])
         except:
+            # If there is no protein as supplied
             originalProteinMeanSd = (None, None)
         if originalProteinMeanSd[0]!= None:
             pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = " +str(round(originalProteinMeanSd[0],2))+"(+/-"+str(round(originalProteinMeanSd[1],2))+")")
@@ -464,6 +508,7 @@ class DSFAnalysis:
         pdf.drawString(8*cm,22.75*cm,"Full interpretation of the results requires you to look ")
         pdf.drawString(8*cm,22.25*cm,"at the individual melt curves.")
 
+        # Summary box
         avTmError = 0
         count = 0
         tmCount = 0
@@ -492,50 +537,56 @@ class DSFAnalysis:
         pdf.setFont("Helvetica-Bold",13)
         wellBehaved = True
 
-        for well in self.originalPlate.proteinAsSupplied:
-            if self.originalPlate.wells[well].Tm == None or self.originalPlate.wells[well].mono == True or well in self.delCurves:
-                wellBehaved = False
-        if originalProteinMeanSd[1] > 1.5:
-            wellBehaved = False
-        if wellBehaved:
-            pdf.drawString(12.5*cm,18.5*cm,"well behaved")
+        # If the protein as supplied is not found as a control
+        if len(self.originalPlate.proteinAsSupplied) == 0:
+            pdf.drawString(12.5*cm,18.5*cm,"not found")
         else:
-            pdf.drawString(12.5*cm,18.5*cm,"not well behaved")
+            # Else find whether it is well behaved or not
+            for well in self.originalPlate.proteinAsSupplied:
+                if self.originalPlate.wells[well].Tm == None or self.originalPlate.wells[well].mono == True or well in self.delCurves:
+                    wellBehaved = False
+            if originalProteinMeanSd[1] > 1.5:
+                wellBehaved = False
+            if wellBehaved:
+                pdf.drawString(12.5*cm,18.5*cm,"well behaved")
+            else:
+                pdf.drawString(12.5*cm,18.5*cm,"not well behaved")
 
         if wellBehaved == False or avTmError >=1.5 or tmCount <= 50:
             pdf.drawString(8*cm,21.5*cm,"The summary graph appears to be unreliable")
 
         pdf.rect(7.75*cm,18.05*cm,12*cm,5.4*cm)
 
-        # Saving the first page and moving onto the second page
-        pdf.showPage()
-        pdf.setFont("Helvetica",12)    
-        
-        pdf.setFont("Helvetica",9)
-        pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
-        pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
-        pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
-        pdf.setFont("Helvetica",12)
+        # Moving on to the in depth graphs
         fig3 = plt.figure(num=1,figsize=(5,4))
 
+        # Variables used to keep track of where to draw the current graph
         xpos=2
         ypos = 3
         newpage = 1
 
-        for sampleContents in Contents.name:
+        for sampleContentspH in Contents.name:
+            if (newpage-1) % 6 == 0:
+                pdf.showPage()
+                pdf.setFont("Helvetica",9)
+                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
+                pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
+                pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
+                pdf.setFont("Helvetica",12)
+            sampleContents = sampleContentspH[0]
             curves = []
             for well in self.originalPlate.names:
-                if self.originalPlate.wells[well].contents.name == sampleContents:
+                if self.originalPlate.wells[well].contents.name == sampleContents and self.originalPlate.wells[well].contents.pH == sampleContentspH[1]:
                     curves.append(well)
             complexDictionary = {}
             meanWellDictionary = {}
             for i, saltConcentration in enumerate(Contents.salt):
+                meanWellDictionary[i] = None
+                complexDictionary[i] = False
                 for well in curves:
                     if self.originalPlate.wells[well].contents.salt == saltConcentration:
                         if self.originalPlate.wells[well].complex:
                             complexDictionary[i] = True
-                        elif i not in complexDictionary:
-                            complexDictionary[i] = False
                         if well in self.delCurves:
                             plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
                             , 'grey')
@@ -555,7 +606,7 @@ class DSFAnalysis:
                             plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
                             , COLOURS[i],linestyle="--")
                             
-                        meanWellDictionary[i] = findKey(well,self.plate.meandict)
+                        meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                         
             plt.axis([20,100,0.001,0.015])
             plt.gca().axes.get_yaxis().set_visible(False)
@@ -566,7 +617,7 @@ class DSFAnalysis:
             pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 3)*9*cm , 8*cm, 6*cm)
             pdf.setFillColor("black")
             pdf.setFont("Helvetica",12)
-            pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9*cm ,"Condition: " + sampleContents)
+            pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9*cm ,"Condition: " + sampleContents + " (" + str(sampleContentspH[1])+")")
             pdf.drawString(cm+(xpos % 2)*9.5*cm,21.5*cm - (ypos % 3)*9*cm ,"Salt:")
             pdf.drawString(cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm ,"Tm: ")
             drawdpH = False
@@ -576,38 +627,32 @@ class DSFAnalysis:
 
                 pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21.5*cm -(i/3)*cm - (ypos % 3)*9*cm,Contents.salt[i])
                 if complexDictionary[i]:
-                    if self.wells[meanWellDictionary[i]].Tm != None:
+                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
                         if self.wells[meanWellDictionary[i]].TmError != None:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
                         else:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm -(i/3)*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
                     else:
-                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,"None")
+                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,"None")
                 else:
-                    if self.wells[meanWellDictionary[i]].Tm != None:
+                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
                         if self.wells[meanWellDictionary[i]].TmError != None:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
                         else:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
+                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm -(i/3)*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
                     else:
-                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm,"None")
-                if self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None:
+                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,"None")
+                if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None:
                     pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,20*cm - (ypos % 3)*9*cm,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
                     pdf.setFillColor("black")
                     if drawdpH ==False:
-                        pdf.drawString(2*cm+(xpos % 2)*9.5*cm,20.5*cm - (ypos % 3)*9*cm,"Adjusted pH at Tm: "+self.wells[meanWellDictionary[i]].contents.pH+" at 20C")
+                        pdf.drawString(2*cm+(xpos % 2)*9.5*cm,20.5*cm - (ypos % 3)*9*cm,"Adjusted pH at Tm: "+str(self.wells[meanWellDictionary[i]].contents.pH)+" at 20C")
                         drawdpH = True
             drawdpH = False
             xpos +=1
             if newpage % 2 == 0:
                 ypos +=1
-            if newpage % 6 == 0:
-                pdf.showPage()
-                pdf.setFont("Helvetica",9)
-                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
-                pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
-                pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
-                pdf.setFont("Helvetica",12)
+            
             newpage += 1 
             plt.close()
             fig3 = plt.figure(num=1,figsize=(5,4))
@@ -621,7 +666,7 @@ class DSFAnalysis:
     
     def computeTms(self):
         """
-        To find the Tm of a mean curve we look at the curves that ocmprised it 
+        To find the Tm of a mean curve we look at the curves that comprised it 
         (not including the discarded curves ofcourse) and find the Tm of each of
         those. We then find the mean and sd of these Tms which gives us a Tm estimate, 
         along with an error estimate
@@ -638,8 +683,8 @@ class DSFAnalysis:
                 self.originalPlate.wells[well].computeTm()
 
         for well in self.plate.names:
-                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meandict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
-                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meandict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
+                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
+                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
                 for data in complexs:
                     if data:
                         self.wells[well].complex = True
@@ -656,13 +701,18 @@ class DSFPlate:
         A container class that keeps all of the data for a DSF experiment
         organized in an ordered format.  This can be used to quickly
         pull out melt curves for wells, along with their contents.
-        Lists of replicate can be found from dictionaries, with key 
+        Lists of replicates can be found from 2 dictionaries, with key 
         replicate well->mean well or key mean well->replicate wells
         
-        +fluorescenceXLS is the .xls file that stores all the melt curve data
+        repDict, where key is a normal well, and value is all of its replicates
+        including itself, e.g. 'A2':['A1','A2','A3']
         
-        +labelsXLS is the .xls file that stores the conditions, and pH if given a custom
-        input file
+        and meanDict, where key is a mean well, and value is the wells that
+        created it, e.g. 'A2':['A4','A5','A6']
+
+        +fluorescenceXLS is the xlsx file that stores all the melt curve data
+        
+        +labelsXLS is the xlsx file that stores the conditions
         """
             
         #Open excel workbook and first sheet for both the RFU file and the summary/contents file
@@ -678,46 +728,59 @@ class DSFPlate:
         #creating dictionary corresponding to replicates on this plate
         self.repDict = {}
         #creating a dictionary that references every mean plate well, to those that it came from
-        self.meandict = {}
-        #Read rows containing names and conditions
-        conditions = shContents.col_values(5, start_rowx=1, end_rowx=None)
-        wellNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
+        self.meanDict = {}
         
-        #checks whether summary file is a custom one with pH or default pcrd export
-        #if there is a d(pH)/dT column, then the input is custom, otherwise
-        #the dpHdT is set to None for every well
-        dpHdT=[]
+        
+        #================ reading in from the contents map ====================#
+        #well names e.g. A1,A2,etc are imported
+        conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
+        #fixes names in files from A01 -> A1 if they are not in the required format already
+        conditionWellNames = [name[0]+str(int(name[1:])) for name in conditionWellNames]
+        
+        #condition names (the buffer solutions) are imported
+        conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
+        
+        #checks contents map for a salt column
         try:
-            customInput = True
-            for i in range(len(wellNames)):
-                dpHdT.append(shContents.cell(i,7).value)
+            conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
         except IndexError:
-            customInput = False
-            for i in range(len(wellNames)):
-                dpHdT.append(None)
-            
-        #small fix for names turning A01 -> A1 as this is consistent with other files
-        for ind,well in enumerate(wellNames):
-            wellNames[ind] = well[0]+str(int(well[1:]))
-            
-        #pcrd output has duplicate rows sometimes, and this ensures they are all unique
-        wellData = zip(wellNames, conditions, dpHdT)
-        names=[]
-        conds=[]
-        dpH=[]
-        for group in wellData:
-            if group[0] not in names:
-                names.append(group[0])
-                conds.append(group[1])
-                dpH.append(group[2])
-        #assigning the duplicate-less lists to the originals, ready to be used
-        #by other things in the method
-        wellNames = names
-        conditions = conds
-        dpHdT = dpH
+            conditionSalts = []
+            for i in range(len(conditionWellNames)):
+                #all conditions have empty string for salt if no salts are given
+                conditionSalts.append('')
+        
+        #checks contents map for a pH column
+        try:
+            conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
+        except IndexError:
+            conditionPhs = []
+            for i in range(len(conditionWellNames)):
+                #all conditions have empty string for pH if no Phs are given
+                conditionPhs.append('')        
+        
+        #checks contents map for a d(pH)/dT column
+        try:
+            conditiondpHdT = shContents.col_values(4, start_rowx=1, end_rowx=None)
+        except IndexError:
+            conditiondpHdT=[]
+            for i in range(len(conditionWellNames)):
+                #all conditions have emty string for dpH/dT if no dph/dt values are given
+                conditiondpHdT.append('')
+                
+        #checks contents map for a control column
+        try:
+            conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
+        except IndexError:
+            conditionIsControl = []
+            for i in range(len(conditionWellNames)):
+                #all conditions have empty string for control if column isnt given
+                conditionIsControl.append('')        
+                
+        #==================================================================#     
+                
         
         #saves the list of names in the Plate for future use
-        self.names = wellNames
+        self.names = conditionWellNames
         
         #control well locations, filled when creating replicate dictionary
         #uses names of controls from global list CONTROL_WELL_NAMES
@@ -726,81 +789,84 @@ class DSFPlate:
         self.proteinAsSupplied = []
         self.noProtein = []
         #the names of the controls are gotten from the global list at the top of the file,
-        #note that the order in that lit is important
-        if customInput:
-            #control names when given a custom summary xls file
-            for i,name in enumerate(wellNames):
-                if conditions[i].lower() == CONTROL_WELL_NAMES[0]:#"lysozyme":
-                    self.lysozyme.append(name)
-                elif conditions[i].lower() == CONTROL_WELL_NAMES[1]:#"no dye":
-                    self.noDye.append(name)
-                elif conditions[i].lower() == CONTROL_WELL_NAMES[2]:#"protein as supplied":
-                    self.proteinAsSupplied.append(name)
-                elif conditions[i].lower() == CONTROL_WELL_NAMES[3]:#"no protein":
-                    self.noProtein.append(name)
-        else:
-            #control names when default pcrd summary file is used
-            for i,name in enumerate(wellNames):
-                if conditions[i].lower() in [CONTROL_WELL_NAMES[0], CONTROL_WELL_NAMES[4]]:
-                    self.lysozyme.append(name)
-                elif conditions[i].lower() in [CONTROL_WELL_NAMES[1], CONTROL_WELL_NAMES[5]]:
-                    self.noDye.append(name)
-                elif conditions[i].lower() in [CONTROL_WELL_NAMES[2], CONTROL_WELL_NAMES[6]]:
-                    self.proteinAsSupplied.append(name)
-                elif conditions[i].lower() in [CONTROL_WELL_NAMES[3], CONTROL_WELL_NAMES[7]]:
-                    self.noProtein.append(name)
-            
+        #note that the order in that list is important
+
+        #checks if wells are the controls that we know to check for, and forces a 
+        #1 in the control column if they are
+        for i,condition in enumerate(conditionNames):
+            if condition.lower() == "lysozyme":
+                self.lysozyme.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
+            elif condition.lower() == "no dye":
+                self.noDye.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
+            elif condition.lower() == "protein as supplied":
+                self.proteinAsSupplied.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
+            elif condition.lower() == "no protein":
+                self.noProtein.append(conditionWellNames[i])
+                conditionIsControl[i] = 1.0
+                
+        
         #dictionary keys are a single well, with value a list of its reps and itself, e.g. 'A2':['A1','A2','A3']
         self.repDict = {}
-        for i,name in enumerate(wellNames):            
-            if name not in self.repDict.keys():
-                self.repDict[name] = []
-            for j,cond in enumerate(conditions):
-                if cond == conditions[i]:
-                    self.repDict[name].append(wellNames[j])
+        for i, well in enumerate(conditionWellNames):
+            #create and entry is one doesnt exist already
+            if well not in self.repDict.keys():
+                self.repDict[well] = []
+            for j, conditionTuple in enumerate(zip(conditionNames, conditionSalts, conditionPhs)):
+                #if we find another well with the same name, ph and salt, it is a replicate
+                if conditionTuple == zip(conditionNames, conditionSalts, conditionPhs)[i]:
+                    self.repDict[well].append(conditionWellNames[j])
         
-        for i,name in enumerate(wellNames):
+        for i,name in enumerate(conditionWellNames):
             #creates a pandas series of each well, with index being temperature, and values fluorescence
             fluoroSeries = pandas.Series(shData.col_values(i+2,start_rowx=1,end_rowx=None),shData.col_values(1,start_rowx=1,end_rowx=None))
-            #tuple of the condition string and the dpHdT, (dpHdT which is None for the pcrd file)
-            dataLabels = (conditions[i],dpHdT[i])
-
             #populate the well dictionary of labels and values
-            self.wells[name] = DSFWell(fluoroSeries, dataLabels)
+            self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i], conditionIsControl[i])
+            
         return
               
 
 class DSFWell:
     
-    def __init__(self, fluorescenceSeries, dataLabels):
+    def __init__(self, fluorescenceSeries, conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl):
         """
         A well class that holds all of the data to characterize
         a well in a buffer plate.
         
         +fluorescenceSeries is a pandas Series describing the melt curve for a single well
         
-        +dataLabels is a dictionary specifying formulation of the well.
+        +conditionName is a buffer condition.
+        +conditionSalt is a salt concentration.
+        +conditionPh is a pH value.
+        +conditiondpHdT is a dPh/dT value.
+        +conditionIsControl is a control flag, where '1' signifies the well is a control.
         
         From the series a well is given a name, its list of temperatures, and its curve"""
         #name, temperatures, and curve from data
         self.name = fluorescenceSeries.name
         self.temperatures = fluorescenceSeries.index
         self.fluorescence = [x for x in fluorescenceSeries]
+        
         #the curve is then normalised to have an area below the curve of 1
         count = 0
         for height in self.fluorescence:
             count += height
         self.fluorescence = [x / count for x in self.fluorescence]
+        
         #the forgive monotonic threshold depends on the normalisation of the curve
         self.monoThresh = DEFAULT_MONO_THRESH / count
+        
         #other attributes of the curve are set to false/none until later analysis of the curve
         self.complex = False
         self.mono = False
         #tm and tm error are calulated upon calling the computeTm() method
         self.Tm = None   
         self.TmError = None
+        
         #the contents of the well is contained in an object of Contents inside well
-        self.contents = Contents(dataLabels[0],dataLabels[1])
+        self.contents = Contents(conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl)
         return  
 
     def isMonotonic(self):
@@ -907,12 +973,12 @@ class DSFWell:
                     lowestIndex2 = i
         for ind in seriesDeriv.index[lowestIndex2:highestIndex]:
             if previous:
-                if seriesDeriv[ind] < 0 and previous > 0:
+                if seriesDeriv[ind] + SIGN_CHANGE_THRESH < 0 and previous - SIGN_CHANGE_THRESH > 0:
                     signChangeCount += 1
-                if seriesDeriv[ind] > 0 and previous < 0:
+                if seriesDeriv[ind] - SIGN_CHANGE_THRESH > 0 and previous + SIGN_CHANGE_THRESH < 0:
                     signChangeCount += 1
-                if seriesDeriv[ind] == 0:
-                    signChangeCount += 1
+                # if seriesDeriv[ind] == 0:
+                #     signChangeCount += 1
             previous = seriesDeriv[ind]
 
             
@@ -972,15 +1038,17 @@ class DSFWell:
         #again check for complex shape before returning
         if signChangeCount > 0:
                 self.complex = True
+
+
+
         averagePoint = (lowestPoint2 +highestPoint) / 2
-        i = 0
+        i = lowestIndex2
         while self.fluorescence[i]<averagePoint:
             i += 1;
 
         # estimates tm by another method and if the difference is too large the curve is considred complex
         if (i/2.0+20 -self.Tm)**2 > 5**2:
             self.complex=True
-        
         return
 
 class Contents:
@@ -990,56 +1058,32 @@ class Contents:
     """
     salt = []
     name = []
-    def __init__(self, sampleName,dpH):
+    def __init__(self, conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl):
         """
-        Struct class for the contents of a well, stores the name, pH, salt, and
-        dpH of each well.
-        
-        +sample name  is the contents as given by the contents map, or pcrd summary file
-        
-        +dpH is the dph as given in the contents file, otherwise its set to None
+        Struct class for the contents of a well, stores the name, pH, salt, 
+        dpH, and whether it is a control for each well.
         """
-        #use regular expressions to look for the appropriate parts of the contents
-        name = re.compile("[\S\s]+(?=,)")
-        pH = re.compile("(?<=pH=)[\d.]+")
-        salt = re.compile("\d+mM[\s\S]+")
-        nameMatch = name.search(sampleName)
-        pHMatch = pH.search(sampleName)
-        saltMatch = salt.search(sampleName)
-        if sampleName.lower() in CONTROL_WELL_NAMES:
-            self.name = sampleName
-            self.pH = None
-            self.salt = None
-            self.dpH = None
-            return
-        #if a name was found, give the contents its name
-        if nameMatch:
-            self.name = nameMatch.group(0)
-        else:
-            #if not, it is a sal only well
-            self.name = "Salt Only"
-        #if a pH was found, give he contents a ph, otherwise set to None
-        if pHMatch:
-            self.pH = pHMatch.group(0)
-        else:
-            self.pH = None
-        #if a salt was found, give he contents a salt, otherwise set to None
-        if saltMatch:
-            self.salt = saltMatch.group(0)
-        else:
-            self.salt = None
-        self.dpH = dpH
+        self.name = conditionName
+        self.salt = conditionSalt
+        self.pH = conditionPh
+        self.dpH = conditiondpHdT
+        #whether or not the well is a control is saved as a boolean in each well
+        self.isControl = True
+        if conditionIsControl != 1:
+            self.isControl = False
+            
         #add names and salts to the static lists if not already present
-        if self.name not in Contents.name:
-            Contents.name.append(self.name)
-        if self.salt not in Contents.salt:
+        key = (self.name, self.pH)
+        if key not in Contents.name and self.name != "" and self.isControl == False:
+            Contents.name.append(key)
+        if self.salt not in Contents.salt and self.salt != "":
             Contents.salt.append(self.salt)
         return
 
         
 
 #==============Functions that can be used to replicate thresholds==============#
-def determineOutlierThreshold(listOfLysozymeWellNames):
+def determineOutlierThreshold(listOfLysozymeWellNames, pathrfu, pathContentsMap):
     """
     Used to reproduce the threshold when determining what curves
     are outliers from a group of replicates
@@ -1047,12 +1091,13 @@ def determineOutlierThreshold(listOfLysozymeWellNames):
     """
     lysozyme=[]
     results = []
-    # TODO should not be hardcoded
-    pathrfu = "../DsfExperiments/data/bufferscreen9/rfuResults/xlsx"
+
+    #the path to a directory of exported RFU result files
     files = os.listdir(pathrfu)
     pathrfu = pathrfu + "/"
     for data in files:
-        plate = DSFPlate(pathrfu+data,"../DsfExperiments/data/Content_map.xlsx")
+        #creates each  plate
+        plate = DSFPlate(pathrfu+data, pathContentsMap)
         for well in listOfLysozymeWellNames:
             lysozyme.append(plate.wells[well].fluorescence)
     for pair in combinations(lysozyme,2):
@@ -1149,7 +1194,6 @@ def sqrDiffWellFluoro(fluoro1,fluoro2):
     """
     Gets the sum of squared differences between every pair of points in two fuorescence curves
     """
-    #TODO LOG
     dist = 0
     count = 0
     x1 = [math.log(x) for x in fluoro1]
@@ -1165,15 +1209,17 @@ def main():
     """
     parse arguments and call classes/functions needed for DSF analysis
     """
-
+    #opens up windows for user to selec files
+    root = Tkinter.Tk()
+    root.withdraw()
+    
+    #TODO close the contents map if its open (possibly not needed when using txt?)
+    
+    #DSF results file
+    rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
+    # contents map, or default cfx manager summary file
+    contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
     try:
-        #opens up windows for user to selec files
-        root = Tkinter.Tk()
-        root.withdraw()
-        #DSF results file
-        rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
-        # contents map, or default cfx manager summary file
-        contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
         #if the files supplied are xlsx as opposed to xls file the pcrd naming error
         if ".xlsx" in rfuFilepath:
             fixPcrdXlsxFile(rfuFilepath)
@@ -1188,22 +1234,17 @@ def main():
         # generates the report
         name = rfuFilepath.split(".")[0]
         mydsf.generateReport(name+".pdf")
-        
-        #delete temporary backup files if all ran correctly
-        if os.path.exists(rfuFilepath+".BAK"):
-            os.remove(rfuFilepath+".BAK")
-        if os.path.exists(contentsMapFilepath+".BAK"):
-            os.remove(contentsMapFilepath+".BAK")
 
         #also remove the exported xls/xlsx files after meltdown has been run on them
         #find the protein name, then all the files with that name in it, then delete them
-        folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
-        proteinName = rfuFilepath.split('/')[-1].split()[0]
-        for fl in os.listdir(folder):
-            if '.pdf' in fl:
-                continue
-            if proteinName in fl:
-                os.remove(folder+'/'+fl)
+        if DELETE_INPUT_FILES:
+            folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
+            proteinName = rfuFilepath.split('/')[-1].split()[0]
+            for fl in os.listdir(folder):
+                if '.pdf' in fl:
+                    continue
+                if proteinName in fl:
+                    os.remove(folder+'/'+fl)
             
         
     except:
@@ -1214,6 +1255,14 @@ def main():
         root.withdraw()
         tkMessageBox.showwarning("Error", "Check error log")
         errors.close()
+        
+    finally:
+        #delete temporary backup files
+        if os.path.exists(rfuFilepath+".BAK"):
+            os.remove(rfuFilepath+".BAK")
+        if os.path.exists(contentsMapFilepath+".BAK"):
+            os.remove(contentsMapFilepath+".BAK")
+        
     return
 
 #excecutes main() on file run
@@ -1221,17 +1270,5 @@ if __name__ == "__main__":
     main()
 
 
-"""
-# Short piece of code for batch analysis of experiments
-files = os.listdir("../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx")
-total = len(files)
-for i, bsc9 in enumerate(files):
-    mydsf = DSFAnalysis()
-    filepath = "../UropCrystallisation/data/bufferscreen9/rfuResults/xlsx/" + bsc9
-    mydsf.loadMeltCurves(filepath,"../UropCrystallisation/data/Content_map.xlsx")
-    mydsf.analyseCurves()
-    mydsf.generateReport("reports/"+bsc9+".pdf")
-    print str(round(i/float(total)* 100,2))  +"%"
-"""
 
 
