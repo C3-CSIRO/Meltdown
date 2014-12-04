@@ -74,7 +74,7 @@ COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = False
+DELETE_INPUT_FILES = True
 
 
 
@@ -1265,19 +1265,10 @@ def main():
     return
 
 #excecutes main() on file run
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
 
-# Short piece of code for batch analysis of experiments
-files = os.listdir("../UropCrystallisation/data/bufferscreen9/xlsx")
-total = len(files)
-for i, bsc9 in enumerate(files):
-    mydsf = DSFAnalysis()
-    filepath = "../UropCrystallisation/data/bufferscreen9/xlsx/" + bsc9
-    mydsf.loadMeltCurves(filepath,"data/Content_map.xlsx")
-    mydsf.analyseCurves()
-    mydsf.generateReport("reports/"+bsc9+".pdf")
-    print str(round(i/float(total)* 100,2))  +"%"
+
 
 
