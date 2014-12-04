@@ -1215,10 +1215,12 @@ def main():
     #opens up windows for user to selec files
     root = Tkinter.Tk()
     root.withdraw()
+    
+    #TODO close the contents map if its open (possibly not needed when using txt?)
+    
     #DSF results file
     rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
     # contents map, or default cfx manager summary file
-    #TODO close the contents map if its open
     contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
     try:
         #if the files supplied are xlsx as opposed to xls file the pcrd naming error
