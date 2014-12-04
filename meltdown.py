@@ -55,7 +55,7 @@ try:
 except:
     root = Tkinter.Tk()
     root.withdraw()
-    tkMessageBox.showwarning("ReportLab not found", "You must use Anaconda to install reportlab before Meltdown can be run")
+    tkMessageBox.showerror("ReportLab not found", "You must use Anaconda to install reportlab before Meltdown can be run")
     sys.exit(1)
 
 #files from directory
@@ -407,7 +407,7 @@ class DSFAnalysis:
             try:
                 handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
             except IndexError:
-                tkMessageBox.showwarning("Error", "Only up to 6 types of each condition are supported.\n(there is no limit to the number of conditions)\n\ne.g. 6 different salt concentrations per buffer")
+                tkMessageBox.showerror("Error", "Only up to 6 types of each condition are supported.\n(there is no limit to the number of conditions)\n\ne.g. 6 different salt concentrations per buffer")
                 sys.exit(1)
 
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
@@ -753,6 +753,7 @@ class DSFPlate:
         #checks contents map for a pH column
         try:
             conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
+            conditionPhs = [int(x) if x!= '' else '' for x in conditionPhs]#TODO check this line and the 2 below work
         except IndexError:
             conditionPhs = []
             for i in range(len(conditionWellNames)):
@@ -763,6 +764,7 @@ class DSFPlate:
         #checks contents map for a d(pH)/dT column
         try:
             conditiondpHdT = shContents.col_values(4, start_rowx=1, end_rowx=None)
+            conditiondpHdT = [float(x) if x!= '' else '' for x in conditiondpHdT]
         except IndexError:
             conditiondpHdT=[]
             for i in range(len(conditionWellNames)):
@@ -772,6 +774,7 @@ class DSFPlate:
         #checks contents map for a control column
         try:
             conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
+            conditionIsControl = [int(x) if x!= '' else '' for x in conditionIsControl]
         except IndexError:
             conditionIsControl = []
             for i in range(len(conditionWellNames)):
@@ -1214,9 +1217,7 @@ def main():
     #opens up windows for user to selec files
     root = Tkinter.Tk()
     root.withdraw()
-    
-    #TODO close the contents map if its open (possibly not needed when using txt?)
-    
+ 
     #DSF results file
     rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
     # contents map, or default cfx manager summary file
@@ -1255,7 +1256,7 @@ def main():
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 
         root = Tkinter.Tk()
         root.withdraw()
-        tkMessageBox.showwarning("Error", "Check error log")
+        tkMessageBox.showerror("Error", "Check error log")
         errors.close()
         
     finally:
