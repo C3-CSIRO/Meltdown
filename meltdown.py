@@ -68,6 +68,7 @@ SIMILARITY_THRESHOLD = 1.72570084974
 LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
 #Monotenicity threshold forgive value on non-normalised curves
 DEFAULT_MONO_THRESH = 10
+SIGN_CHANGE_THRESH = 0.00001
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
 
@@ -972,12 +973,12 @@ class DSFWell:
                     lowestIndex2 = i
         for ind in seriesDeriv.index[lowestIndex2:highestIndex]:
             if previous:
-                if seriesDeriv[ind] < 0 and previous > 0:
+                if seriesDeriv[ind] + SIGN_CHANGE_THRESH < 0 and previous - SIGN_CHANGE_THRESH > 0:
                     signChangeCount += 1
-                if seriesDeriv[ind] > 0 and previous < 0:
+                if seriesDeriv[ind] - SIGN_CHANGE_THRESH > 0 and previous + SIGN_CHANGE_THRESH < 0:
                     signChangeCount += 1
-                if seriesDeriv[ind] == 0:
-                    signChangeCount += 1
+                # if seriesDeriv[ind] == 0:
+                #     signChangeCount += 1
             previous = seriesDeriv[ind]
 
             
@@ -997,6 +998,7 @@ class DSFWell:
             #set complex to true if curve was complex
             if signChangeCount > 0:
                 self.complex = True
+                print "sign change 1"
             return
     
         #could not find any Tm
@@ -1037,6 +1039,7 @@ class DSFWell:
         #again check for complex shape before returning
         if signChangeCount > 0:
                 self.complex = True
+                print "sign change 2",lowestIndex2,highestIndex
 
 
 
@@ -1048,6 +1051,7 @@ class DSFWell:
         # estimates tm by another method and if the difference is too large the curve is considred complex
         if (i/2.0+20 -self.Tm)**2 > 5**2:
             self.complex=True
+            print "method difference"
         
         return
 
