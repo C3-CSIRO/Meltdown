@@ -434,8 +434,8 @@ class DSFAnalysis:
         plt.axhline(originalProteinMeanSd[0],0,1,linestyle="--",color="red")
         # Setting x axis labels
         plt.xticks([x for x in range(len(labels))],labels,rotation="vertical")
-        # Putting the legend for the summary graph at the top
-        plt.legend(tmHandles,Contents.salt,loc='upper center', bbox_to_anchor=(0.5, 1.05),ncol=3, fancybox=True, shadow=False)
+        # Putting the legend for the summary graph at the top, and show only 1 dot instead of 2
+        plt.legend(tmHandles,Contents.salt,loc='upper center', bbox_to_anchor=(0.5, 1.05),ncol=3, fancybox=True, shadow=False, numpoints=1)
 
         # Saving the summary graph as an image and drawing it on the page
         imgdata = cStringIO.StringIO()
