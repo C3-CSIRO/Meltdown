@@ -998,7 +998,6 @@ class DSFWell:
             #set complex to true if curve was complex
             if signChangeCount > 0:
                 self.complex = True
-                print "sign change 1"
             return
     
         #could not find any Tm
@@ -1039,7 +1038,6 @@ class DSFWell:
         #again check for complex shape before returning
         if signChangeCount > 0:
                 self.complex = True
-                print "sign change 2",lowestIndex2,highestIndex
 
 
 
@@ -1051,8 +1049,6 @@ class DSFWell:
         # estimates tm by another method and if the difference is too large the curve is considred complex
         if (i/2.0+20 -self.Tm)**2 > 5**2:
             self.complex=True
-            print "method difference"
-        
         return
 
 class Contents:
@@ -1269,19 +1265,19 @@ def main():
     return
 
 #excecutes main() on file run
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 
-# # Short piece of code for batch analysis of experiments
-# files = os.listdir("../UropCrystallisation/data/bufferscreen9/xlsx")
-# total = len(files)
-# for i, bsc9 in enumerate(files):
-#     mydsf = DSFAnalysis()
-#     filepath = "../UropCrystallisation/data/bufferscreen9/xlsx/" + bsc9
-#     mydsf.loadMeltCurves(filepath,"data/Content_map.xlsx")
-#     mydsf.analyseCurves()
-#     mydsf.generateReport("reports/"+bsc9+".pdf")
-#     print str(round(i/float(total)* 100,2))  +"%"
+# Short piece of code for batch analysis of experiments
+files = os.listdir("../UropCrystallisation/data/bufferscreen9/xlsx")
+total = len(files)
+for i, bsc9 in enumerate(files):
+    mydsf = DSFAnalysis()
+    filepath = "../UropCrystallisation/data/bufferscreen9/xlsx/" + bsc9
+    mydsf.loadMeltCurves(filepath,"data/Content_map.xlsx")
+    mydsf.analyseCurves()
+    mydsf.generateReport("reports/"+bsc9+".pdf")
+    print str(round(i/float(total)* 100,2))  +"%"
 
 
