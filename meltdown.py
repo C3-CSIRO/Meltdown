@@ -562,100 +562,198 @@ class DSFAnalysis:
 
         # Variables used to keep track of where to draw the current graph
         xpos=2
-        ypos = 3
+        
         newpage = 1
 
-        for sampleContentspH in Contents.name:
-            if (newpage-1) % 6 == 0:
-                pdf.showPage()
-                pdf.setFont("Helvetica",9)
-                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
-                pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
-                pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
-                pdf.setFont("Helvetica",12)
-            sampleContents = sampleContentspH[0]
-            curves = []
-            for well in self.originalPlate.names:
-                if self.originalPlate.wells[well].contents.name == sampleContents and self.originalPlate.wells[well].contents.pH == sampleContentspH[1]:
-                    curves.append(well)
-            complexDictionary = {}
-            meanWellDictionary = {}
-            for i, saltConcentration in enumerate(Contents.salt):
-                meanWellDictionary[i] = None
-                complexDictionary[i] = False
-                for well in curves:
-                    if self.originalPlate.wells[well].contents.salt == saltConcentration:
-                        if self.originalPlate.wells[well].complex:
-                            complexDictionary[i] = True
-                        if well in self.delCurves:
-                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , 'grey')
-                        # If the curve is not monotonic
-                        elif self.originalPlate.wells[well].mono == False:
-                            #if it is complex, plot it dotted
+        if len(Contents.salt) < 6:
+            ypos = 3
+            for sampleContentspH in Contents.name:
+                if (newpage-1) % 6 == 0:
+                    pdf.showPage()
+                    pdf.setFont("Helvetica",9)
+                    pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
+                    pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
+                    pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
+                    pdf.setFont("Helvetica",12)
+                sampleContents = sampleContentspH[0]
+                curves = []
+                for well in self.originalPlate.names:
+                    if self.originalPlate.wells[well].contents.name == sampleContents and self.originalPlate.wells[well].contents.pH == sampleContentspH[1]:
+                        curves.append(well)
+                complexDictionary = {}
+                meanWellDictionary = {}
+                for i, saltConcentration in enumerate(Contents.salt):
+                    meanWellDictionary[i] = None
+                    complexDictionary[i] = False
+                    for well in curves:
+                        if self.originalPlate.wells[well].contents.salt == saltConcentration:
                             if self.originalPlate.wells[well].complex:
+                                complexDictionary[i] = True
+                            if well in self.delCurves:
                                 plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                                , COLOURS[i],linestyle=":")
-                            #if not complex, plot it normally
+                                , 'grey')
+                            # If the curve is not monotonic
+                            elif self.originalPlate.wells[well].mono == False:
+                                #if it is complex, plot it dotted
+                                if self.originalPlate.wells[well].complex:
+                                    plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                                    , COLOURS[i],linestyle=":")
+                                #if not complex, plot it normally
+                                else:
+                                    plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                                    , COLOURS[i])
                             else:
+                                # IF the curve is monotonic it is plotted with a 
+                                # dashed line as it is not used to determin Tm
                                 plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                                , COLOURS[i])
-                        else:
-                            # IF the curve is monotonic it is plotted with a 
-                            # dashed line as it is not used to determin Tm
-                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , COLOURS[i],linestyle="--")
+                                , COLOURS[i],linestyle="--")
+                                
+                            meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                             
-                        meanWellDictionary[i] = findKey(well,self.plate.meanDict)
-                        
-            plt.axis([20,100,0.001,0.015])
-            plt.gca().axes.get_yaxis().set_visible(False)
-            imgdata = cStringIO.StringIO()
-            fig3.savefig(imgdata, format='png',dpi=140)
-            imgdata.seek(0)  # rewind the data
-            Image = ImageReader(imgdata)
-            pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 3)*9*cm , 8*cm, 6*cm)
-            pdf.setFillColor("black")
-            pdf.setFont("Helvetica",12)
-            pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9*cm ,"Condition: " + sampleContents + " (" + str(sampleContentspH[1])+")")
-            pdf.drawString(cm+(xpos % 2)*9.5*cm,21.5*cm - (ypos % 3)*9*cm ,"Salt:")
-            pdf.drawString(cm+(xpos % 2)*9.5*cm,21*cm - (ypos % 3)*9*cm ,"Tm: ")
-            drawdpH = False
-            for i in range(len(Contents.salt)):
-                pdf.setFillColor(COLOURS[i])
+                plt.axis([20,100,0.001,0.015])
+                plt.gca().axes.get_yaxis().set_visible(False)
+                imgdata = cStringIO.StringIO()
+                fig3.savefig(imgdata, format='png',dpi=140)
+                imgdata.seek(0)  # rewind the data
+                Image = ImageReader(imgdata)
+                pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,23.5*cm - (ypos % 3)*9.2*cm , 8*cm, 6*cm)
+                pdf.setFillColor("black")
+                pdf.setFont("Helvetica",12)
+                pdf.drawString(cm+(xpos % 2)*9.5*cm,23*cm - (ypos % 3)*9.2*cm ,sampleContents + " (" + str(sampleContentspH[1])+")")
                 pdf.setFont("Helvetica",10)
+                pdf.drawString(cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 3)*9.2*cm ,"Grouped by")
+                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 3)*9.2*cm ,"Tm")
+                drawdpH = False
+                for i in range(len(Contents.salt)):
+                    pdf.setFillColor(COLOURS[i])
+                    
 
-                pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21.5*cm -(i/3)*cm - (ypos % 3)*9*cm,Contents.salt[i])
-                if complexDictionary[i]:
-                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
-                        if self.wells[meanWellDictionary[i]].TmError != None:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
+                    pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm,Contents.salt[i])
+                    if complexDictionary[i]:
+                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
+                            if self.wells[meanWellDictionary[i]].TmError != None:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
+                            else:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
                         else:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm -(i/3)*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm ,"None")
                     else:
-                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,"None")
-                else:
-                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
-                        if self.wells[meanWellDictionary[i]].TmError != None:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
+                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
+                            if self.wells[meanWellDictionary[i]].TmError != None:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
+                            else:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
                         else:
-                            pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm -(i/3)*cm - (ypos % 3)*9*cm,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm ,"None")
+                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None and self.wells[meanWellDictionary[i]].contents.pH != "":
+                        pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 3)*9.2*cm - i*0.5*cm ,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
+                        pdf.setFillColor("black")
+                        if drawdpH ==False:
+                            pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 3)*9.2*cm ,"Adjusted pH at Tm")
+                            drawdpH = True
+                drawdpH = False
+                xpos +=1
+                if newpage % 2 == 0:
+                    ypos +=1
+                
+                newpage += 1 
+                plt.close()
+                fig3 = plt.figure(num=1,figsize=(5,4))
+
+        else:
+            ypos = 2
+            for sampleContentspH in Contents.name:
+                if (newpage-1) % 4 == 0:
+                    pdf.showPage()
+                    pdf.setFont("Helvetica",9)
+                    pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
+                    pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
+                    pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
+                    pdf.setFont("Helvetica",12)
+                sampleContents = sampleContentspH[0]
+                curves = []
+                for well in self.originalPlate.names:
+                    if self.originalPlate.wells[well].contents.name == sampleContents and self.originalPlate.wells[well].contents.pH == sampleContentspH[1]:
+                        curves.append(well)
+                complexDictionary = {}
+                meanWellDictionary = {}
+                for i, saltConcentration in enumerate(Contents.salt):
+                    meanWellDictionary[i] = None
+                    complexDictionary[i] = False
+                    for well in curves:
+                        if self.originalPlate.wells[well].contents.salt == saltConcentration:
+                            if self.originalPlate.wells[well].complex:
+                                complexDictionary[i] = True
+                            if well in self.delCurves:
+                                plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                                , 'grey')
+                            # If the curve is not monotonic
+                            elif self.originalPlate.wells[well].mono == False:
+                                #if it is complex, plot it dotted
+                                if self.originalPlate.wells[well].complex:
+                                    plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                                    , COLOURS[i],linestyle=":")
+                                #if not complex, plot it normally
+                                else:
+                                    plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                                    , COLOURS[i])
+                            else:
+                                # IF the curve is monotonic it is plotted with a 
+                                # dashed line as it is not used to determin Tm
+                                plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                                , COLOURS[i],linestyle="--")
+                                
+                            meanWellDictionary[i] = findKey(well,self.plate.meanDict)
+                            
+                plt.axis([20,100,0.001,0.015])
+                plt.gca().axes.get_yaxis().set_visible(False)
+                imgdata = cStringIO.StringIO()
+                fig3.savefig(imgdata, format='png',dpi=140)
+                imgdata.seek(0)  # rewind the data
+                Image = ImageReader(imgdata)
+                pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,23.5*cm - (ypos % 2)*13.8*cm , 8*cm, 6*cm)
+                pdf.setFillColor("black")
+                pdf.setFont("Helvetica",12)
+                pdf.drawString(cm+(xpos % 2)*9.5*cm,23*cm - (ypos % 2)*13.8*cm ,sampleContents + " (" + str(sampleContentspH[1])+")")
+                pdf.setFont("Helvetica",10)
+                pdf.drawString(cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 2)*13.8*cm ,"Grouped by")
+                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 2)*13.8*cm ,"Tm")
+                drawdpH = False
+                for i in range(len(Contents.salt)):
+                    pdf.setFillColor(COLOURS[i])
+                    
+
+                    pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm,Contents.salt[i])
+                    if complexDictionary[i]:
+                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
+                            if self.wells[meanWellDictionary[i]].TmError != None:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
+                            else:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
+                        else:
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm ,"None")
                     else:
-                        pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,21*cm-(i/3)*cm  - (ypos % 3)*9*cm,"None")
-                if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None and self.wells[meanWellDictionary[i]].contents.pH != "":
-                    pdf.drawString(2*cm+((i+3)%3)*2.5*cm+(xpos % 2)*9.5*cm,20*cm - (ypos % 3)*9*cm,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
-                    pdf.setFillColor("black")
-                    if drawdpH ==False:
-                        pdf.drawString(2*cm+(xpos % 2)*9.5*cm,20.5*cm - (ypos % 3)*9*cm,"Adjusted pH at Tm: "+str(self.wells[meanWellDictionary[i]].contents.pH)+" at 20C")
-                        drawdpH = True
-            drawdpH = False
-            xpos +=1
-            if newpage % 2 == 0:
-                ypos +=1
-            
-            newpage += 1 
-            plt.close()
-            fig3 = plt.figure(num=1,figsize=(5,4))
+                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
+                            if self.wells[meanWellDictionary[i]].TmError != None:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
+                            else:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
+                        else:
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm ,"None")
+                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None and self.wells[meanWellDictionary[i]].contents.pH != "":
+                        pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % 2)*13.8*cm - i*0.5*cm ,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
+                        pdf.setFillColor("black")
+                        if drawdpH ==False:
+                            pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % 2)*13.8*cm ,"Adjusted pH at Tm")
+                            drawdpH = True
+                drawdpH = False
+                xpos +=1
+                if newpage % 2 == 0:
+                    ypos +=1
+                
+                newpage += 1 
+                plt.close()
+                fig3 = plt.figure(num=1,figsize=(5,4))
 
         plt.close()        
 
