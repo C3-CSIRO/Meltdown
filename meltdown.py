@@ -757,7 +757,7 @@ class DSFPlate:
             conditionPhs = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for pH if no Phs are given
-                conditionPhs.append(0)        
+                conditionPhs.append('')        
         
         #checks contents map for a d(pH)/dT column
         try:
