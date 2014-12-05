@@ -770,7 +770,7 @@ class DSFPlate:
         #checks contents map for a salt column. 3rd col
         try:
             conditionSalts = contentsTxt['Condition Variable 2']
-            conditionSalts = [str(x) if not(type(x)==float and math.isnan(x)) else '' for x in conditionSalts]#TODO check this line and the 2 below work
+            conditionSalts = [str(x) if not(type(x)==float or math.isnan(x)) else '' for x in conditionSalts]#TODO check this line and the 2 below work
         except KeyError:
             conditionSalts = []
             for i in range(len(conditionWellNames)):
