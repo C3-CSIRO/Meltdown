@@ -789,7 +789,7 @@ class DSFPlate:
         try:
             conditionSalts = contentsTxt['Condition Variable 2']
             #empty cells are read in as np.nan (type float) and are converted to ''
-            conditionSalts = [str(x) if not type(x)==float  else '' for x in conditionSalts]#TODO check this line and the 2 below work
+            conditionSalts = ['' if type(x)==float and math.isnan(x) else str(x) for x in conditionSalts]#TODO check this line and the 2 below work
         except KeyError:
             conditionSalts = []
             for i in range(len(conditionWellNames)):
@@ -803,7 +803,7 @@ class DSFPlate:
         try:
             conditionPhs = contentsTxt['pH']
             #empty cells are read in as np.nan and are converted to ''
-            conditionPhs = [float(x) if not math.isnan(x) else '' for x in conditionPhs]
+            conditionPhs = ['' if type(x)==float and math.isnan(x) else float(x) for x in conditionPhs]
         except KeyError:
             conditionPhs = []
             for i in range(len(conditionWellNames)):
@@ -818,7 +818,7 @@ class DSFPlate:
         try:
             conditiondpHdT = contentsTxt['d(pH)/dT']
             #empty cells are read in as np.nan and are converted to ''
-            conditiondpHdT = [float(x) if not math.isnan(x) else '' for x in conditiondpHdT]
+            conditiondpHdT = ['' if type(x)==float and math.isnan(x) else float(x) for x in conditiondpHdT]
         except KeyError:
             conditiondpHdT=[]
             for i in range(len(conditionWellNames)):
@@ -832,7 +832,7 @@ class DSFPlate:
         try:
             conditionIsControl = contentsTxt['Control']
             #empty cells are read in as np.nan and are converted to ''
-            conditionIsControl = [int(x) if not math.isnan(x) else '' for x in conditionIsControl]
+            conditionIsControl = ['' if type(x)==float and math.isnan(x) else int(x) for x in conditionIsControl]
         except KeyError:
             conditionIsControl = []
             for i in range(len(conditionWellNames)):
