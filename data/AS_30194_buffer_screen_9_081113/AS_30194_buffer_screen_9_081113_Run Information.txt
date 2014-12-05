@@ -1,0 +1,13 @@
+File Name	AS_30194_buffer_screen_9_081113.pcrd
+Created By User	admin
+Notes	Buffer screen 9 with AS protein 30194 diluted 1:5 - 19.4 uL screen, 300 nL diluted protein and 1:10 diluted dye.
+ID	
+Run Started	11/08/2013 03:18:21 UTC
+Run Ended	11/08/2013 04:01:16 UTC
+Sample Vol	20
+Lid Temp	105
+Protocol File Name	Melt Curve_c3_5sec_cycles.prcl
+Plate Setup File Name	Buffer Screen 9_FRET.pltd
+Base Serial Number	CC008893
+Optical Head Serial Number	785BR3194
+CFX Manager Version	3.0.1224.1015. 

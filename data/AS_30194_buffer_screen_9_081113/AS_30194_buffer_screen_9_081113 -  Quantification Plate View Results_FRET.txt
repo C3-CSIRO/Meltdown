@@ -1,0 +1,33 @@
+		1	2	3	4	5	6	7	8	9	10	11	12
+A	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+A	Sample	Machine Control	Machine Control	Machine Control	50mM NaCl	50mM NaCl	50mM NaCl	200mM NaCl	200mM NaCl	200mM NaCl	Protein Only	Protein Only	Protein Only
+A	Cq												
+A	copy number												
+B	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+B	Sample	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	piperazine, pH=5.5 + 50mM NaCl	piperazine, pH=5.5 + 50mM NaCl	piperazine, pH=5.5 + 50mM NaCl	piperazine, pH=5.5 + 200mM NaCl	piperazine, pH=5.5 + 200mM NaCl	piperazine, pH=5.5 + 200mM NaCl
+B	Cq												
+B	copy number												
+C	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+C	Sample	sodium MES, pH=6.0 + 50mM NaCl	sodium MES, pH=6.0 + 50mM NaCl	sodium MES, pH=6.0 + 50mM NaCl	sodium MES, pH=6.0 + 200mM NaCl	sodium MES, pH=6.0 + 200mM NaCl	sodium MES, pH=6.0 + 200mM NaCl	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl
+C	Cq												
+C	copy number												
+D	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+D	Sample	bis-tris chloride, pH=6.5 + 50mM NaCl	bis-tris chloride, pH=6.5 + 50mM NaCl	bis-tris chloride, pH=6.5 + 50mM NaCl	bis-tris chloride, pH=6.5 + 200mM NaCl	bis-tris chloride, pH=6.5 + 200mM NaCl	bis-tris chloride, pH=6.5 + 200mM NaCl	ADA, pH=6.5 + 50mM NaCl	ADA, pH=6.5 + 50mM NaCl	ADA, pH=6.5 + 50mM NaCl	ADA, pH=6.5 + 200mM NaCl	ADA, pH=6.5 + 200mM NaCl	ADA, pH=6.5 + 200mM NaCl
+D	Cq												
+D	copy number												
+E	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+E	Sample	imidazole, pH=7.0 + 50mM NaCl	imidazole, pH=7.0 + 50mM NaCl	imidazole, pH=7.0 + 50mM NaCl	imidazole, pH=7.0 + 200mM NaCl	imidazole, pH=7.0 + 200mM NaCl	imidazole, pH=7.0 + 200mM NaCl	sodium MOPS, pH=7.0 + 50mM NaCl	sodium MOPS, pH=7.0 + 50mM NaCl	sodium MOPS, pH=7.0 + 50mM NaCl	sodium MOPS, pH=7.0 + 200mM NaCl	sodium MOPS, pH=7.0 + 200mM NaCl	sodium MOPS, pH=7.0 + 200mM NaCl
+E	Cq												
+E	copy number												
+F	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+F	Sample	sodium HEPES, pH=7.5 + 50mM NaCl	sodium HEPES, pH=7.5 + 50mM NaCl	sodium HEPES, pH=7.5 + 50mM NaCl	sodium HEPES, pH=7.5 + 200mM NaCl	sodium HEPES, pH=7.5 + 200mM NaCl	sodium HEPES, pH=7.5 + 200mM NaCl	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl
+F	Cq												
+F	copy number												
+G	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+G	Sample	tris chloride, pH=8.0 + 50mM NaCl	tris chloride, pH=8.0 + 50mM NaCl	tris chloride, pH=8.0 + 50mM NaCl	tris chloride, pH=8.0 + 200mM NaCl	tris chloride, pH=8.0 + 200mM NaCl	tris chloride, pH=8.0 + 200mM NaCl	glycyl-glycine, pH=8.5 + 50mM NaCl	glycyl-glycine, pH=8.5 + 50mM NaCl	glycyl-glycine, pH=8.5 + 50mM NaCl	glycyl-glycine, pH=8.5 + 200mM NaCl	glycyl-glycine, pH=8.5 + 200mM NaCl	glycyl-glycine, pH=8.5 + 200mM NaCl
+G	Cq												
+G	copy number												
+H	Content	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn	Unkn
+H	Sample	Sample Control	Sample Control	Sample Control	CHES, pH=9.0 + 50mM NaCl	CHES, pH=9.0 + 50mM NaCl	CHES, pH=9.0 + 50mM NaCl	CHES, pH=9.0 + 200mM NaCl	CHES, pH=9.0 + 200mM NaCl	CHES, pH=9.0 + 200mM NaCl	Dye Only	Dye Only	Dye Only
+H	Cq												
+H	copy number												

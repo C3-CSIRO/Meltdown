@@ -716,10 +716,21 @@ class DSFPlate:
         """
             
         #Open excel workbook and first sheet for both the RFU file and the summary/contents file
-        wbData = xlrd.open_workbook(fluorescenceXLS)
-        shData = wbData.sheet_by_index(0)
-        wbContents = xlrd.open_workbook(labelsXLS)
-        shContents = wbContents.sheet_by_index(0)
+        #wbData = xlrd.open_workbook(fluorescenceXLS)
+        #shData = wbData.sheet_by_index(0)
+        #wbContents = xlrd.open_workbook(labelsXLS)
+        #shContents = wbContents.sheet_by_index(0)
+        
+        #read in the rfu results and the contents map into a pandas dataframe structure
+        dataTxt = pandas.DataFrame.from_csv(fluorescenceXLS, sep='\t', index_col='Temperature')
+        contentsTxt = pandas.DataFrame.from_csv(labelsXLS, sep='\t', index_col='Well')
+        #remove any columns that that are blank (default pcrd export includes empty columns sometimes)
+        for column in dataTxt:
+            if 'Unnamed' in column:
+                dataTxt.pop(column)
+        for column in contentsTxt:
+            if 'Unnamed' in column:
+                contentsTxt.pop(column)
         
         #names are in order and used to iterate over, wells has each name as a key
         self.names = []
@@ -732,54 +743,66 @@ class DSFPlate:
         
         
         #================ reading in from the contents map ====================#
-        #well names e.g. A1,A2,etc are imported
-        conditionWellNames = shContents.col_values(0, start_rowx=1, end_rowx=None)
+        #well names e.g. A1,A2,etc are imported 1st col
+        conditionWellNames = contentsTxt.index
         #fixes names in files from A01 -> A1 if they are not in the required format already
         conditionWellNames = [name[0]+str(int(name[1:])) for name in conditionWellNames]
         
-        #condition names (the buffer solutions) are imported
-        conditionNames = shContents.col_values(1, start_rowx=1, end_rowx=None)
+        #condition names (the buffer solutions) are imported. 2nd col
+        conditionNames = contentsTxt['Condition Variable 1']
         
-        #checks contents map for a salt column
+        #checks contents map for a salt column. 3rd col
         try:
-            conditionSalts = shContents.col_values(2, start_rowx=1, end_rowx=None)
-            conditionSalts = [str(x) for x in conditionSalts]
-        except IndexError:
+            conditionSalts = contentsTxt['Condition Variable 2']
+            conditionSalts = [str(x) if not(type(x)==float and math.isnan(x)) else '' for x in conditionSalts]#TODO check this line and the 2 below work
+        except KeyError:
             conditionSalts = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for salt if no salts are given
                 conditionSalts.append('')
+        except Exception:
+            tkMessageBox.showerror("Error", "Reading Condition Variable 2 column has failed")
+            sys.exit(1)
         
-        #checks contents map for a pH column
+        #checks contents map for a pH column. 4th col
         try:
-            conditionPhs = shContents.col_values(3, start_rowx=1, end_rowx=None)
-            conditionPhs = [int(x) if x!= '' else '' for x in conditionPhs]#TODO check this line and the 2 below work
-        except IndexError:
+            conditionPhs = contentsTxt['pH']
+            conditionPhs = [int(x) if not math.isnan(x) else '' for x in conditionPhs]
+        except KeyError:
             conditionPhs = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for pH if no Phs are given
-                conditionPhs.append('')        
+                conditionPhs.append('')
+        except Exception:
+            tkMessageBox.showerror("Error", "Reading pH column has failed")
+            sys.exit(1)
 
         
-        #checks contents map for a d(pH)/dT column
+        #checks contents map for a d(pH)/dT column. #5th col
         try:
-            conditiondpHdT = shContents.col_values(4, start_rowx=1, end_rowx=None)
-            conditiondpHdT = [float(x) if x!= '' else '' for x in conditiondpHdT]
-        except IndexError:
+            conditiondpHdT = contentsTxt['d(pH)/dT']
+            conditiondpHdT = [float(x) if not math.isnan(x) else '' for x in conditiondpHdT]
+        except KeyError:
             conditiondpHdT=[]
             for i in range(len(conditionWellNames)):
                 #all conditions have emty string for dpH/dT if no dph/dt values are given
                 conditiondpHdT.append('')
+        except Exception:
+            tkMessageBox.showerror("Error", "Reading d(pH)/dT column has failed")
+            sys.exit(1)
                 
-        #checks contents map for a control column
+        #checks contents map for a control column. #6th col
         try:
-            conditionIsControl = shContents.col_values(5, start_rowx=1, end_rowx=None)
-            conditionIsControl = [int(x) if x!= '' else '' for x in conditionIsControl]
-        except IndexError:
+            conditionIsControl = contentsTxt['Control']
+            conditionIsControl = [int(x) if not math.isnan(x) else '' for x in conditionIsControl]
+        except KeyError:
             conditionIsControl = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for control if column isnt given
-                conditionIsControl.append('')        
+                conditionIsControl.append('')
+        except Exception:
+            tkMessageBox.showerror("Error", "Reading Control column has failed")
+            sys.exit(1)
                 
         #==================================================================#     
                 
@@ -826,7 +849,7 @@ class DSFPlate:
         
         for i,name in enumerate(conditionWellNames):
             #creates a pandas series of each well, with index being temperature, and values fluorescence
-            fluoroSeries = pandas.Series(shData.col_values(i+2,start_rowx=1,end_rowx=None),shData.col_values(1,start_rowx=1,end_rowx=None))
+            fluoroSeries = dataTxt[name]
             #populate the well dictionary of labels and values
             self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i], conditionIsControl[i])
             
@@ -929,11 +952,11 @@ class DSFWell:
         are any turning points between the two. If so, the curve shape is complex
         """
         #first step  is finding the derivative series of the well
-        x = [x for x in self.temperatures]
+        x = self.temperatures
         if self.fluorescence == None:
             self.Tm = None
             return
-        y = [y for y in self.fluorescence]
+        y = self.fluorescence
     
         xdiff = np.diff(x)
         dydx = -np.diff(y)/xdiff
@@ -1143,35 +1166,6 @@ def lysozymeAllTm(pathder,wells):
 
 #useful small functions used throughout
 #================================================#
-def fixPcrdXlsxFile(xlsx):
-    """
-    Function that fixes an xlsx file error when exporting from a pcrd file. The error is 
-    cause by a file inside the pcrd being missnamed, and calling this function on that file
-    will fix this, along with keeping the original file saved with '.BAK' appended to its name
-    """
-    #rename original file, and create new one with same name of the first one
-    #delete the backup if it exists already
-    if os.path.exists(xlsx+".BAK"):
-        os.remove(xlsx+".BAK")
-    os.rename(xlsx, xlsx+".BAK")
-    source = zf.ZipFile(xlsx+".BAK", "r")
-    target = zf.ZipFile(xlsx, "w")
-    
-    #copy every file from the original xlsx to the new (target) xlsx
-    for file in source.filelist:
-        #found the wrongly named file
-        if "sharedstrings.xml" in file.filename:
-            #copy it with correct name
-            target.writestr(file.filename[:-17]+"sharedStrings.xml", source.read(file))
-        else:
-            #otherwise copy file normally
-            target.writestr(file.filename, source.read(file))
-    source.close()
-    target.close()
-    
-    return
-    
-    
 def findKey(value,dict):
     """
     Takes a dictionary and a value and returns the first key it finds that corresponds to that value
@@ -1223,12 +1217,6 @@ def main():
     # contents map, or default cfx manager summary file
     contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
     try:
-        #if the files supplied are xlsx as opposed to xls file the pcrd naming error
-        if ".xlsx" in rfuFilepath:
-            fixPcrdXlsxFile(rfuFilepath)
-        if ".xlsx" in contentsMapFilepath:
-            fixPcrdXlsxFile(contentsMapFilepath)
-        
         #the analysis
         mydsf = DSFAnalysis()
         mydsf.loadMeltCurves(rfuFilepath,contentsMapFilepath)
@@ -1258,14 +1246,7 @@ def main():
         root.withdraw()
         tkMessageBox.showerror("Error", "Check error log")
         errors.close()
-        
-    finally:
-        #delete temporary backup files
-        if os.path.exists(rfuFilepath+".BAK"):
-            os.remove(rfuFilepath+".BAK")
-        if os.path.exists(contentsMapFilepath+".BAK"):
-            os.remove(contentsMapFilepath+".BAK")
-        
+
     return
 
 #excecutes main() on file run

@@ -91,6 +91,7 @@ def discardBad(wellNamesList,matrix,thresh):
                         wells[wli].append(wellNamesList[j])
     #finding the beet group
     maxi=-1
+    choose=""
     for key in wells.keys():
         if len(wells[key]) > maxi:
             maxi = len(wells[key])

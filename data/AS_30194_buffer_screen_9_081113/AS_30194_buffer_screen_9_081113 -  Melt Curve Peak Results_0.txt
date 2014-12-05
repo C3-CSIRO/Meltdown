@@ -1,0 +1,972 @@
+	Well	Fluor	Target	Content	Sample	Melt Temperature	Peak Height	Begin Temperature	End Temperature	Well Note
+	A01	FRET		Unkn	Machine Control	35.5	8.31537760416586	34.5	39	
+	A01	FRET		Unkn	Machine Control	31.5	17.1221468098963	29	34.5	
+	A01	FRET		Unkn	Machine Control	46.5	1.32175781249998	46	48	
+	A01	FRET		Unkn	Machine Control	40	6.32474283854117	39	46	
+	A01	FRET		Unkn	Machine Control	88.5	62.9257161458321	87.5	96.5	
+	A01	FRET		Unkn	Machine Control	79	102.38180501302	75	87	
+	A01	FRET		Unkn	Machine Control	22.5	23.5486311848649	22	28.5	
+	A01	FRET		Unkn	Machine Control	99.5	28.1286724175347	96.5	100	
+	A02	FRET		Unkn	Machine Control	36.5	8.92341308593598	34	44.5	
+	A02	FRET		Unkn	Machine Control	45.5	-0.0939290364582348	45	70.5	
+	A02	FRET		Unkn	Machine Control	29.5	16.4438720703133	28.5	34	
+	A02	FRET		Unkn	Machine Control	79	188.321809895832	75	100	
+	A02	FRET		Unkn	Machine Control	22.5	30.3674755859415	21.5	28.5	
+	A03	FRET		Unkn	Machine Control	40.5	7.89673990885433	39.5	44.5	
+	A03	FRET		Unkn	Machine Control	31	19.569038085937	28.5	37.5	
+	A03	FRET		Unkn	Machine Control	45	1.11563639322878	44.5	46	
+	A03	FRET		Unkn	Machine Control	39	7.44707194010414	38	39.5	
+	A03	FRET		Unkn	Machine Control	22.5	27.5935221354165	22	28.5	
+	A03	FRET		Unkn	Machine Control	92.5	50.0537972005203	91.5	95	
+	A03	FRET		Unkn	Machine Control	79.5	145.759332682292	75	91.5	
+	A03	FRET		Unkn	Machine Control	99.5	32.2924712456595	99	100	
+	A03	FRET		Unkn	Machine Control	95.5	38.2310856119799	95	99	
+	A04	FRET		Unkn	50mM NaCl	81	58.8355924479156	78.5	91	
+	A04	FRET		Unkn	50mM NaCl	76	67.0450227864569	75	78.5	
+	A04	FRET		Unkn	50mM NaCl	94.5	25.9195865885426	93.5	96.5	
+	A04	FRET		Unkn	50mM NaCl	99.5	40.4493988715276	96.5	100	
+	A04	FRET		Unkn	50mM NaCl	70.5	77.9530794270825	69.5	75	
+	A04	FRET		Unkn	50mM NaCl	59	185.533118489581	55.5	63.5	
+	A04	FRET		Unkn	50mM NaCl	49	222.331998697917	45	55.5	
+	A04	FRET		Unkn	50mM NaCl	64.5	110.556715494789	63.5	69	
+	A04	FRET		Unkn	50mM NaCl	22.5	123.040999348975	21.5	30.5	
+	A05	FRET		Unkn	50mM NaCl	22.5	44.1088346354279	21.5	27.5	
+	A05	FRET		Unkn	50mM NaCl	84.5	49.4315559895847	82	88	
+	A05	FRET		Unkn	50mM NaCl	89	16.2497623697911	88	94.5	
+	A05	FRET		Unkn	50mM NaCl	79.5	21.5394628906253	79	81	
+	A05	FRET		Unkn	50mM NaCl	58.5	173.198857421877	56.5	66.5	
+	A05	FRET		Unkn	50mM NaCl	48.5	248.538600260418	45	56.5	
+	A05	FRET		Unkn	50mM NaCl	99	53.1705049189825	96	100	
+	A05	FRET		Unkn	50mM NaCl	67	55.0412402343751	66.5	79	
+	A06	FRET		Unkn	50mM NaCl	82	37.3331575520825	81	84.5	
+	A06	FRET		Unkn	50mM NaCl	78.5	39.2683691406247	76.5	81	
+	A06	FRET		Unkn	50mM NaCl	92	6.06094726562571	91.5	93.5	
+	A06	FRET		Unkn	50mM NaCl	85.5	18.5430436197919	84.5	89.5	
+	A06	FRET		Unkn	50mM NaCl	22.5	64.3893326822946	22	29	
+	A06	FRET		Unkn	50mM NaCl	59	94.0276790364574	56	61.5	
+	A06	FRET		Unkn	50mM NaCl	49	110.725520833332	44.5	56	
+	A06	FRET		Unkn	50mM NaCl	64	76.9870084635409	61.5	76.5	
+	A06	FRET		Unkn	50mM NaCl	98	87.7010698784715	94.5	100	
+	A07	FRET		Unkn	200mM NaCl	83	30.1676920572926	82	86.5	
+	A07	FRET		Unkn	200mM NaCl	79	36.3781250000006	76.5	82	
+	A07	FRET		Unkn	200mM NaCl	89	25.9627636718756	86.5	91.5	
+	A07	FRET		Unkn	200mM NaCl	76	29.5832714843747	75.5	76.5	
+	A07	FRET		Unkn	200mM NaCl	99.5	59.9449055989567	91.5	100	
+	A07	FRET		Unkn	200mM NaCl	22.5	121.147571614577	22	34.5	
+	A07	FRET		Unkn	200mM NaCl	48.5	144.633649088541	46.5	56	
+	A07	FRET		Unkn	200mM NaCl	63.5	68.5165429687486	61.5	75.5	
+	A07	FRET		Unkn	200mM NaCl	58.5	107.575133463542	56	61.5	
+	A08	FRET		Unkn	200mM NaCl	99.5	46.991434461806	99	100	
+	A08	FRET		Unkn	200mM NaCl	79	51.4271777343756	76.5	88.5	
+	A08	FRET		Unkn	200mM NaCl	89.5	29.7424544270846	88.5	94.5	
+	A08	FRET		Unkn	200mM NaCl	97.5	38.8491851128474	94.5	98	
+	A08	FRET		Unkn	200mM NaCl	67.5	94.7301464843758	64	69	
+	A08	FRET		Unkn	200mM NaCl	22.5	137.260100911445	22	35.5	
+	A08	FRET		Unkn	200mM NaCl	49	166.323173828125	46.5	58	
+	A08	FRET		Unkn	200mM NaCl	71.5	104.747737630208	69	76.5	
+	A08	FRET		Unkn	200mM NaCl	60	114.183261718751	58	64	
+	A09	FRET		Unkn	200mM NaCl	69	63.0098600260399	68	71.5	
+	A09	FRET		Unkn	200mM NaCl	93	64.7700227864594	90	95	
+	A09	FRET		Unkn	200mM NaCl	72	59.2929199218714	71.5	77	
+	A09	FRET		Unkn	200mM NaCl	80	44.6760286458357	77	82.5	
+	A09	FRET		Unkn	200mM NaCl	85	54.7194498697917	82.5	90	
+	A09	FRET		Unkn	200mM NaCl	58.5	121.319557291665	56	61.5	
+	A09	FRET		Unkn	200mM NaCl	49	161.11078125	46.5	56	
+	A09	FRET		Unkn	200mM NaCl	97.5	80.8405381944444	95	100	
+	A09	FRET		Unkn	200mM NaCl	64	72.9982161458333	61.5	67	
+	A09	FRET		Unkn	200mM NaCl	22.5	76.9067057291779	21.5	34	
+	A10	FRET		Unkn	Protein Only	22	19.9894140625041	21	22.5	
+	A10	FRET		Unkn	Protein Only	71	21.2239029947914	68.5	73.5	
+	A10	FRET		Unkn	Protein Only	76.5	21.6506201171871	74	77.5	
+	A10	FRET		Unkn	Protein Only	94.5	14.8723681640629	93.5	100	
+	A10	FRET		Unkn	Protein Only	38.5	18.8972395833331	37.5	42.5	
+	A10	FRET		Unkn	Protein Only	89.5	19.803470052083	87.5	93.5	
+	A10	FRET		Unkn	Protein Only	47.5	34.7936572265625	42.5	56.5	
+	A10	FRET		Unkn	Protein Only	59	34.8870849609378	56.5	63.5	
+	A10	FRET		Unkn	Protein Only	31	35.8882389322912	28	37.5	
+	A10	FRET		Unkn	Protein Only	66	23.1827246093736	64	68.5	
+	A10	FRET		Unkn	Protein Only	80	24.5060270182291	77.5	87	
+	A10	FRET		Unkn	Protein Only	26	24.8042187500009	22.5	28	
+	A11	FRET		Unkn	Protein Only	68	14.7319124348954	66.5	70.5	
+	A11	FRET		Unkn	Protein Only	84.5	14.8319628906244	82	85.5	
+	A11	FRET		Unkn	Protein Only	76.5	16.1368033854162	72	82	
+	A11	FRET		Unkn	Protein Only	38	1.87173014322877	36.5	39.5	
+	A11	FRET		Unkn	Protein Only	96	9.5719254557294	95	99	
+	A11	FRET		Unkn	Protein Only	71	13.7998046875	70.5	72	
+	A11	FRET		Unkn	Protein Only	22	18.691621093774	21	22.5	
+	A11	FRET		Unkn	Protein Only	31	25.1685058593745	28	36.5	
+	A11	FRET		Unkn	Protein Only	59	26.7715022786464	56	65.5	
+	A11	FRET		Unkn	Protein Only	49.5	28.9649446614592	42	55	
+	A11	FRET		Unkn	Protein Only	89.5	19.4039485677079	86.5	94	
+	A11	FRET		Unkn	Protein Only	23.5	19.9669970703122	22.5	27.5	
+	A11	FRET		Unkn	Protein Only	55.5	21.4873030598952	55	56	
+	A12	FRET		Unkn	Protein Only	84.5	12.6114176432292	84	87	
+	A12	FRET		Unkn	Protein Only	91.5	12.3333349609375	89.5	93.5	
+	A12	FRET		Unkn	Protein Only	76	17.6039778645825	74	83.5	
+	A12	FRET		Unkn	Protein Only	73	16.3042154947921	72.5	73.5	
+	A12	FRET		Unkn	Protein Only	36.5	6.72593098958498	36	37	
+	A12	FRET		Unkn	Protein Only	96	6.22617350260475	94.5	98.5	
+	A12	FRET		Unkn	Protein Only	88	10.7952506510424	87	89	
+	A12	FRET		Unkn	Protein Only	38	7.98035970052172	37	40.5	
+	A12	FRET		Unkn	Protein Only	23.5	29.5986458333329	22.5	26.5	
+	A12	FRET		Unkn	Protein Only	59	28.8519612630206	56.5	64	
+	A12	FRET		Unkn	Protein Only	46.5	41.0110367838539	40.5	53	
+	A12	FRET		Unkn	Protein Only	31	38.6233235677091	27	36	
+	A12	FRET		Unkn	Protein Only	65	19.7883398437497	64	66.5	
+	A12	FRET		Unkn	Protein Only	69	19.4090755208337	68	72.5	
+	A12	FRET		Unkn	Protein Only	54	28.7899121093761	53	56.5	
+	A12	FRET		Unkn	Protein Only	22	27.7378124999973	21	22.5	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	95	39.0539746093764	94	96	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	99.5	52.499861111111	96	100	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	90	-5.07607747395639	89.5	90.5	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	93.5	36.1907975260403	91	94	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	68.5	59.9858854166663	65.5	70.5	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	22.5	132.018528645817	22	34	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	42.5	170.589143880209	34	56.5	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	73.5	89.1158203124993	71	88.5	
+	B01	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	59	105.189482421873	56.5	65.5	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	91.5	10.2411230468755	90.5	94	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	73.5	13.9276660156273	73	79.5	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	80	8.28712239583297	79.5	80.5	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	84.5	7.65287760416606	83.5	88	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	81.5	8.14008789062632	80.5	83.5	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	70.5	16.1880143229185	68.5	73	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	36.5	87.0091373697918	31	56.5	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	22.5	90.0504492187504	22	26	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	27	72.6498958333332	26	31	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	99.5	24.8619498697919	95	100	
+	B02	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	59.5	36.1768782552086	57	68.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	91.5	11.5535839843758	90	95.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	82	14.8156217447919	81.5	85.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	97	2.6885449218745	95.5	97.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	86.5	9.33427083333174	85.5	87.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	72.5	35.3466308593738	70.5	81.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	22.5	137.219394531237	22	33.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	40	152.514446614583	33.5	56	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	64	51.4583561197931	62.5	70.5	
+	B03	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 50mM NaCl	58.5	87.8492578125005	56	62.5	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	84	11.3060449218764	83.5	86	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	77.5	12.1703808593762	76.5	81	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	22.5	-34.6108072917027	20.5	27.5	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	90	-3.04830078125042	87.5	92	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	58.5	118.615227864583	56.5	76.5	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	38.5	179.760742187501	32.5	56.5	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	95	15.4589518229171	94	97	
+	B04	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	99.5	18.3752723524308	97	100	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	81.5	22.2042936197932	81	82.5	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	83.5	23.5766634114569	82.5	86	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	99.5	19.1481098090285	97	100	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	88.5	21.459140625	86	93.5	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	74	45.4584667968767	73.5	81	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	22.5	128.357044270833	22	25.5	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	37.5	225.258645833334	32.5	56.5	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	70.5	49.7883951822893	69	73	
+	B05	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	58.5	127.184091796875	56.5	69	
+	B06	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	89	15.8116569010419	88	91	
+	B06	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	85.5	12.8717220052085	84	87	
+	B06	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	93.5	-0.306074218750268	92	94.5	
+	B06	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	97.5	20.6881054687497	96	100	
+	B06	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	37.5	189.449114583333	32.5	56	
+	B06	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	59	124.854599609375	56.5	64	
+	B06	FRET		Unkn	sodium acetate - acetic acid, pH=5.0 + 200mM NaCl	65	86.024101562499	64	84	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	98.5	17.2031072771988	96	99	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	99.5	28.3132107204862	99	100	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	82	7.47039388020869	79.5	84	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	91	-1.75206705729317	89	94	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	86.5	3.3105729166673	86	89	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	58.5	93.6092057291665	56	62.5	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	43	205.298876953124	41	56	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	63.5	61.1076171874972	62.5	72.5	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	74.5	35.786972656251	72.5	79.5	
+	B07	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	22.5	54.2755013020878	21.5	27.5	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	76	14.5040885416666	74.5	80	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	22.5	45.1739078775912	22	27.5	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	91.5	-1.0817187499996	88.5	92	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	86	6.03090820312673	83.5	86.5	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	95.5	62.5598600260421	92.5	97	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	43	152.330777994796	40.5	58	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	64.5	51.1869401041668	61.5	74.5	
+	B08	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	59	59.8219108072902	58	61.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	76	44.9389973958334	75.5	76.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	83	47.0891178385427	80.5	87.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	90	33.3955664062491	87.5	91	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	99.5	15.59869032118	99	100	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	93.5	31.8282259114577	91.5	99	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	77.5	55.035087890624	76.5	80.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	58.5	104.961009114581	56.5	64.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	44	214.46869140625	41	56.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	22.5	85.1261425781312	21.5	28.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	72.5	68.3010481770823	69.5	75.5	
+	B09	FRET		Unkn	piperazine, pH=5.5 + 50mM NaCl	65.5	70.5714355468738	64.5	69.5	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	90.5	23.1554134114582	87.5	91.5	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	74	30.9505989583333	71.5	77.5	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	93	22.0715722656239	91.5	94	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	85.5	19.7086523437505	82	87	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	78.5	20.5570442708337	77.5	82	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	98.5	43.6497674334487	97.5	99	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	58.5	91.9072167968748	54	71.5	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	46	131.103095703125	44	54	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	22.5	91.6098567708632	21.5	32.5	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	96.5	44.0650748697935	94	97.5	
+	B10	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	99.5	47.4759743923603	99	100	
+	B11	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	81	35.6792740885429	78.5	83.5	
+	B11	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	84.5	28.181595052084	83.5	92	
+	B11	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	95	24.5585384114588	92	98	
+	B11	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	75.5	50.3369694010411	74	78.5	
+	B11	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	59	507.794095052083	55	74	
+	B11	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	51	286.721516927082	45	55	
+	B11	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	22.5	124.957285156241	22	33	
+	B12	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	97.5	55.1748003472211	95.5	99	
+	B12	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	87.5	12.2109863281247	85.5	90	
+	B12	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	22.5	89.5533658854337	21.5	32.5	
+	B12	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	47	292.293880208335	44.5	56	
+	B12	FRET		Unkn	piperazine, pH=5.5 + 200mM NaCl	59	170.521845703125	56	80.5	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	90	1.72419270833302	89.5	91.5	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	82	14.5552864583349	80.5	84.5	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	88	-1.72829101562434	87.5	89	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	86.5	-0.692858072917147	85.5	87.5	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	99.5	34.2096723090283	99	100	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	50.5	170.928427734375	43.5	56	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	59	190.5691015625	56	80.5	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	22.5	41.4754866536305	22	27	
+	C01	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	95.5	53.5796907552076	93	99	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	82.5	16.1228157552088	81	86.5	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	99.5	38.7581770833339	96	100	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	92.5	-8.6184472656239	91.5	95	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	88	1.91124023437499	86.5	89	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	74	40.3569986979163	73.5	76.5	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	59	152.98498372396	56.5	73.5	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	50.5	175.53446940104	43.5	56.5	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	77.5	43.406455078126	76.5	81	
+	C02	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	22.5	82.0977913411565	21.5	28	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	88	21.587965494791	87	92.5	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	22.5	64.9005826823129	21.5	28	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	97.5	6.26709743923516	97	98	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	86	17.8986425781247	85	87	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	71.5	110.156334635414	69.5	85	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	50.5	158.34697916667	43.5	56	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	59	160.027057291667	56	61.5	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	62.5	116.749817708333	61.5	63.5	
+	C03	FRET		Unkn	sodium MES, pH=6.0 + 50mM NaCl	66.5	128.492425130208	63.5	69.5	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	94	14.6532291666663	91.5	94.5	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	96	16.1771451822916	94.5	99	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	85.5	12.4776888020846	83.5	88	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	88.5	3.81171875000018	88	89.5	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	99.5	6.532339409722	99	100	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	81	40.0490039062502	78.5	83.5	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	58.5	135.642591145832	56.5	77.5	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	54.5	140.476243489584	46.5	56.5	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	26	94.1609928385407	22.5	30	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	31	85.0952506510416	30	36	
+	C04	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	22	88.7749218749869	21	22.5	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	88	10.927958984376	87	90	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	84.5	25.3930013020837	83.5	87	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	99.5	9.29084635416586	99	100	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	93.5	-0.992516276042238	92.5	95.5	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	98.5	6.8178038194452	96.5	99	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	55	182.802812500002	47.5	56	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	58.5	263.910719401043	56	61	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	62	156.202526041666	61	64.5	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	22.5	93.4584374999935	22	33.5	
+	C05	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	67	124.710087890625	65	82.5	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	85.5	10.5116764322897	84.5	86	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	87	14.4778125000018	86	88.5	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	92	-10.8027766927078	90.5	94.5	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	96	-4.44440429687393	94.5	98	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	81.5	49.9023600260407	80.5	84.5	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	54.5	220.036712239586	47	55.5	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	58.5	259.088183593749	56	61	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	22.5	60.3575211588666	21.5	33	
+	C06	FRET		Unkn	sodium MES, pH=6.0 + 200mM NaCl	62	184.912037760415	61	80.5	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	33.5	21.8252539062504	28.5	37.5	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	88	28.9534993489593	85.5	94	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	94.5	5.97632812499967	94	95	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	22.5	4.71292317708105	22	23	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	23.5	4.98425781250171	23	26	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	66.5	107.216279296874	65.5	69.5	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	58.5	197.28857747396	48.5	65.5	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	73.5	95.7344303385414	70	78.5	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	99.5	29.6884657118064	98	100	
+	C07	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	79.5	69.2815722656261	78.5	85	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	93.5	18.424713541667	91	94.5	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	70.5	20.5166569010427	69.5	71.5	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	78.5	11.1096256510416	77.5	81	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	82.5	3.11848632812507	81.5	85	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	87.5	9.22727213541873	86.5	89.5	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	72	20.8958756510426	71.5	77.5	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	49.5	141.547099609374	47.5	58.5	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	99.5	150.944975043403	96.5	100	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	22.5	102.357428385426	21.5	37	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	65	46.9173372395834	63	69.5	
+	C08	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	59	72.8944986979167	58.5	62.5	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	82	21.8850781250005	79.5	83	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	97.5	24.8342491319441	96.5	98.5	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	99.5	31.4614659288184	98.5	100	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	73.5	17.5063248697907	72.5	76	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	77	14.7855338541668	76	79	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	84.5	14.9989811197919	84	85.5	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	83.5	16.5554101562495	83	84	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	25	96.0012532552083	23	29.5	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	59	97.7143717447919	56.5	72.5	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	50	160.629710286459	48	56.5	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	22.5	92.7192220051915	22	23	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	94	37.7053808593752	92	96.5	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	88	47.2793229166671	85.5	92	
+	C09	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 50mM NaCl	31	79.4082177734359	29.5	37.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	31.5	20.8955794270839	27.5	34.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	90	23.7078971354173	89.5	90.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	88.5	25.7259570312507	87.5	89.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	21.5	-3.81597656250028	20.5	22.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	24.5	7.55892578125201	23	26.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	35	8.02392578124977	34.5	37.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	63	129.793896484376	62	83.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	54	155.631888020835	49	56	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	58.5	184.932041015626	56	62	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	85.5	29.0052343750006	84	87.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	93	30.6666178385424	90.5	94.5	
+	C10	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	97	33.4011979166673	94.5	100	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	98	19.2934809027772	95.5	100	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	89	27.7465364583336	86.5	95	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	31	4.41688476562535	30	31.5	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	23	15.9861458333348	21	26.5	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	83	32.1567252604178	82.5	86.5	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	59	277.936298828124	49.5	61	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	63.5	312.019498697916	61	71.5	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	79.5	37.9179394531254	78.5	82	
+	C11	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	73	63.9679329427087	71.5	78.5	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	79	7.23630533854077	78	82	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	90.5	8.12465169270786	89	92	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	83	0.81961588541833	82	83.5	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	95.5	5.60472330729158	94.5	96	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	31	9.56406901041714	29.5	32	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	69	21.7115983072929	67	73.5	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	54	297.340807291667	48.5	67	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	75	13.252851562502	74	78	
+	C12	FRET		Unkn	trisodium citrate - citric acid, pH=6.0 + 200mM NaCl	22.5	15.3632031250136	21.5	25	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	77	2.85529622395825	76	78	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	81	4.8950683593763	79.5	82	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	78.5	2.80463216145859	78	79.5	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	86	2.85169596354353	84.5	87	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	99.5	101.522137586805	87	100	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	45.5	140.797301432294	43	68.5	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	72	10.305680338543	68.5	76	
+	D01	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	22.5	80.4802132161425	22	31.5	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	92.5	3.78133138020814	92	94	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	87.5	5.0411197916668	85.5	89	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	82	-2.79926432291711	80	83.5	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	96	0.325042317708039	95.5	96.5	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	74	11.0817187500019	72	75.5	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	59	74.31880859375	58	70	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	46.5	117.964876302084	43	57	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	99.5	14.6700086805548	97	100	
+	D02	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	22.5	32.2630419922033	21.5	28.5	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	99.5	38.8872580295148	95.5	100	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	78.5	43.7625878906247	76	87	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	94.5	8.88201822916733	93	95.5	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	88.5	16.6287825520839	87	90.5	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	59	156.869407552084	56	72.5	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	47	193.587965494793	43	56	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	73.5	51.4912109374999	72.5	76	
+	D03	FRET		Unkn	bis-tris chloride, pH=6.5 + 50mM NaCl	22.5	56.5561181640384	22	29.5	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	90	32.3185807291679	89	93.5	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	27	37.0831673177081	23.5	28.5	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	22.5	29.0600878906358	21.5	23.5	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	94.5	14.2425195312527	93.5	96	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	98.5	15.222591507523	96	100	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	31	40.523746744791	28.5	35	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	68	155.983004557293	65	78	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	58.5	170.618476562499	48	61	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	64	136.321992187499	61	65	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	84	67.7200976562503	81.5	89	
+	D04	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	79	89.3387337239594	78	81.5	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	99.5	2.0746440972224	98.5	100	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	88.5	6.07210286458371	87	89.5	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	94	-6.91979817708386	92	95.5	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	83.5	-2.80264973958208	82.5	86	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	58.5	150.186276041667	56	65.5	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	49	188.489993489584	47	56	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	22.5	37.7817464192707	22	33	
+	D05	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	66.5	70.3687662760406	65.5	80.5	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	87	17.9189029947921	85	88.5	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	95.5	26.0256868489585	93.5	99	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	99.5	12.6390538194449	99	100	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	77.5	14.9843587239567	76.5	78.5	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	91	30.7812369791665	88.5	93.5	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	58.5	188.529788411458	56	76.5	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	49	244.194999999996	47	56	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	81	32.8009147135396	78.5	84	
+	D06	FRET		Unkn	bis-tris chloride, pH=6.5 + 200mM NaCl	22.5	97.0354524739518	22	35	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	94.5	14.0166048177077	92.5	95.5	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	96	14.5076367187498	95.5	97.5	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	83	9.29196940104146	81.5	84.5	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	91.5	-3.44837239583239	90.5	92	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	88	-1.32861979166785	85.5	90.5	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	49.5	225.644329427084	47	55.5	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	58.5	232.480221354168	55.5	62	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	63	141.960986328125	62	76.5	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	77.5	15.9641569010428	76.5	79.5	
+	D07	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	22.5	92.4008072916639	22	35	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	92.5	14.6940364583335	90.5	93.5	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	94	16.9834440104161	93.5	96.5	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	81.5	23.5302636718731	79	84	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	78.5	12.8258496093746	77.5	79	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	86.5	2.89165690104142	85.5	87	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	84.5	3.97073567708321	84	85.5	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	88	10.2354817708359	87	90	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	26.5	132.426328124999	22.5	30	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	58.5	181.737991536458	56	68.5	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	49.5	225.015214843748	47	56	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	22	124.388476562496	21	22.5	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	99.5	33.4500748697918	96.5	100	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	69.5	58.6530110677102	68.5	77.5	
+	D08	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	30.5	112.534388020833	30	36.5	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	82	52.6109700520841	80.5	84.5	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	99.5	78.8204177517362	97.5	100	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	31.5	105.852187499999	22.5	37	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	22	22.552734374981	21	22.5	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	86	29.6218815104173	84.5	89	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	94.5	38.5296419270825	89.5	96.5	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	71.5	139.639153645835	67	74	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	52.5	172.969915364584	47	56	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	58.5	213.482428385416	56	61.5	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	62	116.667519531247	61.5	63	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	64	131.061455078126	63	67	
+	D09	FRET		Unkn	ADA, pH=6.5 + 50mM NaCl	75	132.797194010416	74	80.5	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	88.5	32.5765592447912	86.5	90.5	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	78.5	34.0969824218743	77.5	81	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	82.5	26.2764062499992	81	86.5	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	32	-15.921852213541	28	45	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	22.5	4.47490885414834	22	24.5	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	52.5	205.886168619791	48.5	56	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	58.5	218.832356770832	56	67	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	69.5	97.0415559895813	67	77.5	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	93.5	38.0328190104168	90.5	96.5	
+	D10	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	99.5	49.9601182725692	97.5	100	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	34	25.8770930989591	33.5	39	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	98.5	26.9870634403936	96	100	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	22.5	2.99613606771356	21.5	23	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	23.5	3.05392252604281	23	25	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	32	28.2424804687502	29	33.5	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	68.5	155.052138671876	66	73	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	59	272.66405924479	49	66	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	89.5	39.9548697916663	83.5	96	
+	D11	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	75	62.6022656249991	73	83.5	
+	D12	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	31	30.9501367187498	28.5	37	
+	D12	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	79.5	20.0573795572909	77.5	89.5	
+	D12	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	93	17.0714518229156	90.5	94.5	
+	D12	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	99	32.0804011140043	97	100	
+	D12	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	55.5	316.276637369793	49	67	
+	D12	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	68	51.8664583333344	67	77.5	
+	D12	FRET		Unkn	ADA, pH=6.5 + 200mM NaCl	22.5	44.3986132812405	22	28.5	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	96	51.2664941406249	92	100	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	63.5	91.8236979166666	62	66	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	80	51.1062955729159	77.5	84	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	90	21.252991536459	87.5	91.5	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	85	28.9339518229154	84	87.5	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	46	136.822486979165	43	54.5	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	59	142.521383463545	56.5	62	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	22.5	128.972392578121	22	31.5	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	55.5	100.604261067711	54.5	56.5	
+	E01	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	68.5	100.958170572915	66	77.5	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	97	15.2981673177086	94.5	98	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	84	21.2785611979192	81.5	87.5	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	88.5	7.40011393229156	88	89	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	91.5	12.0899283854167	89	94.5	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	47.5	173.853235677087	42.5	56	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	59	189.494293619791	56	72.5	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	73.5	57.250830078127	72.5	80.5	
+	E02	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	22.5	79.1631429036319	22	29.5	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	93	12.4155794270832	89.5	95.5	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	96.5	23.3014518229161	95.5	98.5	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	88.5	1.03848307291764	87.5	89	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	84	9.68659830729109	82	87.5	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	59	145.669205729163	56	70.5	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	47.5	148.411829427083	43	56	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	73	41.1638476562499	70.5	80	
+	E03	FRET		Unkn	imidazole, pH=7.0 + 50mM NaCl	22.5	97.5081933593557	22	29	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	79	6.79564453125033	77.5	80	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	82.5	10.4606412760427	81.5	84	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	81	5.50890299479283	80	81.5	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	91.5	-0.484925130208694	89	94	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	86.5	3.81159830729007	85.5	87	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	58.5	76.9022558593762	56.5	77.5	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	48	146.966774088543	46	56.5	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	22.5	57.3713850911738	21.5	34	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	98	11.4334613715283	97.5	100	
+	E04	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	97	13.19546549479	96	97.5	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	30	14.4564729817714	29	33	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	88.5	17.2233170572928	88	90.5	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	93.5	20.650260416666	91.5	97	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	78.5	-0.714557291666779	77.5	81	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	85	0.345533854167343	84.5	86	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	73.5	11.4827018229188	72.5	76	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	53.5	47.041432291665	52.5	56	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	58.5	49.8283593750016	56	62.5	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	48	76.7448111979161	46	52.5	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	63.5	21.0779199218755	63	72	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	99.5	24.3029416232644	97	100	
+	E05	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	22.5	35.1444840494953	21.5	29	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	22.5	52.7051139323019	21.5	30.5	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	85	60.2679915364572	83.5	89	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	91.5	46.9771842447924	89	94.5	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	99	17.2823271122702	97	100	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	95.5	20.8212955729166	94.5	97	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	58.5	261.54420572917	56	61.5	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	47	324.190735677083	44.5	56	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	63.5	199.48939453125	61.5	70	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	73	125.301578776043	70	74.5	
+	E06	FRET		Unkn	imidazole, pH=7.0 + 200mM NaCl	78	184.288063151043	74.5	83.5	
+	E07	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	59.5	77.3797591145835	57	61	
+	E07	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	22.5	56.1235693359306	22	33	
+	E07	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	99.5	38.1584179687522	99	100	
+	E07	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	70.5	166.682604166667	66.5	71.5	
+	E07	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	72.5	155.83958984375	71.5	99	
+	E07	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	64.5	141.371145833334	61	66.5	
+	E08	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	99.5	36.7569270833326	93	100	
+	E08	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	81	20.940777994791	80	86.5	
+	E08	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	88	8.69673828124962	86.5	92	
+	E08	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	75	39.4800195312512	73.5	80	
+	E08	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	48	157.208180338545	43	56.5	
+	E08	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	59	137.676315104166	56.5	73.5	
+	E08	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	22.5	59.6026529948233	21.5	29	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	94.5	33.3864062500016	92.5	95	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	96	39.5183919270844	95	98	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	82	14.7810091145838	81	82.5	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	85.5	20.0412825520841	82.5	90	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	49	87.656653645834	43	56.5	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	59	89.5667708333322	56.5	68.5	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	71	41.2525683593761	68.5	81	
+	E09	FRET		Unkn	sodium MOPS, pH=7.0 + 50mM NaCl	22.5	49.5949137369731	22	29	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	94	32.1365201822927	90.5	94.5	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	77.5	47.7961914062494	75	80.5	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	83	31.8362597656245	80.5	85.5	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	86	16.6789615885417	85.5	86.5	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	89.5	27.8272753906243	86.5	90.5	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	72.5	49.9107096354192	70	75	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	58.5	145.367356770833	56.5	70	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	49	169.753577473957	47	56.5	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	22.5	102.386705729175	21.5	29.5	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	97.5	50.4126215277768	94.5	100	
+	E10	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	30.5	56.7831738281259	29.5	35.5	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	30.5	29.1254443359369	29.5	34	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	90	30.001191406251	88	92	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	74.5	23.7736848958332	71.5	78	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	81	28.0652669270833	78	82.5	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	85.5	35.9201660156256	82.5	88	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	58.5	108.936005859376	55.5	71.5	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	48.5	137.526975911458	46.5	55	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	94.5	43.2394759114584	92	100	
+	E11	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	22.5	75.4663313802051	22	29.5	
+	E12	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	80.5	16.0935970052086	78	88	
+	E12	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	94.5	11.7566861979167	92	97	
+	E12	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	31	78.9636816406243	28.5	37.5	
+	E12	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	50.5	294.998955078125	47	78	
+	E12	FRET		Unkn	sodium MOPS, pH=7.0 + 200mM NaCl	22.5	90.9769726562582	21.5	28.5	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	87	17.3636328124984	84	89.5	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	92.5	21.9742708333341	89.5	93	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	83.5	9.79758138020838	83	84	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	80	11.1164160156233	79.5	82.5	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	72.5	25.1925162760433	70.5	79.5	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	58	97.2104720052087	57	70.5	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	46	184.15921549479	42.5	57	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	97.5	57.150193142361	93	100	
+	F01	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	22.5	60.8820019531196	22	30	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	94	17.2834798177088	92.5	95.5	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	99	24.7867078993033	97	100	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	88.5	13.4506803385435	86.5	89.5	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	84	16.1096549479157	83	86.5	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	82	24.8906510416673	79.5	83	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	59	133.097314453126	56.5	66.5	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	47	166.482545572919	42.5	56.5	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	22.5	38.6251790364718	21.5	27.5	
+	F02	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	69	80.3926888020826	66.5	79.5	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	83.5	20.1911360677083	82	85.5	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	97	28.969511718749	96.5	98.5	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	87	-2.02024088541714	86	88	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	90.5	19.0939876302086	90	92	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	96	31.9092675781262	94	96.5	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	57.5	145.687711588542	56.5	60.5	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	47.5	177.148323567706	42	56.5	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	22.5	85.0629541015755	21.5	29	
+	F03	FRET		Unkn	sodium HEPES, pH=7.5 + 50mM NaCl	61	118.444104817709	60.5	81	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	91.5	16.5654231770834	90.5	94	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	99.5	18.0277549913197	99	100	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	96.5	24.4679524739586	94	98.5	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	89.5	7.2144563802085	89	90.5	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	88	11.1721972656248	85	89	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	82.5	14.7882584635414	79.5	84.5	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	74	41.9813216145832	73.5	78.5	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	58.5	173.155787760416	56	73.5	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	51.5	174.04076171875	50.5	56	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	49	177.747317708338	46.5	50.5	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	22	73.60097656252	21	22.5	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	27	90.3740559895828	22.5	29	
+	F04	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	31	91.4855794270842	29	37	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	22	38.3675781249813	21	22.5	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	78.5	44.4705468749989	77	86.5	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	92	22.2173144531239	86.5	94.5	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	99.5	36.9218891059027	94.5	100	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	74	75.3464648437507	72	77	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	52.5	141.573749999999	46.5	56	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	58.5	163.463365885416	56	64	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	66.5	97.857587890627	64	72	
+	F05	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	31.5	119.555839843749	22.5	37.5	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	89.5	23.3626920572901	88.5	90.5	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	72.5	24.0106575520844	71.5	75	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	93.5	27.3891666666675	92	96	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	91	21.136009114582	90.5	92	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	88	10.4423925781243	87	88.5	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	84	18.5769824218773	83.5	87	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	83	20.082431640625	80	83.5	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	22.5	100.818834635419	22	34.5	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	58.5	121.912747395835	56	66	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	48	149.70580078125	46.5	56	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	99.5	39.1749728732632	96	100	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	77.5	28.9535026041655	75	80	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	68.5	35.293470052083	68	71.5	
+	F06	FRET		Unkn	sodium HEPES, pH=7.5 + 200mM NaCl	67.5	35.6310872395827	66	68	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	82	47.5372656249994	79.5	85.5	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	77	61.5709309895814	75.5	79.5	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	88	30.6574446614585	85.5	89.5	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	96	20.1704101562486	94	98	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	90.5	24.5072102864598	89.5	94	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	58.5	178.1922265625	55.5	61	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	48	188.514368489582	46	55.5	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	62	119.325608723957	61	75.5	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	99.5	72.7928808593756	98	100	
+	F07	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	22.5	83.8360677083423	21.5	33.5	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	83.5	44.528561197915	81.5	88	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	31	67.947607421874	29.5	35.5	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	22	69.4800390624915	21	23	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	99.5	33.0347243923602	97	100	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	94.5	35.1832617187505	92.5	97	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	89.5	39.103492838542	88.5	92.5	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	67.5	83.4955110677081	65.5	71	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	51	114.647350260416	46.5	53	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	58.5	168.625957031254	53	65.5	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	78.5	70.1049414062519	76	81.5	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	26.5	75.1260709635422	23	29	
+	F08	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	73	76.7322167968753	71	76	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	99.5	18.5765624999995	98.5	100	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	77	22.0416048177091	76.5	82	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	73.5	28.8639290364574	72.5	76	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	91	13.7663639322918	90	93.5	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	85	16.0666861979183	82.5	86.5	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	87.5	16.3863899739595	86.5	90	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	59	47.8272395833343	57	62.5	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	22.5	59.5426041666645	22	33.5	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	47	96.1308300781261	45.5	57	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	96	29.2892871093744	93.5	98.5	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	70	35.0681087239573	67.5	72.5	
+	F09	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 50mM NaCl	63.5	36.3027734374998	62.5	67.5	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	90.5	46.3057194010431	88	93	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	99.5	56.5191623263894	98	100	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	95.5	37.366093749999	93	98	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	85.5	32.3271744791663	84	88	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	82	35.3462337239584	77.5	84	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	68	67.931689453126	65.5	77.5	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	58.5	102.388805338542	56.5	65	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	49.5	147.7285546875	47.5	54	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	54.5	93.3274707031226	54	56.5	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	22.5	81.5666796875159	21.5	24.5	
+	F10	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	31	93.2337369791679	24.5	38.5	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	24	50.5990983072908	22.5	28	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	96.5	52.2994563802073	95	100	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	31	43.7536979166672	28	35.5	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	22	47.7537109375158	21	22.5	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	89.5	67.0131347656256	87	94	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	64.5	166.031722005207	61.5	68.5	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	59	188.218385416666	49	61.5	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	77.5	100.588421223957	76.5	87	
+	F11	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	71	132.288362630206	68.5	76.5	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	86.5	2.67765950520823	85	88	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	70	26.0926725260432	69	78.5	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	82	2.28242513020905	81	83.5	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	97	-10.6688509114563	95	99.5	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	92.5	1.0687825520821	92	95	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	59	180.24944986979	58	69	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	52	335.153841145833	48	58	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	31	105.605654296877	28.5	38	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	22	93.6642187500024	21	22.5	
+	F12	FRET		Unkn	Na2H/KH2 phosphate, pH=7.5 + 200mM NaCl	24	101.453515625	22.5	28.5	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	92	75.7431705729185	89	94.5	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	22.5	80.7722460937296	22	29	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	87.5	59.0640006510412	85	89	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	74	73.0810091145827	71.5	85	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	99.5	88.2235883246519	98.5	100	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	64	118.999593098958	63	71.5	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	59	142.933365885414	51.5	63	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	97	91.5073763020823	94.5	98.5	
+	G01	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	47.5	107.382467447916	42.5	51.5	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	98	41.3091992187494	95.5	99	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	82.5	53.4915690104151	80	89	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	91.5	39.9644173177095	90.5	92.5	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	90	24.5983430989578	89	90.5	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	93	39.0210286458331	92.5	95.5	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	58.5	144.67083984375	56.5	69	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	50.5	200.722057291669	49	56.5	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	72.5	77.7866113281261	70	74.5	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	75.5	64.8560416666669	75	80	
+	G02	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	22.5	76.2996956380166	22	35	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	74.5	19.7035188802072	72	79	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	90	29.9055826822911	87.5	91	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	80	8.12415690104092	79.5	81	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	85	15.1598111979157	81	87	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	51	48.8465397135421	49.5	56	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	99.5	50.8875249565961	91	100	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	22.5	52.4400309244738	22	27.5	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	47.5	49.1558496093783	42.5	49	
+	G03	FRET		Unkn	tris chloride, pH=8.0 + 50mM NaCl	59	50.197688802084	56.5	72	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	68	20.2050683593758	67	70.5	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	92	26.7568847656246	89	95	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	82	15.5983626302065	79.5	84.5	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	85	8.41988281249974	84.5	85.5	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	87	11.1053385416657	85.5	88	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	22.5	87.5631608072888	22	33	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	46.5	91.5009277343747	45	57	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	98	51.7939702690993	95	99	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	73.5	27.0766178385406	70.5	78.5	
+	G04	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	57.5	43.5712044270824	57	67	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	97	33.909609374999	95	99	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	80.5	41.3103320312507	78.5	83	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	76.5	43.194293619791	75	78.5	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	92	25.6056966145836	91	93.5	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	84	29.4703059895847	83	86.5	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	88.5	30.9310221354177	86.5	91	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	52.5	59.9874186197931	50	53	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	58.5	85.6079134114573	54	64.5	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	22.5	120.813470052071	22	34	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	67	53.269606119791	64.5	68	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	70.5	56.0525325520844	68	75	
+	G05	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	49	59.4890917968751	45.5	50	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	29.5	37.3113525390618	28	32.5	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	69	43.9061002604166	67	71.5	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	94	31.0460904947919	92.5	96	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	87	20.5474121093743	84.5	91	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	78.5	21.6858235677091	75.5	81	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	72.5	45.5352408854176	71.5	75.5	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	22.5	96.0235742187505	21.5	28	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	47	140.420566406249	45	58	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	59	59.9672428385429	58	63	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	63.5	45.827929687498	63	67	
+	G06	FRET		Unkn	tris chloride, pH=8.0 + 200mM NaCl	99.5	55.0258322482651	96	100	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	78	23.802509765625	76.5	79	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	81	25.022942708334	79	86.5	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	75.5	28.6235839843768	73	76.5	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	87	18.1628808593761	86.5	89.5	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	63	22.2066243489578	62.5	67	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	70.5	23.0521809895828	67.5	73	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	22.5	82.6150651041955	21.5	28	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	52	96.0322656250028	51.5	62.5	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	46	121.537584635415	41	51.5	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	99	43.4787080439829	98.5	99.5	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	92	45.4808138020828	89.5	96.5	
+	G07	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	98	48.8292881944436	96.5	98.5	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	91	20.5951041666667	90	93.5	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	75	22.4790266927089	72.5	77.5	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	67.5	19.9160970052095	65	68.5	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	63.5	18.1267252604173	62.5	65	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	70.5	19.4698925781223	70	72.5	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	80	30.8195963541671	77.5	85	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	22.5	46.185533854164	22	26.5	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	45	72.3199739583345	41	56	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	96	40.862854817708	93.5	98	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	87.5	32.1132617187492	85	90	
+	G08	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	58.5	37.8910481770821	56	61.5	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	86	28.8740917968746	83.5	88	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	79.5	29.3002994791659	77	83.5	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	94	33.5526204427085	91.5	96	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	89	19.5644954427104	88	90	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	90.5	19.9860188802069	90	91.5	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	75.5	24.5479850260413	74.5	77	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	58.5	128.742275390624	56	67	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	46	143.197483723959	41	54.5	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	99.5	171.647891710068	98	100	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	68	52.0557877604175	67	74.5	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	22.5	57.4505485026133	21.5	27	
+	G09	FRET		Unkn	glycyl-glycine, pH=8.5 + 50mM NaCl	55	106.971790364582	54.5	56	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	82.5	35.9219042968759	81	85	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	78.5	57.0265234374995	77.5	81	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	96	57.6970312500013	94.5	99	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	93.5	34.7906542968752	90.5	94.5	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	89.5	11.5684277343757	89	90.5	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	99.5	22.6914431423603	99	100	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	85.5	25.1122363281246	85	89	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	26.5	136.346227213541	22.5	29	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	48.5	153.459101562499	45.5	56	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	58.5	160.320458984373	56	61.5	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	30.5	122.302923177084	29	35	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	62	116.174791666666	61.5	62.5	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	22	117.53371093748	21	22.5	
+	G10	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	65	122.252750651041	62.5	77.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	67.5	31.2404492187486	65	70	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	79	41.9047721354149	75	82.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	85.5	28.2644856770834	83	88	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	72.5	25.4750976562476	70	74.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	90.5	26.8496809895843	88	92.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	46.5	103.528391927086	45	51.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	22.5	128.553706054669	22	33.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	52	74.1315852864595	51.5	56.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	97.5	48.6539746093753	92.5	99.5	
+	G11	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	59	70.4925846354165	56.5	65	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	69	32.2844173177107	66.5	71.5	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	88	33.1621809895836	86	95	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	81	34.8162500000003	78.5	83.5	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	77.5	30.1695117187522	75	78.5	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	72.5	30.2791243489592	71.5	75	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	85	30.9981152343759	84	85.5	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	56	90.1517740885405	54	58	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	22.5	94.9423828125043	21.5	32.5	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	46.5	100.74628580729	45	50	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	99.5	47.8096950954852	95	100	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	52.5	82.8836588541667	50	54	
+	G12	FRET		Unkn	glycyl-glycine, pH=8.5 + 200mM NaCl	58.5	87.1666438802081	58	66	
+	H01	FRET		Unkn	Sample Control	22.5	38.3699446614594	22	29	
+	H01	FRET		Unkn	Sample Control	84	44.5282128906243	83.5	85.5	
+	H01	FRET		Unkn	Sample Control	76.5	29.4749967447945	71.5	80	
+	H01	FRET		Unkn	Sample Control	66	14.5711751302081	65	68	
+	H01	FRET		Unkn	Sample Control	30	18.3473014322907	29	32.5	
+	H01	FRET		Unkn	Sample Control	92.5	123.22890625	85.5	98	
+	H01	FRET		Unkn	Sample Control	99.5	166.551127387153	98	100	
+	H01	FRET		Unkn	Sample Control	47.5	110.833587239583	45.5	56	
+	H01	FRET		Unkn	Sample Control	83	47.1906998697921	80	83.5	
+	H01	FRET		Unkn	Sample Control	58.5	55.9505143229164	56	65	
+	H02	FRET		Unkn	Sample Control	85	53.0042480468757	72	85.5	
+	H02	FRET		Unkn	Sample Control	58.5	68.783085937499	56.5	61.5	
+	H02	FRET		Unkn	Sample Control	66.5	20.1246191406246	65.5	71.5	
+	H02	FRET		Unkn	Sample Control	62	37.715791015627	61.5	65.5	
+	H02	FRET		Unkn	Sample Control	22.5	69.6794498697716	22	33.5	
+	H02	FRET		Unkn	Sample Control	93	112.240800781251	85.5	95	
+	H02	FRET		Unkn	Sample Control	96.5	117.524641927084	95	99	
+	H02	FRET		Unkn	Sample Control	99.5	89.6880707465267	99	100	
+	H02	FRET		Unkn	Sample Control	47.5	108.193834635418	45.5	56.5	
+	H03	FRET		Unkn	Sample Control	84.5	41.6652246093745	82.5	86	
+	H03	FRET		Unkn	Sample Control	59	47.772623697917	56.5	62	
+	H03	FRET		Unkn	Sample Control	67	41.3364648437509	65	73.5	
+	H03	FRET		Unkn	Sample Control	77.5	35.8300195312497	73.5	82.5	
+	H03	FRET		Unkn	Sample Control	63	40.4031542968742	62	65	
+	H03	FRET		Unkn	Sample Control	94	103.758330078125	91	95.5	
+	H03	FRET		Unkn	Sample Control	97.5	107.349116753471	95.5	100	
+	H03	FRET		Unkn	Sample Control	47.5	99.278968098959	46	56.5	
+	H03	FRET		Unkn	Sample Control	22.5	50.6049739583467	21.5	32	
+	H03	FRET		Unkn	Sample Control	89.5	72.0334277343759	86	91	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	79	37.9979329427078	76	82.5	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	22.5	44.4928824869908	21.5	25.5	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	72.5	37.8781738281259	68.5	75	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	66	31.7525260416669	63.5	68	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	75.5	35.0123535156229	75	76	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	51	55.1218815104153	50	55	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	46.5	68.5038476562509	43.5	50	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	94.5	82.367483723958	91.5	99	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	59	66.0592708333322	55	63	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	89.5	55.2320507812506	83	91.5	
+	H04	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	99.5	60.1413487413188	99	100	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	69	56.3881184895843	68	73.5	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	22.5	57.4718457031109	22	24.5	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	88	40.3966113281259	83.5	90.5	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	76	48.5702766927091	73.5	83.5	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	58.5	124.561767578126	53.5	68	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	49	126.4940625	41	53.5	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	99.5	64.8084418402775	99	100	
+	H05	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	95.5	83.5838834635412	90.5	98	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	75.5	26.7067643229179	75	79	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	71	33.1688183593739	70	75	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	84	23.9757617187497	83	85.5	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	80.5	25.026819661457	79.5	83	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	66.5	38.2861946614598	64	70	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	58.5	100.785130208333	53.5	64	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	99.5	177.588421223959	85.5	100	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	22.5	59.9538053385343	22	25	
+	H06	FRET		Unkn	CHES, pH=9.0 + 50mM NaCl	48	90.1991894531254	41	53	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	78	34.0942285156253	74.5	80.5	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	22.5	38.4018652343731	22	29.5	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	82.5	30.2232942708345	80.5	85	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	30	5.65969726562571	29.5	31	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	86	30.0178580729175	85	87	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	71	42.9849316406247	70	74	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	58.5	94.2554101562489	56	61.5	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	45	155.510553385414	42	55	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	62	65.2194791666677	61.5	70	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	99.5	54.2292241753482	99	100	
+	H07	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	96.5	55.859765624999	87	99	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	83	56.6554166666675	78	86.5	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	70.5	72.1442024739576	68.5	78	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	89.5	43.1777506510408	87	92	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	30	56.5462760416674	28.5	32.5	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	99.5	155.592501085068	92.5	100	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	58.5	187.54625	56	68.5	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	22.5	75.540423177038	22	28.5	
+	H08	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	51.5	136.721256510418	43.5	56	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	70.5	31.2089322916677	65.5	73.5	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	98	59.0420659722229	90.5	100	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	81.5	30.2984667968743	77	85.5	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	89.5	29.604918619791	85.5	90.5	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	74	29.8255957031251	73.5	77	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	53.5	114.434150390622	52	57	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	45	138.862207031248	42.5	52	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	60	104.352337239582	57	65.5	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	30	65.3319303385426	28.5	32.5	
+	H09	FRET		Unkn	CHES, pH=9.0 + 200mM NaCl	23.5	90.6463964843734	21.5	28.5	
+	H10	FRET		Unkn	Dye Only	84.5	0.316863606770653	84	85.5	
+	H10	FRET		Unkn	Dye Only	52	0.0261490885423541	51.5	52.5	
+	H10	FRET		Unkn	Dye Only	71	0.3756103515625	70.5	71.5	
+	H10	FRET		Unkn	Dye Only	54	0.612006835938246	53	54.5	
+	H10	FRET		Unkn	Dye Only	88.5	0.411355794271572	87.5	89	
+	H10	FRET		Unkn	Dye Only	86.5	-0.115304361978929	85.5	87	
+	H10	FRET		Unkn	Dye Only	77	-1.61299153645888	74.5	78	
+	H10	FRET		Unkn	Dye Only	67.5	-2.03127278645889	67	68.5	
+	H10	FRET		Unkn	Dye Only	64.5	-1.39509765625024	63.5	65	
+	H10	FRET		Unkn	Dye Only	66	-1.09807291666675	65	67	
+	H10	FRET		Unkn	Dye Only	80	-1.18374348958389	78	81	
+	H10	FRET		Unkn	Dye Only	55.5	0.830558268229254	54.5	56.5	
+	H10	FRET		Unkn	Dye Only	97	8.86455729166647	94	100	
+	H10	FRET		Unkn	Dye Only	45.5	5.37338378906253	43	46.5	
+	H10	FRET		Unkn	Dye Only	40.5	10.4082714843739	38.5	43	
+	H10	FRET		Unkn	Dye Only	22.5	37.1588981119603	22	28.5	
+	H10	FRET		Unkn	Dye Only	31	28.0874023437499	28.5	38	
+	H10	FRET		Unkn	Dye Only	49	3.99518880208331	48	51.5	
+	H10	FRET		Unkn	Dye Only	59	1.44363932291691	58.5	60	
+	H10	FRET		Unkn	Dye Only	61	1.13545247395842	60	62	
+	H10	FRET		Unkn	Dye Only	92	1.47656901041626	90.5	93	
+	H10	FRET		Unkn	Dye Only	47	3.5475472005204	46.5	48	
+	H10	FRET		Unkn	Dye Only	57.5	1.647127278646	56.5	58.5	
+	H11	FRET		Unkn	Dye Only	57	1.69818359375085	56	57.5	
+	H11	FRET		Unkn	Dye Only	55	1.30111165364553	54	56	
+	H11	FRET		Unkn	Dye Only	58.5	2.28802408854159	57.5	59.5	
+	H11	FRET		Unkn	Dye Only	47	2.05175292968795	46	47.5	
+	H11	FRET		Unkn	Dye Only	62.5	-0.03848795572884	61.5	65	
+	H11	FRET		Unkn	Dye Only	65.5	-1.3411523437494	65	66.5	
+	H11	FRET		Unkn	Dye Only	76	-1.842379557291	74	79	
+	H11	FRET		Unkn	Dye Only	71	-0.455935872395173	66.5	73.5	
+	H11	FRET		Unkn	Dye Only	81.5	-1.25795410156377	79	82.5	
+	H11	FRET		Unkn	Dye Only	49	3.62435384114451	47.5	54	
+	H11	FRET		Unkn	Dye Only	27.5	19.2818815104174	26	28.5	
+	H11	FRET		Unkn	Dye Only	99	11.6274571397566	98.5	100	
+	H11	FRET		Unkn	Dye Only	22.5	29.2791503906257	22	26	
+	H11	FRET		Unkn	Dye Only	31	24.9059456380209	28.5	35	
+	H11	FRET		Unkn	Dye Only	98	10.8556640625006	96.5	98.5	
+	H11	FRET		Unkn	Dye Only	35.5	6.95227701822955	35	38	
+	H11	FRET		Unkn	Dye Only	39	5.41380208333385	38.5	46	
+	H11	FRET		Unkn	Dye Only	88	9.40889160156303	84.5	90.5	
+	H11	FRET		Unkn	Dye Only	93.5	9.07241048177042	90.5	96.5	
+	H12	FRET		Unkn	Dye Only	58.5	1.23405761718755	58	59.5	
+	H12	FRET		Unkn	Dye Only	76	1.13731445312533	75	77	
+	H12	FRET		Unkn	Dye Only	80	2.03350585937454	77	82	
+	H12	FRET		Unkn	Dye Only	86.5	2.19995930989518	85.5	87	
+	H12	FRET		Unkn	Dye Only	99.5	2.1399148220487	99	100	
+	H12	FRET		Unkn	Dye Only	66	-0.154296875000398	65.5	67.5	
+	H12	FRET		Unkn	Dye Only	60.5	-0.993636067708849	60	61.5	
+	H12	FRET		Unkn	Dye Only	64	0.245851236979036	63.5	65	
+	H12	FRET		Unkn	Dye Only	57.5	1.02039550781217	56.5	58	
+	H12	FRET		Unkn	Dye Only	63	0.346630859375239	62.5	63.5	
+	H12	FRET		Unkn	Dye Only	92.5	2.48001953124981	91.5	93	
+	H12	FRET		Unkn	Dye Only	45.5	5.06034993489567	42	49.5	
+	H12	FRET		Unkn	Dye Only	70.5	4.32594726562468	68.5	73.5	
+	H12	FRET		Unkn	Dye Only	38	7.22845865885267	35	42	
+	H12	FRET		Unkn	Dye Only	22.5	36.1803727213464	22	28	
+	H12	FRET		Unkn	Dye Only	30.5	25.4869026692703	28.5	34.5	
+	H12	FRET		Unkn	Dye Only	84.5	2.93564778645822	82	85.5	
+	H12	FRET		Unkn	Dye Only	94	2.58824707031238	93	95	
+	H12	FRET		Unkn	Dye Only	96	3.05072428385392	95	98	
+	H12	FRET		Unkn	Dye Only	89.5	4.21895345051996	87	91.5	
+	H12	FRET		Unkn	Dye Only	52	3.65921061197878	50	56.5	
