@@ -638,7 +638,7 @@ class DSFAnalysis:
                             
                         meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                         
-            plt.axis([20,100,0.001,0.015])
+            plt.ylim(1/(plt.xlim()[1]-plt.xlim()[0])/10,1/(plt.xlim()[1]-plt.xlim()[0])*2)
             plt.gca().axes.get_yaxis().set_visible(False)
             imgdata = cStringIO.StringIO()
             fig3.savefig(imgdata, format='png',dpi=140)
@@ -914,11 +914,13 @@ class DSFWell:
         self.name = fluorescenceSeries.name
         self.temperatures = fluorescenceSeries.index
         self.fluorescence = [x for x in fluorescenceSeries]
+
+        stepSize = self.temperatures[1]-self.temperatures[0]
         
         #the curve is then normalised to have an area below the curve of 1
         count = 0
         for height in self.fluorescence:
-            count += height
+            count += height*stepSize
         self.fluorescence = [x / count for x in self.fluorescence]
         
         #the forgive monotonic threshold depends on the normalisation of the curve
