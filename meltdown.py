@@ -766,11 +766,14 @@ class DSFPlate:
         
         #condition names (the buffer solutions) are imported. 2nd col
         conditionNames = contentsTxt['Condition Variable 1']
+        #empty cells are read in as np.nan (type float) and are converted to ''
+        conditionNames = [str(x) if not type(x)==float  else '' for x in conditionNames]
         
         #checks contents map for a salt column. 3rd col
         try:
             conditionSalts = contentsTxt['Condition Variable 2']
-            conditionSalts = [str(x) if not(type(x)==float or math.isnan(x)) else '' for x in conditionSalts]#TODO check this line and the 2 below work
+            #empty cells are read in as np.nan (type float) and are converted to ''
+            conditionSalts = [str(x) if not type(x)==float  else '' for x in conditionSalts]#TODO check this line and the 2 below work
         except KeyError:
             conditionSalts = []
             for i in range(len(conditionWellNames)):
@@ -783,7 +786,8 @@ class DSFPlate:
         #checks contents map for a pH column. 4th col
         try:
             conditionPhs = contentsTxt['pH']
-            conditionPhs = [int(x) if not math.isnan(x) else '' for x in conditionPhs]
+            #empty cells are read in as np.nan and are converted to ''
+            conditionPhs = [float(x) if not math.isnan(x) else '' for x in conditionPhs]
         except KeyError:
             conditionPhs = []
             for i in range(len(conditionWellNames)):
@@ -797,6 +801,7 @@ class DSFPlate:
         #checks contents map for a d(pH)/dT column. #5th col
         try:
             conditiondpHdT = contentsTxt['d(pH)/dT']
+            #empty cells are read in as np.nan and are converted to ''
             conditiondpHdT = [float(x) if not math.isnan(x) else '' for x in conditiondpHdT]
         except KeyError:
             conditiondpHdT=[]
@@ -810,6 +815,7 @@ class DSFPlate:
         #checks contents map for a control column. #6th col
         try:
             conditionIsControl = contentsTxt['Control']
+            #empty cells are read in as np.nan and are converted to ''
             conditionIsControl = [int(x) if not math.isnan(x) else '' for x in conditionIsControl]
         except KeyError:
             conditionIsControl = []
