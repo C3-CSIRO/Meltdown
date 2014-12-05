@@ -36,12 +36,10 @@
 
 import math
 import pandas
-import xlrd
 import Tkinter, tkFileDialog, tkMessageBox
 import cStringIO
 import os
 import sys, traceback
-import zipfile as zf
 import matplotlib.pyplot as plt
 import numpy as np
 from itertools import combinations
