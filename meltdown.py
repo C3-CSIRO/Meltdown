@@ -68,7 +68,23 @@ LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
 DEFAULT_MONO_THRESH = 10
 SIGN_CHANGE_THRESH = 0.00001
 #the different colours of the saltconcentrations, in order of appearance
-COLOURS = ["blue","darkorange","green","red","cyan","magenta"]
+COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
+            "DarkSlateGray","Olive","LightSeaGreen","DarkMagenta","Gold","Navy",
+            "DarkRed","Lime","Indigo","MediumSpringGreen","DeepPink","Salmon",
+            "Teal","DeepSkyBlue","DarkOliveGreen","Maroon","GoldenRod","MediumVioletRed"]
+
+# ['Red','Green','Blue','Magenta','Cyan',
+#             'Aquamarine','CadetBlue','Copper',
+#             'DarkGreen','DarkOrchid','DarkPurple',
+#             'Dark Wood','Firebrick','Flesh','ForestGreen',
+#             'Gold','Goldenrod','Green Copper','Khaki',
+#             'Maroon','Midnight Blue','New Tan','Old Gold',
+#             'Orange',"Orchid","Quartz","Rich Blue",
+#             "Scarlet","Sea Green","Semi-Sweet Chocolate",
+#             "Sienna",'Slate Blue',"Spring Green",
+#             "Steel Blue","Summer Sky","Tan","Turquoise",
+#             "Very Dark Brown","Violet","Violet Red",
+#             "Yellow Green"]
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
