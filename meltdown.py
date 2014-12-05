@@ -378,7 +378,7 @@ class DSFAnalysis:
 
         # Labels for the summary graph
         names = sorted(Contents.name, key=lambda x: x[1])
-        labels = [x[0] for x in names]
+        labels = [x[0]+"("+str(x[1])+")" for x in names]
         tmHandles = []
         for i, saltConcentration in enumerate(Contents.salt):
             # Tms to be drawn regularly 
