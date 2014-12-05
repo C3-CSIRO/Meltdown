@@ -723,7 +723,7 @@ class DSFPlate:
         
         #read in the rfu results and the contents map into a pandas dataframe structure
         dataTxt = pandas.DataFrame.from_csv(fluorescenceXLS, sep='\t', index_col='Temperature')
-        contentsTxt = pandas.DataFrame.from_csv(labelsXLS, sep='\t', index_col='Well')
+        contentsTxt = pandas.DataFrame.from_csv(labelsXLS, sep='\t', index_col=None)
         #remove any columns that that are blank (default pcrd export includes empty columns sometimes)
         for column in dataTxt:
             if 'Unnamed' in column:
@@ -744,7 +744,7 @@ class DSFPlate:
         
         #================ reading in from the contents map ====================#
         #well names e.g. A1,A2,etc are imported 1st col
-        conditionWellNames = contentsTxt.index
+        conditionWellNames = contentsTxt['Well']
         #fixes names in files from A01 -> A1 if they are not in the required format already
         conditionWellNames = [name[0]+str(int(name[1:])) for name in conditionWellNames]
         
@@ -1013,13 +1013,13 @@ class DSFWell:
         #finding the lowest point and its index on the derivative series
         #only search for Tm up to 90degrees, since last part is hard to predict
             #and often gives false positives
-        for ind in seriesDeriv.index[:-20]:
+        for ind in seriesDeriv.index[:-20]:#TODO bad, could have less than 20 steps, change this
             if seriesDeriv[ind]<lowestPoint:
                 lowestPoint = seriesDeriv[ind]
                 lowestPointIndex = ind
 
         #if lowest point is the first or last index, then no curve fit is required
-        if lowestPointIndex in [seriesDeriv.index[0],seriesDeriv.index[-1]]:
+        if lowestPointIndex in [seriesDeriv.index[0],seriesDeriv.index[-1]]:#TODO index -1 pointless since we dont look at last 20, see above TODO
             tm = lowestPointIndex
             self.Tm = tm
             
@@ -1036,9 +1036,11 @@ class DSFWell:
             self.complex = False
             return     
         
-        #the indices either side of the lowest index
-        leftIndex = lowestPointIndex - 0.5
-        rightIndex = lowestPointIndex + 0.5
+        #the indices in the series either side of the lowest index
+        #note the first list is indexed e.g. list[i] where i is the section using .index
+        leftIndex = [ind for ind in seriesDeriv.index][[ind for ind in seriesDeriv.index].index(lowestPointIndex)-1]
+        rightIndex = [ind for ind in seriesDeriv.index][[ind for ind in seriesDeriv.index].index(lowestPointIndex)+1]
+        
         
         #matrices used to fit a parabola to the 3 points
         Y=[seriesDeriv[leftIndex],
