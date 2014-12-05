@@ -783,34 +783,34 @@ class DSFPlate:
         #condition names (the buffer solutions) are imported. 2nd col
         conditionNames = contentsTxt['Condition Variable 1']
         #empty cells are read in as np.nan (type float) and are converted to ''
-        conditionNames = [str(x) if not type(x)==float  else '' for x in conditionNames]
+        conditionNames = ['' if type(x)!=str and np.isnan(x) else str(x) for x in conditionNames]
         
         #checks contents map for a salt column. 3rd col
         try:
             conditionSalts = contentsTxt['Condition Variable 2']
             #empty cells are read in as np.nan (type float) and are converted to ''
-            conditionSalts = ['' if type(x)==float and math.isnan(x) else str(x) for x in conditionSalts]#TODO check this line and the 2 below work
+            conditionSalts = ['' if type(x)!=str and np.isnan(x) else str(x) for x in conditionSalts]#TODO check this line and the 2 below work
         except KeyError:
             conditionSalts = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for salt if no salts are given
                 conditionSalts.append('')
-        except Exception:
-            tkMessageBox.showerror("Error", "Reading Condition Variable 2 column has failed")
+        except Exception as e:
+            tkMessageBox.showerror("Error", "Reading Condition Variable 2 column has failed\n\n"+e.message)
             sys.exit(1)
         
         #checks contents map for a pH column. 4th col
         try:
             conditionPhs = contentsTxt['pH']
             #empty cells are read in as np.nan and are converted to ''
-            conditionPhs = ['' if type(x)==float and math.isnan(x) else float(x) for x in conditionPhs]
+            conditionPhs = ['' if type(x)!=str and np.isnan(x) else float(x) for x in conditionPhs]
         except KeyError:
             conditionPhs = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for pH if no Phs are given
                 conditionPhs.append('')
-        except Exception:
-            tkMessageBox.showerror("Error", "Reading pH column has failed")
+        except Exception as e:
+            tkMessageBox.showerror("Error", "Reading pH column has failed\n\n"+e.message)
             sys.exit(1)
 
         
@@ -818,30 +818,30 @@ class DSFPlate:
         try:
             conditiondpHdT = contentsTxt['d(pH)/dT']
             #empty cells are read in as np.nan and are converted to ''
-            conditiondpHdT = ['' if type(x)==float and math.isnan(x) else float(x) for x in conditiondpHdT]
+            conditiondpHdT = ['' if type(x)!=str and np.isnan(x) else float(x) for x in conditiondpHdT]
         except KeyError:
             conditiondpHdT=[]
             for i in range(len(conditionWellNames)):
                 #all conditions have emty string for dpH/dT if no dph/dt values are given
                 conditiondpHdT.append('')
-        except Exception:
-            tkMessageBox.showerror("Error", "Reading d(pH)/dT column has failed")
+        except Exception as e:
+            tkMessageBox.showerror("Error", "Reading d(pH)/dT column has failed\n\n"+e.message)
             sys.exit(1)
                 
         #checks contents map for a control column. #6th col
         try:
             conditionIsControl = contentsTxt['Control']
             #empty cells are read in as np.nan and are converted to ''
-            conditionIsControl = ['' if type(x)==float and math.isnan(x) else int(x) for x in conditionIsControl]
+            conditionIsControl = ['' if type(x)!=str and np.isnan(x) else int(x) for x in conditionIsControl]
         except KeyError:
             conditionIsControl = []
             for i in range(len(conditionWellNames)):
                 #all conditions have empty string for control if column isnt given
                 conditionIsControl.append('')
-        except Exception:
-            tkMessageBox.showerror("Error", "Reading Control column has failed")
+        except Exception as e:
+            tkMessageBox.showerror("Error", "Reading Control column has failed\n\n"+e.message)
             sys.exit(1)
-                
+      
         #==================================================================#     
                 
         
