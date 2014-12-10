@@ -88,7 +88,7 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = False
+DELETE_INPUT_FILES = True
 
 
 

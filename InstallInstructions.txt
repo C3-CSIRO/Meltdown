@@ -42,14 +42,13 @@ Running Meltdown
 	Open the DSF .pcrd file that you want to analyse in the CFX Manager
 
 2. 	
-	Export the pcrd file to excel files.
+	Export the pcrd file to text files (tab delimited);
+
+	Ensure that you have updated you BioRad software to version 3.1 or later
 
 	For version 3.1.
 		Click the "Export" menu, select "Export All Data Sheets" and select
-		either "Excel 2007" or "Excel 2003"
-
-	For version 3.0.
-		Click the "Export" menu an select "Export All Data Sheets to Excel"
+		"Text (*.txt)"
 
 3.	
 	Run Meltdown by double clicking on "RunMeltdown.bat"
@@ -60,4 +59,4 @@ Running Meltdown
 
 5. 
 	Meltdown will now run. The results will be outputted to a .pdf file in
-	the Meltdown directory.
+	the directory where the pcrd file was exported.
