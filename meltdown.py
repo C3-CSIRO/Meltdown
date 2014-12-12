@@ -1147,7 +1147,7 @@ class Contents:
         key = (self.name, self.pH)
         if key not in Contents.name and self.name != "" and self.isControl == False:
             Contents.name.append(key)
-        if self.salt not in Contents.salt and self.salt != "":
+        if self.salt not in Contents.salt:
             Contents.salt.append(self.salt)
         return
 
