@@ -88,8 +88,8 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = True
-
+DELETE_INPUT_FILES = False
+#TODO revet to true
 
 
 class DSFAnalysis:
@@ -238,7 +238,7 @@ class DSFAnalysis:
         be within the noise of the experiment, and not used for any  sort of useful 
         analysis. These carves are found and added to self.delCurves (removed from analysis)
         """
-        #TODO this isnt used
+        #TODO this method isnt used
         thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
         for well in self.wells:
             if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
@@ -417,12 +417,11 @@ class DSFAnalysis:
                         maxi = val
                     if val < mini:
                         mini = val
-
             # Handle for the legend
             try:
                 handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
             except IndexError:
-                tkMessageBox.showerror("Error", "Only up to 6 types of each condition are supported.\n(there is no limit to the number of conditions)\n\ne.g. 6 different salt concentrations per buffer")
+                tkMessageBox.showerror("Error", "Only up to 24 types of each condition are supported.\n(there is no limit to the number of conditions)\n\ne.g. 6 different salt concentrations per buffer")
                 sys.exit(1)
 
             plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
@@ -442,7 +441,8 @@ class DSFAnalysis:
                 plt.axis([-1,len(labels),2*originalProteinMeanSd[0] - maxi-5,maxi + 10])
         else:
             plt.axis([-1,len(labels),mini-5,maxi + 5])
-        plt.gcf().subplots_adjust(bottom=0.35)
+        #padding at the top changes depending on how many different condition cvariable 2's there are (legend gets bigger)
+        plt.gcf().subplots_adjust(bottom=0.35, top=0.85 - 0.035*(int(len(Contents.salt)/3)))
         plt.ylabel('Tm')
 
         # Drawing the Tm of the protein as supplied as a horizontal line on the summary graph
@@ -450,8 +450,7 @@ class DSFAnalysis:
         # Setting x axis labels
         plt.xticks([x for x in range(len(labels))],labels,rotation="vertical")
         # Putting the legend for the summary graph at the top, and show only 1 dot instead of 2
-        plt.legend(tmHandles,Contents.salt,loc='upper center', bbox_to_anchor=(0.5, 1.05),ncol=3, fancybox=True, shadow=False, numpoints=1)
-
+        plt.legend(tmHandles,Contents.salt,loc='lower center', bbox_to_anchor=(0.5, 1),ncol=3, fancybox=True, shadow=False, numpoints=1)
         # Saving the summary graph as an image and drawing it on the page
         imgdata = cStringIO.StringIO()
         fig1.savefig(imgdata, format='png',dpi=180)
@@ -764,6 +763,9 @@ class DSFPlate:
         for column in contentsTxt:
             if 'Unnamed' in column:
                 contentsTxt.pop(column)
+        #remove any rows that are all blank (e.g. empty lines at the end of the file)
+        dataTxt.dropna(how='all', inplace=True)
+        contentsTxt.dropna(how='all', inplace=True)
         
         #names are in order and used to iterate over, wells has each name as a key
         self.names = []
@@ -790,7 +792,7 @@ class DSFPlate:
         try:
             conditionSalts = contentsTxt['Condition Variable 2']
             #empty cells are read in as np.nan (type float) and are converted to ''
-            conditionSalts = ['' if type(x)!=str and np.isnan(x) else str(x) for x in conditionSalts]#TODO check this line and the 2 below work
+            conditionSalts = ['' if type(x)!=str and np.isnan(x) else str(x) for x in conditionSalts]
         except KeyError:
             conditionSalts = []
             for i in range(len(conditionWellNames)):
@@ -1053,7 +1055,7 @@ class DSFWell:
             
         #finding the lowest point and its index on the derivative series
         #only search for Tm up to 90degrees, since last part is hard to predict
-            #and often gives false positives
+        #and often gives false positives
         for ind in seriesDeriv.index[:-20]:#TODO bad, could have less than 20 steps, change this
             if seriesDeriv[ind]<lowestPoint:
                 lowestPoint = seriesDeriv[ind]
@@ -1147,7 +1149,10 @@ class Contents:
         key = (self.name, self.pH)
         if key not in Contents.name and self.name != "" and self.isControl == False:
             Contents.name.append(key)
-        if self.salt not in Contents.salt:
+        if self.salt not in Contents.salt and self.salt != "":
+            Contents.salt.append(self.salt)
+        #only add empty string as a type is its used in non-controls
+        if self.salt == "" and self.isControl != 1:
             Contents.salt.append(self.salt)
         return
 
