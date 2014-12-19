@@ -88,8 +88,7 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = False
-#TODO revet to true
+DELETE_INPUT_FILES = True
 
 
 class DSFAnalysis:
@@ -1152,7 +1151,7 @@ class Contents:
         if self.salt not in Contents.salt and self.salt != "":
             Contents.salt.append(self.salt)
         #only add empty string as a type is its used in non-controls
-        if self.salt == "" and self.isControl != 1:
+        if self.salt not in Contents.salt and self.salt == "" and self.isControl != 1:
             Contents.salt.append(self.salt)
         return
 
