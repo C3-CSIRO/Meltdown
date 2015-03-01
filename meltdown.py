@@ -598,9 +598,9 @@ class DSFAnalysis:
             if (newpage-1) % graphNum == 0:
                 pdf.showPage()
                 pdf.setFont("Helvetica",9)
-                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
-                pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
-                pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
+                pdf.drawString(cm, 1.3*cm,"Curves drawn with dotted lines are unable to be analysed (monotonic, complex transitions, and saturated)")
+                pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
+                pdf.drawString(cm, 0.5*cm,"Curves drawn with dashed lines are outliers, and are excluded from Tm calculations")
                 pdf.setFont("Helvetica",12)
             sampleContents = sampleContentspH[0]
             curves = []
@@ -618,7 +618,7 @@ class DSFAnalysis:
                             complexDictionary[i] = True
                         if well in self.delCurves:
                             plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , 'grey')
+                            , COLOURS[i], linestyle="--")
                         # If the curve is not monotonic
                         elif self.originalPlate.wells[well].mono == False:
                             #if it is complex, plot it dotted
@@ -630,10 +630,10 @@ class DSFAnalysis:
                                 plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
                                 , COLOURS[i])
                         else:
-                            # IF the curve is monotonic it is plotted with a 
-                            # dashed line as it is not used to determin Tm
+                            # IF the curve is monotonic it is also plotted with a 
+                            # dotted line as it is not used to determin Tm
                             plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , COLOURS[i],linestyle="--")
+                            , COLOURS[i],linestyle=":")
                             
                         meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                         
