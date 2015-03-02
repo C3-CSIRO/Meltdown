@@ -121,8 +121,7 @@ class DSFAnalysis:
         self.wells = self.plate.wells
         self.originalPlate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.removeOutliers()
-        #TODO -
-        #self.removeInsignificant()
+        self.removeInsignificant()
         self.findMeanCurves()
         return
     
@@ -237,32 +236,70 @@ class DSFAnalysis:
         """
         Curves which were normalised with too large of a factor, are considered to
         be within the noise of the experiment, and not used for any  sort of useful 
-        analysis. These carves are found and added to self.delCurves (removed from analysis)
+        analysis. These curves are found and added to self.delCurves (removed from analysis)
         """
-        #TODO this method isnt used
-        thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
+
+        # TODO Fix curves that are in the noise
+        # Searching for curves that are in the noise
+        # if len self.plate.noProtein > 0:
+        #     thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
+        #     for well in self.wells:
+        #         if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
+        #             if self.wells[well].monoThresh > thresholdm/1.15:
+        #                 #self.wells[well].fluorescence = None
+        #                 self.delCurves.append(well)
+
+        #         if self.wells[well].fluorescence:
+        #             x = [x for x in self.wells[well].temperatures]
+        #             y = [y for y in self.wells[well].fluorescence]
+        #             xdiff = np.diff(x)
+        #             dydx = -np.diff(y)/xdiff
+
+        #             #the derivative series, has one less index since there is one fewer differences than points
+        #             seriesDeriv = pandas.Series(dydx, x[:-1])
+        #             mini = 0
+        #             for ind in seriesDeriv.index[:-20]:
+        #                 if seriesDeriv[ind]<mini:
+        #                     mini = seriesDeriv[ind]
+
+        #             if mini > -0.00005:
+        #                 if well not in self.delCurves and well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
+        #                     self.delCurves.append(well)
+
         for well in self.wells:
-            if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
-                if self.wells[well].monoThresh > thresholdm/1.15:
-                    #self.wells[well].fluorescence = None
-                    self.delCurves.append(well)
+            if well not in self.delCurves:
+                mini = self.wells[well].fluorescence[0]
+                maxi = self.wells[well].fluorescence[0]
 
-            if self.wells[well].fluorescence:
-                x = [x for x in self.wells[well].temperatures]
-                y = [y for y in self.wells[well].fluorescence]
-                xdiff = np.diff(x)
-                dydx = -np.diff(y)/xdiff
+                maxInd = 0
+                for i in range(len(self.wells[well].fluorescence)):
+                    if self.wells[well].fluorescence[i] > maxi:
+                        maxi = self.wells[well].fluorescence[i]
+                        maxInd = i
+                    if self.wells[well].fluorescence[i] < mini:
+                        mini = self.wells[well].fluorescence[i]
 
-                #the derivative series, has one less index since there is one fewer differences than points
-                seriesDeriv = pandas.Series(dydx, x[:-1])
-                mini = 0
-                for ind in seriesDeriv.index[:-20]:
-                    if seriesDeriv[ind]<mini:
-                        mini = seriesDeriv[ind]
+                diff = maxi - mini
 
-                if mini > -0.00005:
-                    if well not in self.delCurves and well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
-                        self.delCurves.append(well)
+                lowFlatBoundry = maxi - 0.005*diff
+
+                count = 0
+                ind = maxInd - 1
+                while True:
+                    if self.wells[well].fluorescence[ind] > lowFlatBoundry:
+                        count += 1
+                        ind -= 1
+                    else:
+                        break
+                ind = maxInd+1
+                while True:
+                    if self.wells[well].fluorescence[ind] > lowFlatBoundry:
+                        count += 1 
+                        ind += 1
+                    else:
+                        break
+                if well not in self.delCurves and count >= 10:
+                    self.delCurves.append(well) 
         return
     
     def analyseCurves(self):
