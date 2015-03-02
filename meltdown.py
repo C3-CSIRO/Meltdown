@@ -88,7 +88,7 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = True
+DELETE_INPUT_FILES = False
 
 
 class DSFAnalysis:
@@ -138,8 +138,8 @@ class DSFAnalysis:
         numcount = 1
         letcount = 0
         ordcount = ord("A")
-        names = sorted(self.plate.names,key=lambda well: int(well[1:]))
-        for well in sorted(names, key=lambda well: well[0]):
+        names = self.plate.names
+        for well in names:
             if well not in visited:
                 reps = []
                 reps += self.originalPlate.repDict[well]
@@ -542,7 +542,10 @@ class DSFAnalysis:
                 count += 1
         pdf.drawString(8*cm,19.5*cm,"Average estimation of error is")
         pdf.setFont("Helvetica-Bold",13)
-        avTmError = round(avTmError/float(count),1)
+        if count != 0:
+            avTmError = round(avTmError/float(count),1)
+        else:
+            avTmError = 0
         pdf.drawString(14.1*cm,19.5*cm,str(avTmError)+" C")
 
         pdf.setFont("Helvetica",13)
@@ -754,6 +757,7 @@ class DSFPlate:
         
         #read in the rfu results and the contents map into a pandas dataframe structure
         dataTxt = pandas.DataFrame.from_csv(fluorescenceXLS, sep='\t', index_col='Temperature')
+        dataTxt.columns = [str(colName) for colName in dataTxt.columns]
         contentsTxt = pandas.DataFrame.from_csv(labelsXLS, sep='\t', index_col=None)
         #remove any columns that that are blank (default pcrd export includes empty columns sometimes)
         for column in dataTxt:
@@ -778,9 +782,10 @@ class DSFPlate:
         
         #================ reading in from the contents map ====================#
         #well names e.g. A1,A2,etc are imported 1st col
-        conditionWellNames = contentsTxt['Well']
-        #fixes names in files from A01 -> A1 if they are not in the required format already
-        conditionWellNames = [name[0]+str(int(name[1:])) for name in conditionWellNames]
+        conditionWellNames = [str(rowName) for rowName in contentsTxt['Well']]
+        #TODO sadf
+        ##fixes names in files to be strings if they are named 1,2,3 etc
+        #conditionWellNames = [str(name) for name in conditionWellNames]
         
         #condition names (the buffer solutions) are imported. 2nd col
         conditionNames = contentsTxt['Condition Variable 1']
