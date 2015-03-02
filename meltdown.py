@@ -136,8 +136,8 @@ class DSFAnalysis:
         meanWells = {}
         visited = []
         numcount = 1
-        letcount = 0
-        ordcount = ord("A")
+        #letcount = 0
+        #ordcount = ord("A")
         names = self.plate.names
         for well in names:
             if well not in visited:
@@ -151,28 +151,30 @@ class DSFAnalysis:
                         del reps[i]
                         i -=1    
                     i+=1
-                # if the first letter of the well name is not the same as ordcount
-                if ord(well[0]) != ordcount:
-                    ordcount = ord(well[0])
-                    letcount += 1
-                    numcount = 1
+                ## if the first letter of the well name is not the same as ordcount
+                #if ord(well[0]) != ordcount:
+                #    ordcount = ord(well[0])
+                #    letcount += 1
+                #    numcount = 1
                 if len(reps) > 0:
-                    meanWells[chr(65+letcount) + str(numcount)] = (meanCurve([self.wells[well].fluorescence for well in reps]),well)
+                    #meanWells[chr(65+letcount) + str(numcount)] = (meanCurve([self.wells[well].fluorescence for well in reps]),well)
+                    meanWells[well] = (meanCurve([self.wells[well].fluorescence for well in reps]),well)
+                
                 else:
-                    meanWells[chr(65+letcount) + str(numcount)] = (None,well)
+                    meanWells[well] = (None,well)
                 if well in self.plate.lysozyme:
-                    self.plate.lysozyme = [chr(65+letcount) + str(numcount)]
+                    self.plate.lysozyme = [well]
                 if well in self.plate.noDye:
-                    self.plate.noDye = [chr(65+letcount) + str(numcount)]
+                    self.plate.noDye = [well]
                 if well in self.plate.proteinAsSupplied:
-                    self.plate.proteinAsSupplied = [chr(65+letcount) + str(numcount)]
+                    self.plate.proteinAsSupplied = [well]
                 if well in self.plate.noProtein:
-                    self.plate.noProtein = [chr(65+letcount) + str(numcount)]
+                    self.plate.noProtein = [well]
 
                 
                 #creates a dictionary allowing you to find which wells created which mean well
                 #e.g. 'A2': ["A4","A5","A6"]
-                self.plate.meanDict[chr(65+letcount) + str(numcount)] = self.originalPlate.repDict[well]
+                self.plate.meanDict[well] = self.originalPlate.repDict[well]
                 
                 #numcount increased for naming mean wells
                 numcount += 1
