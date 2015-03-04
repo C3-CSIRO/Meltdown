@@ -1132,7 +1132,8 @@ class DSFWell:
                 lowestPointIndex = ind
                 
         #no Tm will be found if the slope is not steep enough.
-        if lowestPoint > -5e-05:
+        if lowestPoint > -0.000005:
+            print self.name, 'lowestpoint too small', lowestPoint
             lowestPointIndex = None
 
         #if lowest point is the first or last index, then no curve fit is required
