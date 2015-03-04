@@ -292,6 +292,24 @@ class DSFAnalysis:
         """
         Calculate the Tms of all the curves in the plate
         """
+        #TODO working here too too
+        #gets the maximum point out of all the non normalised graphs
+        self.overallMaxNonNormalised = 0
+        for well in self.plate.wells.values():
+            if well.maxNonNormalised > self.overallMaxNonNormalised:
+                self.overallMaxNonNormalised = well.maxNonNormalised
+                
+        #this is the monotenicity threshold derived for this plate
+        self.plate.monotonicThreshold = 0.0005 * self.overallMaxNonNormalised
+        
+        #gets the maximum point out of all the normalised graphs
+        #used when plotting the graphs
+        self.overallMaxNormalised = 0
+        for well in self.plate.wells.values():
+            if well.maxNormalised > self.overallMaxNormalised:
+                self.overallMaxNormalised = well.maxNormalised
+        
+        
         self.computeTms()
         return
         
@@ -824,9 +842,6 @@ class DSFPlate:
         #================ reading in from the contents map ====================#
         #well names e.g. A1,A2,etc are imported 1st col
         conditionWellNames = [str(rowName) for rowName in contentsTxt['Well']]
-        #TODO sadf
-        ##fixes names in files to be strings if they are named 1,2,3 etc
-        #conditionWellNames = [str(name) for name in conditionWellNames]
         
         #condition names (the buffer solutions) are imported. 2nd col
         conditionNames = contentsTxt['Condition Variable 1']
@@ -965,14 +980,33 @@ class DSFWell:
 
         stepSize = self.temperatures[1]-self.temperatures[0]
         
+        #TODO working here
+        #from the non normalised curve we get the max  for each individual curve
+        #the overall max on the plate will decide what the monotenicity threshold for the experiment will be
+        self.maxNonNormalised = 0
+        for x in self.fluorescence:
+            if x > self.maxNonNormalised:
+                self.maxNonNormalised = x
+        
+        #================= normalisation happens here ================#
         #the curve is then normalised to have an area below the curve of 1
         count = 0
         for height in self.fluorescence:
             count += height*stepSize
         self.fluorescence = [x / count for x in self.fluorescence]
         
+        #TODO working here too
+        #from the now normalised curve we get the max and min for each individual curve
+        #this is used in complex detection and plotting
+        self.maxNormalised = 0
+        for x in self.fluorescence:
+            if x > self.maxNormalised:
+                self.maxNormalised = x
+        
+        
         #the forgive monotonic threshold depends on the normalisation of the curve
         self.monoThresh = DEFAULT_MONO_THRESH / count
+        
         
         #other attributes of the curve are set to false/none until later analysis of the curve
         self.complex = False
@@ -1112,7 +1146,7 @@ class DSFWell:
             lowestPointIndex = None
 
         #if lowest point is the first or last index, then no curve fit is required
-        if lowestPointIndex in [seriesDeriv.index[0],seriesDeriv.index[-1]]:#TODO index -1 pointless since we dont look at last 20, see above TODO
+        if lowestPointIndex == seriesDeriv.index[0]:
             tm = lowestPointIndex
             self.Tm = tm
             
