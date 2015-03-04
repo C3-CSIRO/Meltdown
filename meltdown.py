@@ -1120,6 +1120,10 @@ class DSFWell:
             if seriesDeriv[ind]<lowestPoint:
                 lowestPoint = seriesDeriv[ind]
                 lowestPointIndex = ind
+                
+        #no Tm will be found if the slope is not steep enough.
+        if lowestPoint > -5e-05:
+            lowestPointIndex = None
 
         #if lowest point is the first or last index, then no curve fit is required
         if lowestPointIndex in [seriesDeriv.index[0],seriesDeriv.index[-1]]:#TODO index -1 pointless since we dont look at last 20, see above TODO
