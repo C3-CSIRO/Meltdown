@@ -1333,7 +1333,7 @@ def main():
     root.withdraw()
  
     #DSF results file
-    rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results")
+    rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results", filetypes=[("text files", ".txt")])
     # contents map, or default cfx manager summary file
     contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
     try:
