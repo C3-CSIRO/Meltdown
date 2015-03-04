@@ -613,7 +613,23 @@ class DSFAnalysis:
         pdf.rect(7.75*cm,18.05*cm,12*cm,5.4*cm)
 
         # Moving on to the in depth graphs
+
+        # Finding the maximun and minimum flurescence points so that all the graphs can have the same scale
+        # TODO find some way of optimizing this. Nested loops is real slow
+        minYValue = 1
+        maxYValue = 0
+        for well in self.originalPlate.wells:
+            for value in self.originalPlate.wells[well].fluorescence:
+                if value > maxYValue:
+                    maxYValue = value
+                if value < minYValue:
+                    minYValue = value
+
+        paddingSize = (maxYValue - minYValue) * 0.05
+
         fig3 = plt.figure(num=1,figsize=(5,4))
+
+
 
         # Variables used to keep track of where to draw the current graph
         xpos=2
@@ -679,8 +695,7 @@ class DSFAnalysis:
                             
                         meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                         
-            #TODO change this so it uses the max and min values of all curves
-            plt.ylim(1/(plt.xlim()[1]-plt.xlim()[0])/10,1/(plt.xlim()[1]-plt.xlim()[0])*2)
+            plt.ylim(minYValue-paddingSize,maxYValue+paddingSize)
             plt.gca().axes.get_yaxis().set_visible(False)
             imgdata = cStringIO.StringIO()
             fig3.savefig(imgdata, format='png',dpi=140)
