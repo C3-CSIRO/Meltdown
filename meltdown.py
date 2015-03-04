@@ -995,9 +995,12 @@ class DSFWell:
         #from the now normalised curve we get the max and min for each individual curve
         #this is used in complex detection and plotting
         self.maxNormalised = 0
+        self.minNormalised = 1
         for x in self.fluorescence:
             if x > self.maxNormalised:
                 self.maxNormalised = x
+            if x < self.minNormalised:
+                self.minNormalised = x
         
         #other attributes of the curve are set to false/none until later analysis of the curve
         self.complex = False
