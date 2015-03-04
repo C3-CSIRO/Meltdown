@@ -241,31 +241,15 @@ class DSFAnalysis:
 
         # TODO Fix curves that are in the noise
         # Searching for curves that are in the noise
-        # if len self.plate.noProtein > 0:
-        #     thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
-        #     for well in self.wells:
-        #         if well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
-        #             if self.wells[well].monoThresh > thresholdm/1.15:
-        #                 #self.wells[well].fluorescence = None
-        #                 self.delCurves.append(well)
+        if len(self.plate.noProtein) > 0:
+            thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
+            for well in self.wells:
+                if not self.wells[well].contents.isControl:
+                    if self.wells[well].monoThresh > thresholdm/1.15:
+                        #self.wells[well].fluorescence = None
+                        self.delCurves.append(well)
 
-        #         if self.wells[well].fluorescence:
-        #             x = [x for x in self.wells[well].temperatures]
-        #             y = [y for y in self.wells[well].fluorescence]
-        #             xdiff = np.diff(x)
-        #             dydx = -np.diff(y)/xdiff
-
-        #             #the derivative series, has one less index since there is one fewer differences than points
-        #             seriesDeriv = pandas.Series(dydx, x[:-1])
-        #             mini = 0
-        #             for ind in seriesDeriv.index[:-20]:
-        #                 if seriesDeriv[ind]<mini:
-        #                     mini = seriesDeriv[ind]
-
-        #             if mini > -0.00005:
-        #                 if well not in self.delCurves and well not in self.plate.lysozyme and well not in self.plate.noProtein and well not in self.plate.noDye:
-        #                     self.delCurves.append(well)
-
+        # Searching for curves that have overloaded the sensor
         for well in self.wells:
             if well not in self.delCurves:
                 mini = self.wells[well].fluorescence[0]
@@ -281,8 +265,10 @@ class DSFAnalysis:
 
                 diff = maxi - mini
 
+                # A boundry defining how much the points can fluctuate and still be considered flat
                 lowFlatBoundry = maxi - 0.005*diff
 
+                # Look each way to see how many temperature steps the curve stays flat for
                 count = 0
                 ind = maxInd - 1
                 while True:
