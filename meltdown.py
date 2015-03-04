@@ -289,7 +289,6 @@ class DSFAnalysis:
         """
         Calculate the Tms of all the curves in the plate
         """
-        #TODO working here too too
         #gets the maximum point out of all the non normalised graphs
         self.overallMaxNonNormalised = 0
         for well in self.plate.wells.values():
@@ -302,9 +301,12 @@ class DSFAnalysis:
         #gets the maximum point out of all the normalised graphs
         #used when plotting the graphs
         self.overallMaxNormalised = 0
+        self.overallMinNormalised = 1
         for well in self.plate.wells.values():
             if well.maxNormalised > self.overallMaxNormalised:
                 self.overallMaxNormalised = well.maxNormalised
+            if well.minNormalised < self.overallMinNormalised:
+                self.overallMinNormalised = well.minNormalised
         
         
         self.computeTms()
@@ -616,8 +618,8 @@ class DSFAnalysis:
         # Moving on to the in depth graphs
 
         # Finding the maximun and minimum flurescence points so that all the graphs can have the same scale
-        minYValue = self.minNormalised
-        maxYValue = self.maxNormalised
+        minYValue = self.overallMinNormalised
+        maxYValue = self.overallMaxNormalised
 
         paddingSize = (maxYValue - minYValue) * 0.05
 
@@ -966,7 +968,6 @@ class DSFWell:
 
         stepSize = self.temperatures[1]-self.temperatures[0]
         
-        #TODO working here
         #from the non normalised curve we get the max  for each individual curve
         #the overall max on the plate will decide what the monotenicity threshold for the experiment will be
         self.maxNonNormalised = 0
@@ -983,14 +984,11 @@ class DSFWell:
         #used to calculate the monotenicity threshold
         self.normalisationFactor = count
         
-        #TODO working here too
         #from the now normalised curve we get the max and min for each individual curve
         #this is used in complex detection and plotting
-        self.maxNormalised = 0
+        self.maxNormalised = self.maxNonNormalised / count
         self.minNormalised = 1
         for x in self.fluorescence:
-            if x > self.maxNormalised:
-                self.maxNormalised = x
             if x < self.minNormalised:
                 self.minNormalised = x
         
