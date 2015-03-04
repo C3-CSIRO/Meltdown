@@ -237,7 +237,6 @@ class DSFAnalysis:
         analysis. These curves are found and added to self.delCurves (removed from analysis)
         """
 
-        # TODO Fix curves that are in the noise
         # Searching for curves that are in the noise
         if len(self.plate.noProtein) > 0:
             thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
@@ -617,15 +616,8 @@ class DSFAnalysis:
         # Moving on to the in depth graphs
 
         # Finding the maximun and minimum flurescence points so that all the graphs can have the same scale
-        # TODO find some way of optimizing this. Nested loops is real slow
-        minYValue = 1
-        maxYValue = 0
-        for well in self.originalPlate.wells:
-            for value in self.originalPlate.wells[well].fluorescence:
-                if value > maxYValue:
-                    maxYValue = value
-                if value < minYValue:
-                    minYValue = value
+        minYValue = self.minNormalised
+        maxYValue = self.maxNormalised
 
         paddingSize = (maxYValue - minYValue) * 0.05
 
@@ -1202,8 +1194,7 @@ class DSFWell:
             i += 1;
 
         # estimates tm by another method and if the difference is too large the curve is considred complex
-        if (i/2.0+20 -self.Tm)**2 > 5**2:
-            print self.temperatures[i],self.Tm, self.name
+        if (self.temperatures[i] -self.Tm)**2 > 5**2:
             self.complex=True
         return
 
