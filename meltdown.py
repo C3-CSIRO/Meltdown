@@ -64,7 +64,7 @@ import replicateHandling as rh
 SIMILARITY_THRESHOLD = 1.72570084974
 #lysozyme tm over all of our files: (mean,std_dev)
 LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
-SIGN_CHANGE_THRESH = 0.00001
+SIGN_CHANGE_THRESH = 0.000001 # changed from 0.00001
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
             "DarkSlateGray","Olive","LightSeaGreen","DarkMagenta","Gold","Navy",
@@ -1109,12 +1109,14 @@ class DSFWell:
                 if value<lowestPoint2:
                     lowestPoint2 = value
                     lowestIndex2 = i
-        for ind in seriesDeriv.index[lowestIndex2:highestIndex]:
+        signChange = False
+        for ind in seriesDeriv.index[lowestIndex2+1:highestIndex]:
+        
             if previous:
                 if seriesDeriv[ind] + SIGN_CHANGE_THRESH < 0 and previous - SIGN_CHANGE_THRESH > 0:
-                    signChangeCount += 1
+                    signChange = True
                 if seriesDeriv[ind] - SIGN_CHANGE_THRESH > 0 and previous + SIGN_CHANGE_THRESH < 0:
-                    signChangeCount += 1
+                    signChange = True
                 # if seriesDeriv[ind] == 0:
                 #     signChangeCount += 1
             previous = seriesDeriv[ind]
@@ -1139,7 +1141,7 @@ class DSFWell:
             self.Tm = tm
             
             #set complex to true if curve was complex
-            if signChangeCount > 0:
+            if signChange:
                 self.complex = True
             return
     
@@ -1181,9 +1183,8 @@ class DSFWell:
         self.Tm = tm
         
         #again check for complex shape before returning
-        if signChangeCount > 0:
+        if signChange:
                 self.complex = True
-
 
 
         averagePoint = (lowestPoint2 +highestPoint) / 2
