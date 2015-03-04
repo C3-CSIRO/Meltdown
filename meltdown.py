@@ -64,8 +64,6 @@ import replicateHandling as rh
 SIMILARITY_THRESHOLD = 1.72570084974
 #lysozyme tm over all of our files: (mean,std_dev)
 LYSOZYME_TM_THRESHOLD = (70.87202380952381, 0.73394932964132509)
-#Monotenicity threshold forgive value on non-normalised curves (experimentally derived)
-DEFAULT_MONO_THRESH = 10
 SIGN_CHANGE_THRESH = 0.00001
 #the different colours of the saltconcentrations, in order of appearance
 COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
@@ -771,7 +769,7 @@ class DSFAnalysis:
         #making this the useful part
         for well in self.originalPlate.names:
             #sets own mono instance variable to apropriate state
-            self.originalPlate.wells[well].isMonotonic()
+            self.originalPlate.wells[well].isMonotonic(self.plate.monotonicThreshold)
             if self.originalPlate.wells[well].mono == False:
                 self.originalPlate.wells[well].computeTm()
 
@@ -990,6 +988,8 @@ class DSFWell:
         for height in self.fluorescence:
             count += height*stepSize
         self.fluorescence = [x / count for x in self.fluorescence]
+        #used to calculate the monotenicity threshold
+        self.normalisationFactor = count
         
         #TODO working here too
         #from the now normalised curve we get the max and min for each individual curve
@@ -998,11 +998,6 @@ class DSFWell:
         for x in self.fluorescence:
             if x > self.maxNormalised:
                 self.maxNormalised = x
-        
-        
-        #the forgive monotonic threshold depends on the normalisation of the curve
-        self.monoThresh = DEFAULT_MONO_THRESH / count
-        
         
         #other attributes of the curve are set to false/none until later analysis of the curve
         self.complex = False
@@ -1015,7 +1010,7 @@ class DSFWell:
         self.contents = Contents(conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl)
         return  
 
-    def isMonotonic(self):
+    def isMonotonic(self, monoThreshold):
         """
         Checks to see if the normalised curve, and hence original curve, is monotonic non-increasing
         
@@ -1024,6 +1019,10 @@ class DSFWell:
         is not monotonic, with each decreasing pair of points inbetween, puts the consecutive contradiction 
         count back down by 1.
         """
+        
+        #the forgive monotonic threshold depends on the normalisation of the curve
+        self.monoThresh = monoThreshold / self.normalisationFactor
+        
         #assume monotonic non-increasing
         nonIncreasingMono = True
         contradictions = 0
