@@ -679,6 +679,7 @@ class DSFAnalysis:
                             
                         meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                         
+            #TODO change this so it uses the max and min values of all curves
             plt.ylim(1/(plt.xlim()[1]-plt.xlim()[0])/10,1/(plt.xlim()[1]-plt.xlim()[0])*2)
             plt.gca().axes.get_yaxis().set_visible(False)
             imgdata = cStringIO.StringIO()
@@ -1099,7 +1100,8 @@ class DSFWell:
         #finding the lowest point and its index on the derivative series
         #only search for Tm up to 90degrees, since last part is hard to predict
         #and often gives false positives
-        for ind in seriesDeriv.index[:-20]:#TODO bad, could have less than 20 steps, change this
+        ignoreNum = int(len(seriesDeriv.index)*0.125)
+        for ind in seriesDeriv.index[:-ignoreNum]:
             if seriesDeriv[ind]<lowestPoint:
                 lowestPoint = seriesDeriv[ind]
                 lowestPointIndex = ind
