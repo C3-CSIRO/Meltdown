@@ -268,14 +268,14 @@ class DSFAnalysis:
                 # Look each way to see how many temperature steps the curve stays flat for
                 count = 0
                 ind = maxInd - 1
-                while True:
+                while ind>=0:
                     if self.wells[well].fluorescence[ind] > lowFlatBoundry:
                         count += 1
                         ind -= 1
                     else:
                         break
                 ind = maxInd+1
-                while True:
+                while ind<len(self.wells[well].fluorescence):
                     if self.wells[well].fluorescence[ind] > lowFlatBoundry:
                         count += 1 
                         ind += 1
@@ -1335,7 +1335,7 @@ def main():
     #DSF results file
     rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results", filetypes=[("text files", ".txt")])
     # contents map, or default cfx manager summary file
-    contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map")
+    contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map", filetypes=[("text files", ".txt")])
     try:
         #the analysis
         mydsf = DSFAnalysis()
