@@ -1200,6 +1200,7 @@ class DSFWell:
 
         # estimates tm by another method and if the difference is too large the curve is considred complex
         if (i/2.0+20 -self.Tm)**2 > 5**2:
+            print self.temperatures[i],self.Tm, self.name
             self.complex=True
         return
 
