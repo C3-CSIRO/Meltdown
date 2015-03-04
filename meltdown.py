@@ -807,12 +807,8 @@ class DSFPlate:
         
         +labelsXLS is the xlsx file that stores the conditions
         """
-            
-        #Open excel workbook and first sheet for both the RFU file and the summary/contents file
-        #wbData = xlrd.open_workbook(fluorescenceXLS)
-        #shData = wbData.sheet_by_index(0)
-        #wbContents = xlrd.open_workbook(labelsXLS)
-        #shContents = wbContents.sheet_by_index(0)
+        #this is calculated once the curves are analysed
+        self.monotonicThreshold = None
         
         #read in the rfu results and the contents map into a pandas dataframe structure
         dataTxt = pandas.DataFrame.from_csv(fluorescenceXLS, sep='\t', index_col='Temperature')
