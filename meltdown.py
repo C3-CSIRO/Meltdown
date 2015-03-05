@@ -687,9 +687,9 @@ class DSFAnalysis:
             if (newpage-1) % graphNum == 0:
                 pdf.showPage()
                 pdf.setFont("Helvetica",9)
-                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are monotonic and excluded from Tm calculations")
-                pdf.drawString(cm, 0.9*cm,"Curves with complex melt transitions are marked (^) and are drawn with a dotted line")
-                pdf.drawString(cm, 0.5*cm,"Curves coloured grey are outliers, and are excluded from Tm calculations")
+                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are unable to be analysed (monotonic, saturated, in the noise, and outliers)")
+                pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
+                pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines are unreliable")
                 pdf.setFont("Helvetica",12)
             sampleContents = sampleContentspH[0]
             curves = []
