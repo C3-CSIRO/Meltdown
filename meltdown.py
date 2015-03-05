@@ -86,7 +86,7 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 
 ##====DEBUGGING====##
 #set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = False
+DELETE_INPUT_FILES = True
 
 
 class DSFAnalysis:
@@ -689,7 +689,7 @@ class DSFAnalysis:
                 pdf.setFont("Helvetica",9)
                 pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are unable to be analysed (monotonic, saturated, in the noise, and outliers)")
                 pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
-                pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines are unreliable")
+                pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines have unreliable estimates for Tms")
                 pdf.setFont("Helvetica",12)
             sampleContents = sampleContentspH[0]
             curves = []
