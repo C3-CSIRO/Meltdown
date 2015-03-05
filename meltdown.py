@@ -837,7 +837,13 @@ class DSFPlate:
         conditionWellNames = [str(rowName) for rowName in contentsTxt['Well']]
         
         #condition names (the buffer solutions) are imported. 2nd col
-        conditionNames = contentsTxt['Condition Variable 1']
+        #checks the contents map for a Condition Variable 1 column
+        try:
+            conditionNames = contentsTxt['Condition Variable 1']
+        except KeyError as e:
+            tkMessageBox.showerror("Error", "Reading Condition Variable 1 column has failed\n\n"+e.message)
+            sys.exit(1)
+        
         #empty cells are read in as np.nan (type float) and are converted to ''
         conditionNames = ['' if type(x)!=str and np.isnan(x) else str(x) for x in conditionNames]
         
