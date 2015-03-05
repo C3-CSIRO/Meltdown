@@ -119,7 +119,7 @@ class DSFAnalysis:
         self.wells = self.plate.wells
         self.originalPlate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.removeOutliers()
-        self.removeInsignificant()
+        #self.removeInsignificant()
         self.findMeanCurves()
         return
     
@@ -236,13 +236,16 @@ class DSFAnalysis:
         be within the noise of the experiment, and not used for any  sort of useful 
         analysis. These curves are found and added to self.delCurves (removed from analysis)
         """
-
+        #TODO make sure this method now works AFTER meanCurves and analyseCures have been run
+        
         # Searching for curves that are in the noise
         if len(self.plate.noProtein) > 0:
             thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
-            for well in self.wells:
-                if not self.wells[well].contents.isControl:
-                    if self.wells[well].monoThresh > thresholdm/1.15:
+            print self.wells.keys(), len(self.wells.keys())
+            print self.delCurves, len(self.delCurves)
+            for well in self.originalPlate.wells:
+                if not self.originalPlate.wells[well].contents.isControl and well not in self.delCurves:
+                    if self.originalPlate.wells[well].monoThresh > thresholdm/1.15:
                         #self.wells[well].fluorescence = None
                         self.delCurves.append(well)
 
@@ -295,8 +298,9 @@ class DSFAnalysis:
             if well.maxNonNormalised > self.overallMaxNonNormalised:
                 self.overallMaxNonNormalised = well.maxNonNormalised
                 
-        #this is the monotenicity threshold derived for this plate
+        #this is the monotenicity threshold derived for these plate
         self.plate.monotonicThreshold = 0.0005 * self.overallMaxNonNormalised
+        self.originalPlate.monotonicThreshold = self.plate.monotonicThreshold
         
         #gets the maximum point out of all the normalised graphs
         #used when plotting the graphs
@@ -310,6 +314,39 @@ class DSFAnalysis:
         
         
         self.computeTms()
+        return
+        
+    def computeTms(self):
+        """
+        To find the Tm of a mean curve we look at the curves that comprised it 
+        (not including the discarded curves ofcourse) and find the Tm of each of
+        those. We then find the mean and sd of these Tms which gives us a Tm estimate, 
+        along with an error estimate
+        
+        When finding the Tm of a curve that is not a mean curve, the error is set to 
+        None
+        """
+        #most calculating is done by getting the mean and sd of replicate Tms,
+        #making this the useful part
+        for well in self.originalPlate.names:
+            #sets own mono instance variable to apropriate state
+            self.originalPlate.wells[well].isMonotonic(self.plate.monotonicThreshold)
+            if self.originalPlate.wells[well].mono == False:
+                self.originalPlate.wells[well].computeTm()
+            #monotonic curves are now grouped with complex curves, and plotted as such
+            else:
+                if well not in self.delCurves:
+                    self.delCurves.append(well)
+
+        for well in self.plate.names:
+                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
+                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
+                for data in complexs:
+                    if data:
+                        self.wells[well].complex = True
+                self.wells[well].Tm , self.wells[well].TmError = rh.meanSd(tms)
+                if len(tms) == 1:
+                    self.wells[well].TmError = None
         return
         
     def returnControlCheck(self):
@@ -670,24 +707,23 @@ class DSFAnalysis:
                     if self.originalPlate.wells[well].contents.salt == saltConcentration:
                         if self.originalPlate.wells[well].complex:
                             complexDictionary[i] = True
+                            
+                        #if curve is in delCurves, plot it dashed. Consists of monotonic curves, curves in the noise,
+                        #saturated (flat) curves, and replicate outlier curves
                         if well in self.delCurves:
                             plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , 'grey')
-                        # If the curve is not monotonic
-                        elif self.originalPlate.wells[well].mono == False:
-                            #if it is complex, plot it dotted
-                            if self.originalPlate.wells[well].complex:
-                                plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                                , COLOURS[i],linestyle=":")
-                            #if not complex, plot it normally
-                            else:
-                                plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                                , COLOURS[i])
-                        else:
-                            # IF the curve is monotonic it is plotted with a 
-                            # dashed line as it is not used to determin Tm
-                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
                             , COLOURS[i],linestyle="--")
+                            
+                        #If the curve complex (unreliable Tm), plot it dotted. 
+                        #Consists of complex and Tms that are not steep enough
+                        elif self.originalPlate.wells[well].complex == True:
+                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                            , COLOURS[i],linestyle=":")
+                            
+                        #otherwise plot the graph normally
+                        else:
+                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                            , COLOURS[i])
                             
                         meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                         
@@ -747,35 +783,6 @@ class DSFAnalysis:
 
         pdf.save()
 
-        return
-    
-    def computeTms(self):
-        """
-        To find the Tm of a mean curve we look at the curves that comprised it 
-        (not including the discarded curves ofcourse) and find the Tm of each of
-        those. We then find the mean and sd of these Tms which gives us a Tm estimate, 
-        along with an error estimate
-        
-        When finding the Tm of a curve that is not a mean curve, the error is set to 
-        None
-        """
-        #most calculating is done by getting the mean and sd of replicate Tms,
-        #making this the useful part
-        for well in self.originalPlate.names:
-            #sets own mono instance variable to apropriate state
-            self.originalPlate.wells[well].isMonotonic(self.plate.monotonicThreshold)
-            if self.originalPlate.wells[well].mono == False:
-                self.originalPlate.wells[well].computeTm()
-
-        for well in self.plate.names:
-                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
-                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
-                for data in complexs:
-                    if data:
-                        self.wells[well].complex = True
-                self.wells[well].Tm , self.wells[well].TmError = rh.meanSd(tms)
-                if len(tms) == 1:
-                    self.wells[well].TmError = None
         return
 
     
@@ -1083,7 +1090,6 @@ class DSFWell:
         lowestIndex2 = None
         highestPoint = 0
         highestIndex = None
-        signChangeCount = 0
         previous = None
         for i, value in enumerate(self.fluorescence[:-1]):
             if value > highestPoint:
@@ -1130,13 +1136,15 @@ class DSFWell:
             if seriesDeriv[ind]<lowestPoint:
                 lowestPoint = seriesDeriv[ind]
                 lowestPointIndex = ind
-                
-        #no Tm will be found if the slope is not steep enough.
-        if lowestPoint > -0.000005:
-            print self.name, 'lowestpoint too small', lowestPoint
-            lowestPointIndex = None
+        
+        #TODO working, tms not steep enough added to complex
+        #if the slope is not steep enough, tm remains saved, but curve is grouped with the
+        #complex curves (now known as the unreliable group)
+        #if lowestPoint > -0.000001 / (normalisationFactor / saturation max point of all curves thing):
+        #    print self.name, 'lowestpoint too small', lowestPoint
+        #    self.complex = True
 
-        #if lowest point is the first or last index, then no curve fit is required
+        #if lowest point is the first index, then no curve fit is required
         if lowestPointIndex == seriesDeriv.index[0]:
             tm = lowestPointIndex
             self.Tm = tm
@@ -1150,8 +1158,9 @@ class DSFWell:
         if lowestPointIndex == None:
             self.Tm = None
             
-            #if no tm, the curve cannot be complex, set to false (should already be false), before returning
-            self.complex = False
+            #if no tm, the curve hopefully be picked up as a monotonic/in the noise/saturated/outlier
+            #however, if this does not happen, the curve remains as complex
+            self.complex = True
             return     
         
         #the indices in the series either side of the lowest index
@@ -1185,7 +1194,7 @@ class DSFWell:
         
         #again check for complex shape before returning
         if signChange:
-                self.complex = True
+            self.complex = True
 
 
         averagePoint = (lowestPoint2 +highestPoint) / 2
@@ -1343,6 +1352,7 @@ def main():
         mydsf = DSFAnalysis()
         mydsf.loadMeltCurves(rfuFilepath,contentsMapFilepath)
         mydsf.analyseCurves()
+        mydsf.removeInsignificant()
         
         # generates the report
         name = rfuFilepath.split(".")[0]
@@ -1374,5 +1384,37 @@ def main():
 #excecutes main() on file run
 if __name__ == "__main__":
     main()
+
+#can be used for batch analysis of experiments with the same contents map
+"""
+loc = ""
+contents = ""
+i=0
+for file_ in os.listdir(loc):
+    rfuFilepath = loc + file_
+    print rfuFilepath
+    mydsf = DSFAnalysis()
+    mydsf.loadMeltCurves(rfuFilepath,contents)
+    mydsf.analyseCurves()
+    mydsf.removeInsignificant()
+    
+    # generates the report
+    name = rfuFilepath.split(".")[0]
+    mydsf.generateReport(name+".pdf")
+    
+    if i == 10:
+        break
+    i+=1
+"""
+
+
+
+
+
+
+
+
+
+
 
 
