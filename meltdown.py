@@ -241,8 +241,6 @@ class DSFAnalysis:
         # Searching for curves that are in the noise
         if len(self.plate.noProtein) > 0:
             thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
-            print self.wells.keys(), len(self.wells.keys())
-            print self.delCurves, len(self.delCurves)
             for well in self.originalPlate.wells:
                 if not self.originalPlate.wells[well].contents.isControl and well not in self.delCurves:
                     if self.originalPlate.wells[well].monoThresh > thresholdm/1.15:
