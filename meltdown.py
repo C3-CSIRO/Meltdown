@@ -506,7 +506,7 @@ class DSFAnalysis:
                 unreliableDrawn = True
             tmHandles.append(handle)
 
-        originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied])
+        originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied if x not in self.delCurves])
         
         
         # Setting the scale of the y axis
