@@ -119,7 +119,6 @@ class DSFAnalysis:
         self.wells = self.plate.wells
         self.originalPlate = DSFPlate(fluorescenceXLS, labelsXLS)
         self.removeOutliers()
-        #self.removeInsignificant()
         self.findMeanCurves()
         return
     
@@ -310,8 +309,9 @@ class DSFAnalysis:
             if well.minNormalised < self.overallMinNormalised:
                 self.overallMinNormalised = well.minNormalised
         
-        
-        self.computeTms()
+        for well in self.originalPlate.names:
+            #sets the per-well monotonic threshold,
+            self.originalPlate.wells[well].setUniqueMonoThresh(self.plate.monotonicThreshold)
         return
         
     def computeTms(self):
@@ -328,17 +328,17 @@ class DSFAnalysis:
         #making this the useful part
         for well in self.originalPlate.names:
             #sets own mono instance variable to apropriate state
-            self.originalPlate.wells[well].isMonotonic(self.plate.monotonicThreshold)
-            if self.originalPlate.wells[well].mono == False:
+            self.originalPlate.wells[well].isMonotonic()
+            if self.originalPlate.wells[well].mono == False and well not in self.delCurves:
                 self.originalPlate.wells[well].computeTm()
             #monotonic curves are now grouped with complex curves, and plotted as such
-            else:
+            elif self.originalPlate.wells[well].mono:
                 if well not in self.delCurves:
                     self.delCurves.append(well)
 
         for well in self.plate.names:
-                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
-                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meanDict[well]  if x not in self.delCurves and not self.originalPlate.wells[x].mono]
+                tms = [self.originalPlate.wells[x].Tm for x in self.plate.meanDict[well]  if x not in self.delCurves]
+                complexs = [self.originalPlate.wells[x].complex for x in self.plate.meanDict[well]  if x not in self.delCurves]
                 for data in complexs:
                     if data:
                         self.wells[well].complex = True
@@ -1014,7 +1014,12 @@ class DSFWell:
         self.contents = Contents(conditionName, conditionSalt, conditionPh, conditiondpHdT, conditionIsControl)
         return  
 
-    def isMonotonic(self, monoThreshold):
+    def setUniqueMonoThresh(self, monoThreshold):
+        #the forgive monotonic threshold depends on the normalisation of the curve
+        self.monoThresh = monoThreshold / self.normalisationFactor
+        return
+        
+    def isMonotonic(self):
         """
         Checks to see if the normalised curve, and hence original curve, is monotonic non-increasing
         
@@ -1023,10 +1028,7 @@ class DSFWell:
         is not monotonic, with each decreasing pair of points inbetween, puts the consecutive contradiction 
         count back down by 1.
         """
-        
-        #the forgive monotonic threshold depends on the normalisation of the curve
-        self.monoThresh = monoThreshold / self.normalisationFactor
-        
+
         #assume monotonic non-increasing
         nonIncreasingMono = True
         contradictions = 0
@@ -1357,6 +1359,8 @@ def main():
         mydsf.loadMeltCurves(rfuFilepath,contentsMapFilepath)
         mydsf.analyseCurves()
         mydsf.removeInsignificant()
+        mydsf.computeTms()
+        
         
         # generates the report
         name = rfuFilepath.split(".")[0]

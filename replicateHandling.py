@@ -42,7 +42,7 @@ def meanSd(listOfNumbers):
     N=len(listOfNumbers)
     for item in listOfNumbers:
         if item !=None:
-            etotal+=item
+            etotal+=float(item)
             e2total+=math.pow(item,2)
         else:
             N -= 1
