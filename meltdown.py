@@ -40,6 +40,8 @@ import Tkinter, tkFileDialog, tkMessageBox
 import cStringIO
 import os
 import sys, traceback
+import ConfigParser
+import csv
 import matplotlib.pyplot as plt
 import numpy as np
 from itertools import combinations
@@ -84,9 +86,13 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 #             "Very Dark Brown","Violet","Violet Red",
 #             "Yellow Green"]
 
-##====DEBUGGING====##
-#set this to false if you do not wish for the exported data files to be deleted after being analysed
-DELETE_INPUT_FILES = True
+#read the settings.ini file and set the appropriate flags
+RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
+cfg = ConfigParser.ConfigParser()
+cfg.readfp(open(RUNNING_LOCATION + '\\settings.ini'))
+#get options
+DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
+CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
 
 
 class DSFAnalysis:
@@ -374,7 +380,7 @@ class DSFAnalysis:
         #test the control if the control is present in the plate
         if len(self.plate.noDye)>0:
             #get the curves to compare as series
-            noDyeExpected = pandas.Series.from_csv("data/noDyeControl.csv")
+            noDyeExpected = pandas.Series.from_csv(RUNNING_LOCATION + "\\data\\noDyeControl.csv")
             #indexed at 0 since control list has only one item
             noDyeReal = pandas.Series(self.plate.wells[self.plate.noDye[0]].fluorescence, self.plate.wells[self.plate.noDye[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
@@ -387,7 +393,7 @@ class DSFAnalysis:
         #test the control if the control is present in the plate
         if len(self.plate.noProtein)>0:
             #get the curves to compare as series
-            noProteinExpected = pandas.Series.from_csv("data/noProteinControl.csv")
+            noProteinExpected = pandas.Series.from_csv(RUNNING_LOCATION + "\\data\\noProteinControl.csv")
             #indexed at 0 since control list has only one item
             noProteinReal = pandas.Series(self.plate.wells[self.plate.noProtein[0]].fluorescence, self.plate.wells[self.plate.noProtein[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
@@ -425,7 +431,7 @@ class DSFAnalysis:
             pdf.drawString(cm,27*cm, "..."+self.name[-70:])
 
         pdf.setFont("Helvetica-Bold",12)
-        pdf.drawImage("data/CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
+        pdf.drawImage(RUNNING_LOCATION + "\\data\\CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
 
         # For finding the best Tm
         best = ""
@@ -781,6 +787,19 @@ class DSFAnalysis:
 
         pdf.save()
 
+        return
+
+    def produceNormalisedOutput(self, fileLocAndName):
+        with open(fileLocAndName, 'w') as fp:
+            fWriter = csv.writer(fp, delimiter='\t')
+            fWriter.writerow(['Temperature'] + self.originalPlate.names)
+            for i in range(len(self.originalPlate.wells.values()[0].temperatures)):
+                #start each row with the temperature
+                row = [self.originalPlate.wells.values()[0].temperatures[i]]
+                #create each row as the value as that temperature on each well
+                for wellName in self.originalPlate.names:
+                    row.append(self.originalPlate.wells[wellName].fluorescence[i])
+                fWriter.writerow(row)
         return
 
     
@@ -1353,18 +1372,29 @@ def main():
     contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map", filetypes=[("text files", ".txt")])
     try:
         #the analysis
+        print 'reading in data ...'
         mydsf = DSFAnalysis()
         mydsf.loadMeltCurves(rfuFilepath,contentsMapFilepath)
+        print 'analysing ...'
         mydsf.analyseCurves()
         mydsf.removeInsignificant()
         
         # generates the report
+        print 'generating report ...'
         name = rfuFilepath.split(".")[0]
         mydsf.generateReport(name+".pdf")
+        
+        #generate a tab delimited .txt file of the normalised curves, if the setting in the ini
+        #is set to true
+        if CREATE_NORMALISED_DATA:
+            #add -normalised to the end of the filename
+            print 'creating normalised data ...'
+            mydsf.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
 
         #also remove the exported xls/xlsx files after meltdown has been run on them
         #find the protein name, then all the files with that name in it, then delete them
         if DELETE_INPUT_FILES:
+            print 'deleting input data file ...'
             folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
             proteinName = rfuFilepath.split('/')[-1].split()[0]
             for fl in os.listdir(folder):
@@ -1372,14 +1402,17 @@ def main():
                     continue
                 if proteinName in fl:
                     os.remove(folder+'/'+fl)
+        
+        print '*done*'
             
         
     except:
-        errors = open("error_log.txt",'w')
+        errors = open(RUNNING_LOCATION + "\\error_log.txt",'w')
         etype, value, tb = sys.exc_info()
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 
         root = Tkinter.Tk()
         root.withdraw()
+        print '*error occured, check error log*'
         tkMessageBox.showerror("Error", "Check error log")
         errors.close()
 
