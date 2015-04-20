@@ -1387,13 +1387,6 @@ def main():
         print 'generating report ...'
         name = rfuFilepath.split(".")[0]
         mydsf.generateReport(name+".pdf")
-        
-        #generate a tab delimited .txt file of the normalised curves, if the setting in the ini
-        #is set to true
-        if CREATE_NORMALISED_DATA:
-            #add -normalised to the end of the filename
-            print 'creating normalised data ...'
-            mydsf.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
 
         #also remove the exported xls/xlsx files after meltdown has been run on them
         #find the protein name, then all the files with that name in it, then delete them
@@ -1406,6 +1399,13 @@ def main():
                     continue
                 if proteinName in fl:
                     os.remove(folder+'/'+fl)
+                    
+        #generate a tab delimited .txt file of the normalised curves, if the setting in the ini
+        #is set to true
+        if CREATE_NORMALISED_DATA:
+            #add -normalised to the end of the filename
+            print 'creating normalised data ...'
+            mydsf.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
         
         print '*done*'
             
