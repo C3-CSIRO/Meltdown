@@ -33,6 +33,7 @@
 # Additionally, given a suitable set of training data, the parameters used for outlier detection
 # and Tm calculationcan be recomputed.
 #
+global version = "1.1.0"
 
 import math
 import pandas
@@ -73,19 +74,6 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
             "DarkRed","Lime","Indigo","MediumSpringGreen","DeepPink","Salmon",
             "Teal","DeepSkyBlue","DarkOliveGreen","Maroon","GoldenRod","MediumVioletRed"]
 
-# ['Red','Green','Blue','Magenta','Cyan',
-#             'Aquamarine','CadetBlue','Copper',
-#             'DarkGreen','DarkOrchid','DarkPurple',
-#             'Dark Wood','Firebrick','Flesh','ForestGreen',
-#             'Gold','Goldenrod','Green Copper','Khaki',
-#             'Maroon','Midnight Blue','New Tan','Old Gold',
-#             'Orange',"Orchid","Quartz","Rich Blue",
-#             "Scarlet","Sea Green","Semi-Sweet Chocolate",
-#             "Sienna",'Slate Blue',"Spring Green",
-#             "Steel Blue","Summer Sky","Tan","Turquoise",
-#             "Very Dark Brown","Violet","Violet Red",
-#             "Yellow Green"]
-
 #read the settings.ini file and set the appropriate flags
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
 cfg = ConfigParser.ConfigParser()
@@ -110,7 +98,7 @@ class DSFAnalysis:
         self.delCurves = []
         return
     
-    def loadMeltCurves(self, fluorescenceXLS, labelsXLS):
+    def loadMeltCurves(self, fluorescenceFilepath, contentsMapFilepath):
         """
         Loads the two XLSX files and takes from them the information
         needed to start the analysis.
@@ -120,10 +108,10 @@ class DSFAnalysis:
         +labelsXLS is the xlsx file that stores the conditions
         """
         #populates the relevant instance variables for the analysis
-        self.name = fluorescenceXLS
-        self.plate = DSFPlate(fluorescenceXLS, labelsXLS)
+        self.name = fluorescenceFilepath
+        self.plate = DSFPlate(fluorescenceFilepath, contentsMapFilepath)
         self.wells = self.plate.wells
-        self.originalPlate = DSFPlate(fluorescenceXLS, labelsXLS)
+        self.originalPlate = DSFPlate(fluorescenceFilepath, contentsMapFilepath)
         self.removeOutliers()
         self.findMeanCurves()
         return
@@ -137,9 +125,6 @@ class DSFAnalysis:
         """
         meanWells = {}
         visited = []
-        numcount = 1
-        #letcount = 0
-        #ordcount = ord("A")
         names = self.plate.names
         for well in names:
             if well not in visited:
@@ -153,13 +138,7 @@ class DSFAnalysis:
                         del reps[i]
                         i -=1    
                     i+=1
-                ## if the first letter of the well name is not the same as ordcount
-                #if ord(well[0]) != ordcount:
-                #    ordcount = ord(well[0])
-                #    letcount += 1
-                #    numcount = 1
                 if len(reps) > 0:
-                    #meanWells[chr(65+letcount) + str(numcount)] = (meanCurve([self.wells[well].fluorescence for well in reps]),well)
                     meanWells[well] = (meanCurve([self.wells[well].fluorescence for well in reps]),well)
                 
                 else:
@@ -177,9 +156,6 @@ class DSFAnalysis:
                 #creates a dictionary allowing you to find which wells created which mean well
                 #e.g. 'A2': ["A4","A5","A6"]
                 self.plate.meanDict[well] = self.originalPlate.repDict[well]
-                
-                #numcount increased for naming mean wells
-                numcount += 1
                 
         remove = []
 
@@ -293,7 +269,6 @@ class DSFAnalysis:
     
     def analyseCurves(self):
         """
-        Calculate the Tms of all the curves in the plate
         """
         #gets the maximum point out of all the non normalised graphs
         self.overallMaxNonNormalised = 0
@@ -318,6 +293,9 @@ class DSFAnalysis:
         for well in self.originalPlate.names:
             #sets the per-well monotonic threshold,
             self.originalPlate.wells[well].setUniqueMonoThresh(self.plate.monotonicThreshold)
+
+        mydsf.removeInsignificant()
+        mydsf.computeTms()  1
         return
         
     def computeTms(self):
@@ -973,7 +951,7 @@ class DSFPlate:
             #populate the well dictionary of labels and values
             self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i], conditionIsControl[i])
             
-        return
+        returns
               
 
 class DSFWell:
@@ -1380,8 +1358,7 @@ def main():
         mydsf.loadMeltCurves(rfuFilepath,contentsMapFilepath)
         print 'analysing ...'
         mydsf.analyseCurves()
-        mydsf.removeInsignificant()
-        mydsf.computeTms()
+        
         
         
         # generates the report
@@ -1414,6 +1391,7 @@ def main():
     except:
         errors = open(RUNNING_LOCATION + "\\error_log.txt",'w')
         etype, value, tb = sys.exc_info()
+        errrors.write(version+"\n")
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 
         root = Tkinter.Tk()
         root.withdraw()
