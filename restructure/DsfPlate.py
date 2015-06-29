@@ -8,7 +8,7 @@ class DsfPlate:
     def __readContentsOfWell(contentsMap, wellName):
         return
     
-    def __addWell(fluorescence, temperature, name, cv1, cv2, ph, dphdt, isControl):
+    def __addWell(fluorescence, temperatures, name, cv1, cv2, ph, dphdt, isControl):
         return
     
     def __createConditionVariableGrouping(contentsMap):
