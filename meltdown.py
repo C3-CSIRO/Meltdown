@@ -33,7 +33,7 @@
 # Additionally, given a suitable set of training data, the parameters used for outlier detection
 # and Tm calculationcan be recomputed.
 #
-global version = "1.1.0"
+version = "1.1.0"
 
 import math
 import pandas
@@ -294,8 +294,8 @@ class DSFAnalysis:
             #sets the per-well monotonic threshold,
             self.originalPlate.wells[well].setUniqueMonoThresh(self.plate.monotonicThreshold)
 
-        mydsf.removeInsignificant()
-        mydsf.computeTms()  1
+        self.removeInsignificant()
+        self.computeTms()
         return
         
     def computeTms(self):
@@ -951,7 +951,7 @@ class DSFPlate:
             #populate the well dictionary of labels and values
             self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i], conditionIsControl[i])
             
-        returns
+        return
               
 
 class DSFWell:
@@ -1391,7 +1391,7 @@ def main():
     except:
         errors = open(RUNNING_LOCATION + "\\error_log.txt",'w')
         etype, value, tb = sys.exc_info()
-        errrors.write(version+"\n")
+        errors.write(version+"\n")
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 
         root = Tkinter.Tk()
         root.withdraw()
