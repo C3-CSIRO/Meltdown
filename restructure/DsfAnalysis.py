@@ -14,6 +14,9 @@ class DsfAnalysis:
     def __createMeanWells():
         return
     
+    def __createMeanContentsHash():
+        return
+    
     def generateReport():
         return
     

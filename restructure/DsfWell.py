@@ -2,10 +2,10 @@
 
 
 class DsfWell:
-    def __init__(self,fluorescence,temperatures,name,cv1,cv2,ph,dphdt,isControl):
+    def __init__(self,fluorescence,temperatures,name,contents):
         self.fluorescence = fluorescence
         self.temperatures = temperatures
-        self.contents = Contents(cv1,cv2,ph,dphdt,isControl)
+        self.contents = contents
         self.name = name
 
         self.normalisationFactor = None
@@ -24,17 +24,17 @@ class DsfWell:
 
         return
     
-    def getMinAndMax():
-        minimum = fluorescence[0]
-        maximum = fluorescence[0]
-        for value in fluorescence[1:]:
+    def getMinAndMax(self):
+        minimum = self.fluorescence[0]
+        maximum = self.fluorescence[0]
+        for value in self.fluorescence[1:]:
             if value > maximum:
                 maximum = value
             if value < minimum:
                 minimum = value
         return (minimum,maximum)
     
-    def normalise():
+    def normalise(self):
         count = 0
         for height in self.fluorescence:
             count += height*stepSize
@@ -43,7 +43,7 @@ class DsfWell:
         self.normalisationFactor = count
         return
     
-    def computeSaturation():
+    def computeSaturation(self):
         if not self.isDsicarded:
             currentValue = self.fluorescence[0]
             maxInd = 0

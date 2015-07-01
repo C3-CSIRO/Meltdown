@@ -4,4 +4,6 @@
 class MeanWell:
     def __init__(self):
         return
-    
+
+    def getContents():
+        return
