@@ -206,8 +206,7 @@ class DsfPlate:
                         outlierWells.append(wellName)
         #go thraough all the outlier wells and set their outlier and discarded flags to true
         for wellName in outlierWells:
-            self.wells[wellName].isOutlier = True
-            self.wells[wellName].isDiscarded = True
+            self.wells[wellName].setAsOutlier()
         return
     
     def computeSaturations(self):
