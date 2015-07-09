@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from itertools import combinations
 
+import replicateHandling as rh
 from DsfWell import DsfWell
 from Contents import Contents
 from MeltdownException import MeltdownException
@@ -17,12 +19,20 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
             "DarkSlateGray","Olive","LightSeaGreen","DarkMagenta","Gold","Navy",
             "DarkRed","Lime","Indigo","MediumSpringGreen","DeepPink","Salmon",
             "Teal","DeepSkyBlue","DarkOliveGreen","Maroon","GoldenRod","MediumVioletRed"]
+            
+#discarding bad replicates threshold. calculated as mean difference between any two of 168 normalised lysozyme curves
+SIMILARITY_THRESHOLD = 1.72570084974
+#gives threshold for monotonicity in a non normalised melt curve when multiplied by highest fluorescence value on the plate
+PLATE_MONOTONICITY_THRESHOLD_FACTOR = 0.0005
+#gives the 'in the noise' threshold when multiplied by the mean monotonicity threshold of the 'no protein' control wells
+NOISE_THRESHOLD_FACTOR = 1.15
+
 
 class DsfPlate:
     def __init__(self, dataFilePath, contentsMapFilePath):
         
-        #initialise list of wells
-        self.wells = []
+        #initialise dict of well names to wells
+        self.wells = {}
         #initialise lists of control names
         self.lysozyme = []
         self.noDye = []
@@ -33,8 +43,11 @@ class DsfPlate:
         #initialised replicate dictionary, maps well name to name of all its replicate wells (including itself)
         self.repDict = {}
         
+        #initial values for plate specific thresholds
+        self.plateMonotonicThreshold = None
+        self.noiseThreshold = None
         
-        #read the data file as a pandas data frame
+        #==================read the data file as a pandas data frame
         try:
             data = pd.DataFrame.from_csv(dataFilePath, sep='\t', index_col='Temperature')
         except Exception as e:
@@ -50,10 +63,8 @@ class DsfPlate:
         data.dropna(how='all', inplace=True)
         #replace any empty cells (default value NaN) to be empty strings ('')
         data.fillna(value='', inplace=True)
-        
-        
-        
-        #read the in the contents map as a dataframe too
+
+        #==================read the in the contents map as a dataframe too
         try:
             contentsMap = pd.DataFrame.from_csv(contentsMapFilePath, sep='\t', index_col='Well')
         except Exception as e:
@@ -67,9 +78,7 @@ class DsfPlate:
         contentsMap.dropna(how='all', inplace=True)
         #replace any empty cells (default value NaN) to be empty strings ('')
         contentsMap.fillna(value='', inplace=True)
-        
-        
-        
+        #==================
         
         for wellName in data.columns:
             wellContents = self.__readContentsOfWell(contentsMap, wellName)
@@ -140,7 +149,7 @@ class DsfPlate:
     def __addWell(self, fluorescenceSeries, name, contents):
         #create a dsf well object and add it to wells list
         well = DsfWell(list(fluorescenceSeries.values), list(fluorescenceSeries.index), name, contents)
-        self.wells.append(well)
+        self.wells[name] = well
         return
     
     def __assignConditionVariable2Colours(self, contentsMap):
@@ -171,27 +180,100 @@ class DsfPlate:
                     self.repDict[wellName].append(comparedWellName)
         return
     
-    def computeOutliers():
+    def computeOutliers(self):
+        seen = []
+        outlierWells = []
+        for wellName in self.wells.keys():
+            #carful not to loop over the same wells
+            if wellName not in seen:
+                reps = self.repDict[wellName]
+                seen += reps
+                #every possible pair of replicates
+                pairs = combinations(reps, 2)
+                #initialise the distance matrix, as described in replicate handling
+                distMatrix = [[0 for x in range(len(reps))] for y in range(len(reps))]
+                for pair in pairs:
+                    #calculate the distance between the pairs
+                    dist = rh.sqrdiff(self.wells[pair[0]].fluorescence, self.wells[pair[1]].fluorescence)
+                    #add the appropriate distance values to the distance matrix
+                    distMatrix[reps.index(pair[0])][reps.index(pair[1])] = dist
+                    distMatrix[reps.index(pair[1])][reps.index(pair[0])] = dist
+                #get list of replicates which are NOT outliers
+                keep = rh.discardBad(reps, distMatrix, SIMILARITY_THRESHOLD)
+                #add to the total list of outlier wells
+                for rep in reps:
+                    if rep not in keep:
+                        outlierWells.append(wellName)
+        #go thraough all the outlier wells and set their outlier and discarded flags to true
+        for wellName in outlierWells:
+            self.wells[wellName].isOutlier = True
+            self.wells[wellName].isDiscarded = True
         return
     
-    def computeSaturations():
+    def computeSaturations(self):
+        #let each stored well calculate if it is saturated
+        for well in self.wells.values():
+            well.computeSaturation()
         return
     
-    def computeMonotonicities():
+    def computeMonotonicities(self):
+        self.__computePlateMonotonicThreshold()
+        #make each well calculate whether it is monotonic, with the now calculated plate monotonicity threshold
+        for well in self.wells.values():
+            well.computeMonotonicity(self.plateMonotonicThreshold)
         return
     
-    def computeInTheNoises():
+    def computeInTheNoises(self):
+        self.__computeNoiseThreshold()
+        #make each well calculate whether it is in the noise, with the now calculated noise threshold
+        for well in self.wells.values():
+            well.computeInTheNoise(self.noiseThreshold)
         return
     
-    def computeTms():
+    def computeTms(self):
+        #each well calculates its Tm on itself
+        for well in self.wells.values():
+            well.computeTm()
         return
     
-    def computeComplexities():
+    def computeComplexities(self):
+        #each well calculates if it is complex on itself
+        for well in self.wells.values():
+            well.computeComplexity()
         return
     
-    def __computePlateMonotonicThreshold():
+    def __computePlateMonotonicThreshold(self):
+        #get the highest fluorescence value from all wells before they were normalised
+        overallMaxNonNormalised = 0
+        for well in self.wells.values():
+            if well.wellMax > overallMaxNonNormalised:
+                overallMaxNonNormalised = well.wellMax
+        #calculate the plates monotonic threshold used the constant factor
+        self.plateMonotonicThreshold = PLATE_MONOTONICITY_THRESHOLD_FACTOR * overallMaxNonNormalised
         return
     
-    def __computeNoiseThreshold():
+    def __computeNoiseThreshold(self):
+        #if no no protein controls, leave the noise threshold as None, and let this be handled in DsfWell
+        if len(self.noProtein)==0:
+            self.noiseThreshold = None
+            return
+        #otherwise, calculate th noise threshold from the constant factor
+        meanNoProteinMonotonicThreshold, sd = rh.meanSd([self.wells[wellName].wellMonotonicThreshold for wellName in self.noProtein])
+        self.noiseThreshold = meanNoProteinMonotonicThreshold * NOISE_THRESHOLD_FACTOR
         return
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

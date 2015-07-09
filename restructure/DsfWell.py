@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import math
 
 class DsfWell:
     def __init__(self,fluorescence,temperatures,name,contents):
@@ -14,6 +15,7 @@ class DsfWell:
         self.wellNormalisedMax = None 
         self.wellNormalisedMin = None
         self.tm = None
+        self.wellMonotonicThreshold = None
 
         self.isMonotonic = False
         self.isComplex =  False
@@ -21,6 +23,11 @@ class DsfWell:
         self.isInTheNoise = False
         self.isSaturated = False
         self.isDiscarded = False
+        
+        #get min and max of the non normalised and normalised curves
+        self.wellMin, self.wellMax = self.getMinAndMax()
+        self.normalise()
+        self.wellNormalisedMin, self.wellNormalisedMax = self.getMinAndMax()
 
         return
     
@@ -35,6 +42,8 @@ class DsfWell:
         return (minimum,maximum)
     
     def normalise(self):
+        #throw error if there is only 1 fluorescence value?
+        stepSize = math.fabs(self.temperatures[1] - self.temperatures[0])
         count = 0
         for height in self.fluorescence:
             count += height*stepSize
@@ -79,6 +88,7 @@ class DsfWell:
         return
     
     def computeMonotonicity(plateMonotonicThreshold):
+        #set self.wellMonotonicThreshold here
         return
     
     def computeInTheNoise(noiseThreshold):

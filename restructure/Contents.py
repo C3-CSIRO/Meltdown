@@ -3,6 +3,7 @@
 
 class Contents:
     def __init__(self, cv1, cv2, ph, dphdt, isControl):
+        #stores the contents of a well
         self.cv1 = cv1
         self.cv2 = cv2
         self.ph = ph
