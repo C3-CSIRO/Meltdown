@@ -82,17 +82,22 @@ class DsfPlate:
         
         for wellName in data.columns:
             wellContents = self.__readContentsOfWell(contentsMap, wellName)
-            #check if well is one fo the 4 supported controls, and add name to appropriate list if that is the case
+            #check if well is one of the 4 supported controls, and add name to appropriate list if that is the case
             if wellContents.cv1.lower() == LYSOZYME:
+                #save each of the controls found to be lower cased, so they can be found later
+                wellContents.cv1 = wellContents.cv1.lower()
                 self.lysozyme.append(wellName)
                 wellContents.control = 1
             elif wellContents.cv1.lower() == NO_DYE:
+                wellContents.cv1 = wellContents.cv1.lower()
                 self.noDye.append(wellName)
                 wellContents.control = 1
             elif wellContents.cv1.lower() == PROTEIN_AS_SUPPLIED:
+                wellContents.cv1 = wellContents.cv1.lower()
                 self.proteinAsSupplied.append(wellName)
                 wellContents.control = 1
             elif wellContents.cv1.lower() == NO_PROTEIN:
+                wellContents.cv1 = wellContents.cv1.lower()
                 self.noProtein.append(wellName)
                 wellContents.control = 1
             

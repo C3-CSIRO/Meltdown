@@ -96,7 +96,8 @@ class DsfAnalysis:
         #check if no dye control is present
         if len(self.plate.noDye)>0:
             #create a mean curve out of the replicates that are not outliers
-            meanNoDyeCurve = [0 for x in self.plate.wells[self.plate.noDye[0]]]
+            #initialise the mean curve sum to all zeros
+            meanNoDyeCurve = [0 for x in self.plate.wells[self.plate.noDye[0]].temperatures]
             validCurvesInSum = 0
             for wellName in self.plate.noDye:
                 well = self.plate.wells[wellName]
@@ -118,7 +119,8 @@ class DsfAnalysis:
         #check if no protein control is present
         if len(self.plate.noProtein)>0:
             #create a mean curve out of the replicates that are not outliers
-            meanNoProteinCurve = [0 for x in self.plate.wells[self.plate.noDye[0]]]
+            #initialise the mean curve sum to all zeros
+            meanNoProteinCurve = [0 for x in self.plate.wells[self.plate.noProtein[0]].temperatures]
             validCurvesInSum = 0
             for wellName in self.plate.noDye:
                 well = self.plate.wells[wellName]
