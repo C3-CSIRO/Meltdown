@@ -3,15 +3,21 @@
 import math
 import pandas as pd
 import numpy as np
+import Tkinter, tkMessageBox
 
-
+#the max amount the flat saturated curves can fluctuate within the flat section
 SATURATION_FLUCTUATION_THRESHOLD = 0.005
-
+#how long a flat section on curve can be before it is considered saturated
 LENGTH_OF_FLAT_CONSIDERED_SATURATED = 10
-
+#the fraction of the total curve, at the end, that will not be iterated over for Tm calculation, as last section is unreliable
 FRACTION_OF_CURVE_NOT_CHECKED_FOR_TM = 0.125
-
+#number of times a monotonic curve can break its monotonicity but still be considered monotonic
 MONOTONIC_CONTRADICTION_LIMIT = 5
+#when finding sign changes in the derivative series, this is the forgiving threshold from 0
+SIGN_CHANGE_THRESH = 0.000001
+#the largest difference between the calculated Tm, and the mid point of the highest and lowest points on the curve before
+#curve is considered complex
+MAX_DIFFERENCE_BETWEEN_TMS_BEFORE_COMPLEX = 5
 
 class DsfWell:
     def __init__(self,fluorescence,temperatures,name,contents):
@@ -102,6 +108,10 @@ class DsfWell:
         #calculate the well's individual monotonic threshold from the plate's one
         self.wellMonotonicThreshold = plateMonotonicThreshold / self.normalisationFactor
         
+        #no need to calculate if curve is monotonic, if it is already tagged as discarded
+        if self.isDiscarded:
+            return
+        
         #initially assume curve is decreasing monotonic
         decreasingMonotonic = True
         contradictions = 0
@@ -133,6 +143,15 @@ class DsfWell:
         return
     
     def computeInTheNoise(self, noiseThreshold):
+        #no need to calculate if curve already discarded
+        if self.isDiscarded:
+            return
+        #curve is in the noise, and should be discarded, if its monotonic threshold is greater than the noise threshold given
+        if self.wellMonotonicThreshold > noiseThreshold:
+            self.isInTheNoise = True
+            self.isDiscarded = True
+        else:
+            self.isInTheNoise = False
         return
     
     def computeTm(self):
@@ -165,6 +184,8 @@ class DsfWell:
         #if no lowest point could be found, leave the Tm as none
         if lowestPointIndex == None:
             self.tm = None
+            #force curve to be complex if no Tm can be found, and it has not been discarded
+            self.isComplex = True
             return
         
         #get the index's either side of the lowest point
@@ -197,6 +218,69 @@ class DsfWell:
         return
     
     def computeComplexity(self):
+        #only calculate if curve is not discarded, and not already marked as complex
+        if self.isDiscarded or self.isComplex:
+            return
+        x = self.temperatures
+        y = self.fluorescence
+        #get the derivative series (each point is the slope between successive points in the normalised curve)
+        xdiff = np.diff(x)
+        dydx = -np.diff(y)/xdiff
+        #the derivative series has one less index since there is one fewer differences than points
+        seriesDeriv = pd.Series(dydx, x[:-1])
+        
+        #checks from a derivative sign change between the highest and lowest points on the curve
+        lowestPoint = 1
+        lowestIndex = None
+        highestPoint = 0
+        highestIndex = None
+        previous = None
+        for i, value in enumerate(self.fluorescence[:-1]):
+            if value > highestPoint:
+                highestPoint = value
+                highestIndex = i
+        if highestIndex == 0 :
+            highestPoint = 0
+            highestIndex = None
+            for i, value in enumerate(self.fluorescence[:-1]):
+                if value<lowestPoint:
+                    lowestPoint = value
+                    lowestIndex = i
+            for i, value in enumerate(self.fluorescence[:-1]):
+                if i < lowestIndex:
+                    continue
+                if value > highestPoint:
+                    highestPoint = value
+                    highestIndex = i
+        else:
+            for i, value in enumerate(self.fluorescence[:-1]):
+                if i > highestIndex:
+                    break
+                if value<lowestPoint:
+                    lowestPoint = value
+                    lowestIndex = i
+        signChange = False
+        for ind in seriesDeriv.index[lowestIndex+1:highestIndex]:
+        
+            if previous:
+                if seriesDeriv[ind] + SIGN_CHANGE_THRESH < 0 and previous - SIGN_CHANGE_THRESH > 0:
+                    signChange = True
+                if seriesDeriv[ind] - SIGN_CHANGE_THRESH > 0 and previous + SIGN_CHANGE_THRESH < 0:
+                    signChange = True
+            previous = seriesDeriv[ind]
+        #if we have a sign change, curve is complex
+        if signChange:
+            self.isComplex = True
+            return
+        
+        #other check for complex curve, uses another estimate for Tm
+        averagePoint = (lowestPoint +highestPoint) / 2
+        i = lowestIndex
+        while self.fluorescence[i]<averagePoint:
+            i += 1;
+        #if difference between previously calculated Tm, and new estimate is too large the curve is considered complex
+        if math.fabs(self.temperatures[i] -self.tm) > MAX_DIFFERENCE_BETWEEN_TMS_BEFORE_COMPLEX:
+            self.complex=True
         return
         
     def setAsOutlier(self):
@@ -207,7 +291,15 @@ class DsfWell:
 
 
 
-
+def main():
+    root = Tkinter.Tk()
+    root.withdraw()
+    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    return
+    
+    
+if __name__ == "__main__":
+    main()
 
 
 

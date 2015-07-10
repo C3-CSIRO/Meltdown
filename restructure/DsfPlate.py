@@ -2,6 +2,7 @@
 
 import pandas as pd
 from itertools import combinations
+import Tkinter, tkMessageBox
 
 import replicateHandling as rh
 from DsfWell import DsfWell
@@ -269,7 +270,15 @@ class DsfPlate:
 
 
 
-
+def main():
+    root = Tkinter.Tk()
+    root.withdraw()
+    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    return
+    
+    
+if __name__ == "__main__":
+    main()
 
 
 

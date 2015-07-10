@@ -3,6 +3,7 @@
 import csv
 import os
 import pandas as pd
+import Tkinter, tkMessageBox
 
 import replicateHandling as rh
 from DsfPlate import DsfPlate, LYSOZYME, SIMILARITY_THRESHOLD
@@ -53,8 +54,8 @@ class DsfAnalysis:
                 reps = self.plate.repDict[wellName]
                 seen += reps
                 #get mean tm and tm error (sd of tms)
-                tm, tmError = rh.meanSd([self.plate.wells[w].tm for w in reps])
-                complexMean = any([self.plate.wells[w].isComplex for w in reps])
+                tm, tmError = rh.meanSd([self.plate.wells[w].tm for w in reps if not self.plate.wells[w].isDiscarded])
+                complexMean = any([self.plate.wells[w].isComplex for w in reps if not self.plate.wells[w].isDiscarded])
                 contents = self.plate.wells[wellName].contents
                 #create a mean well and add it to list
                 self.meanWells.append(MeanWell(tm, tmError, complexMean, reps, contents))
@@ -164,6 +165,35 @@ class DsfAnalysis:
         return
     
     def generateReport(self, outputFilePath):
+        #TODO "the big one"
+    
         return
     
+
+def main():
+    root = Tkinter.Tk()
+    root.withdraw()
+    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    return
     
+    
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

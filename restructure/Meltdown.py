@@ -43,15 +43,15 @@ def main():
     root.withdraw()
  
     #choosing a dsf results data file
-    rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF results", filetypes=[("text files", ".txt")])
+    rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF Experiment Results", filetypes=[("text files", ".txt")])
     #choosing a contents map for the data file
-    contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the contents map", filetypes=[("text files", ".txt")])
+    contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the Contents Map", filetypes=[("text files", ".txt")])
     try:
         #the analysis
         print 'reading in data ...'
         #name the analysis the name of the data file
         experiment = DsfAnalysis(rfuFilepath.split('/')[-1])
-        experiment.loadMeltCurves(rfuFilepath,contentsMapFilepath)
+        experiment.loadCurves(rfuFilepath,contentsMapFilepath)
         print 'analysing ...'
         experiment.analyseCurves()
         
@@ -64,7 +64,7 @@ def main():
         #have the same word at the start of their file name, this is assumed to be the protein name, and
         #all files with the same first word in the directory are deleted
         if DELETE_INPUT_FILES:
-            print 'deleting input data file ...'
+            print 'deleting input data files ...'
             folder = rfuFilepath[:-len(rfuFilepath.split('/')[-1]) - 1]
             proteinName = rfuFilepath.split('/')[-1].split()[0]
             for fl in os.listdir(folder):
@@ -91,7 +91,7 @@ def main():
         #save to the error log before finishing
         errors = open(RUNNING_LOCATION + "\\error_log.txt",'w')
         etype, value, tb = sys.exc_info()
-        errors.write(VERSION+"\n")
+        errors.write("Version: "+VERSION+"\n")
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 
         root = Tkinter.Tk()
         root.withdraw()

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import Tkinter, tkMessageBox
 
 class Contents:
     def __init__(self, cv1, cv2, ph, dphdt, isControl):
@@ -10,4 +11,14 @@ class Contents:
         self.dphdt = dphdt
         self.isControl = isControl
         return
+
+
+def main():
+    root = Tkinter.Tk()
+    root.withdraw()
+    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    return
     
+    
+if __name__ == "__main__":
+    main()

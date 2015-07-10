@@ -389,12 +389,14 @@ class DSFAnalysis:
         
         Input: Outfile is the name of the file to which the report is saved
         """
+        #======heading, add version here somewhere
         pdf = canvas.Canvas(outFile,pagesize=A4) 
         pdf.setFont("Helvetica-Bold",16)
         pdf.drawString(cm,28*cm,"MELTDOWN")
         pdf.setFont("Helvetica",16)
         pdf.drawString(6*cm,28*cm,"Melt Curve Analysis")
 
+        #======filename and image
         # Remove the file path from the name
         for i in range(1,len(self.name)):
             if self.name[-i] == '/' or self.name[-i] == '\\':
@@ -411,16 +413,15 @@ class DSFAnalysis:
         pdf.setFont("Helvetica-Bold",12)
         pdf.drawImage(RUNNING_LOCATION + "\\data\\CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
 
+        #======Highest Tm, at the bottom of the first page
         # For finding the best Tm
         best = ""
         maxi = 0
-
         for well in self.plate.names:
             # Finding the maximum Tm
             if self.wells[well].contents.isControl == False and self.wells[well].Tm != None and self.wells[well].mono == False and self.wells[well].Tm > maxi:
                 maxi = self.wells[well].Tm
                 best = well
-
         # This checks if a maximum Tm has being found. If none it is most likely because no Tms could be calculated
         if best != "":
             if self.wells[best].TmError != None:
@@ -432,10 +433,11 @@ class DSFAnalysis:
         pdf.setFont("Helvetica",12)
         fig1 = plt.figure(num=1,figsize=(10,8))
 
+
+        #======the summary graph, with diamonds and circles from Tms
         # Maximum and minimum for the y axis of the summary graph
         maxi = 0
         mini = 100
-
         # Labels for the summary graph
         names = sorted(Contents.name, key=lambda x: x[1])
         labels = [x[0]+"("+str(x[1])+")" for x in names]
@@ -528,7 +530,7 @@ class DSFAnalysis:
 
         pdf.setFillColor("black")
 
-
+        #========the controls, and whether they passed/failed/were not found
         controlChecks = self.returnControlCheck()
 
         #set colour of the controls
@@ -543,6 +545,7 @@ class DSFAnalysis:
         
         pdf.setFillColor("black")
         
+        #=========plots the protein as supplied in top left of the front page
         if originalProteinMeanSd[0]!=None:
             pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
         fig2 = plt.figure(num=1,figsize=(5,4))
