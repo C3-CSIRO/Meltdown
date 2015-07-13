@@ -41,12 +41,20 @@ def main():
     #opens up selection windows for user to use
     root = Tkinter.Tk()
     root.withdraw()
- 
-    #choosing a dsf results data file
-    rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF Experiment Results", filetypes=[("text files", ".txt")])
-    #choosing a contents map for the data file
-    contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the Contents Map", filetypes=[("text files", ".txt")])
+    
     try:
+        #choosing a dsf results data file
+        rfuFilepath = tkFileDialog.askopenfilename(title="Select the DSF Experiment Results", filetypes=[("text files", ".txt")])
+        #raise error if dialog is closed before selecting a file
+        if rfuFilepath == '':
+            raise MeltdownException("Data file not selected")
+        
+        #choosing a contents map for the data file
+        contentsMapFilepath = tkFileDialog.askopenfilename(title="Select the Contents Map", filetypes=[("text files", ".txt")])
+        #raise error if dialog is closed
+        if contentsMapFilepath == '':
+            raise MeltdownException("Contents map file not selected")
+
         #the analysis
         print 'reading in data ...'
         #name the analysis the name of the data file
@@ -58,7 +66,7 @@ def main():
         # generating the report
         print 'generating report ...'
         name = rfuFilepath.split(".")[0]
-        experiment.generateReport(name+".pdf")
+        experiment.generateReport(name+".pdf", VERSION)
 
         #remove any exported files in the directory of the data file. These files are identified if they
         #have the same word at the start of their file name, this is assumed to be the protein name, and
@@ -84,7 +92,7 @@ def main():
     #expected error, to do with reading input, will give descriptive messages
     except MeltdownException as e:
         tkMessageBox.showerror("Error", e.message)
-        print '*error occured, "' + e.message +'"*'
+        print '*error occured* ' + e.message
     #unexpected errors only direct you to the error log
     except Exception:
         tkMessageBox.showerror("Error", "Unexpected error, please check the error log for more information")
@@ -96,7 +104,7 @@ def main():
         root = Tkinter.Tk()
         root.withdraw()
         errors.close()
-        print '*error occured, check error log*'
+        print '*error occured* check error log'
     return
 
 #excecutes main() on file run

@@ -545,11 +545,11 @@ class DSFAnalysis:
         
         pdf.setFillColor("black")
         
-        #=========plots the protein as supplied in top left of the front page
+        #===========writes protein as supplied for the summary graph at bottom of first page
         if originalProteinMeanSd[0]!=None:
             pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
         fig2 = plt.figure(num=1,figsize=(5,4))
-
+        #=========plots the protein as supplied in top left of the front page
         # Plotting the protein as supplied as a control check
         for well in self.originalPlate.proteinAsSupplied:
             if well in self.delCurves:
@@ -581,11 +581,12 @@ class DSFAnalysis:
         else:
             pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = N/A")
 
+        #================top right Summary box
         pdf.setFont("Helvetica-Bold",13)
         pdf.drawString(8*cm,22.75*cm,"Full interpretation of the results requires you to look ")
         pdf.drawString(8*cm,22.25*cm,"at the individual melt curves.")
 
-        # Summary box
+        
         avTmError = 0
         count = 0
         tmCount = 0
@@ -636,7 +637,8 @@ class DSFAnalysis:
             pdf.drawString(8*cm,21.5*cm,"The summary graph appears to be unreliable")
 
         pdf.rect(7.75*cm,18.05*cm,12*cm,5.4*cm)
-
+        
+        #======================================other pages
         # Moving on to the in depth graphs
 
         # Finding the maximun and minimum flurescence points so that all the graphs can have the same scale
@@ -737,7 +739,10 @@ class DSFAnalysis:
                                 pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
                             else:
                                 pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
-                        else:
+                        else:        plt.close()        
+
+
+        pdf.save()
                             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,"None")
                     else:
                         if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
