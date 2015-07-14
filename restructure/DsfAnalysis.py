@@ -2,6 +2,7 @@
 
 import csv
 import os
+import math
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -102,7 +103,7 @@ class DsfAnalysis:
         #first check if lysozyme control is present on the plate
         if len(self.plate.lysozyme)>0:
             #get the mean well for the lysozyme control, it will have no ph, and no condition variable 2
-            lysozymeMeanWell = self.contentsHash[LYSOZYME]['']['']
+            lysozymeMeanWell = self.contentsHash[(LYSOZYME,'')]['']
             
             #lysozyme Tm check, only uses mean lysozyme Tm, hence indexing ([0])
             if lysozymeMeanWell.tm > LYSOZYME_TM_THRESHOLD[0] - 2*LYSOZYME_TM_THRESHOLD[1] and\
@@ -316,103 +317,239 @@ class DsfAnalysis:
         
         
         #plotting the summary graph at the bottom of the first page
-        pdf.setFillColor("black")
-        if suppliedProteinTm != None:
-            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
+        #gets a set of all the condition var 2s in the experiment (without repeats)
+        uniqueCv2s = set([cv2 for cv2Dict in self.contentsHash.values() for cv2 in cv2Dict.keys()])#TODO this should not include cv2's only found in controls
+        #gets a sorted by ph list of (condition var 1, ph) tuples. these are unique
+        cv1PhPairs = sorted(self.contentsHash.keys(), key=lambda x: x[1])#TODO this should not include controls
         
-        pdf.setFont("Helvetica",12)
-        fig1 = plt.figure(num=1,figsize=(10,8))
         
-        # Maximum and minimum for the y axis of the summary graph
-        maxi = 0
-        mini = 100
-        # Labels for the summary graph
-        names = sorted(Contents.name, key=lambda x: x[1])
-        labels = [x[0]+"("+str(x[1])+")" for x in names]
-        tmHandles = []
-        unreliableDrawn = False
-        for i, saltConcentration in enumerate(Contents.salt):
-            # Tms to be drawn regularly 
+        #turns the tuples into string names to display on the x axis
+        xAxisConditionLabels = [pair[0]+"("+str(pair[1])+")" for pair in cv1PhPairs]
+        
+        #flag for if there were any complex curve tms found, so that the warning is displayed        
+        foundUnreliable = False
+        #list of plat handles, used in giving the legend the right colours
+        legendHandles = []
+        #y axis min and max initialisations, these are changed based on the highest and lowest Tms
+        yAxisMin = yAxisMax = 0
+        #creates the graph figure
+        summaryGraphFigure = plt.figure(num=1,figsize=(10,8))
+        
+        for cv2 in uniqueCv2s:
+            #the normal tms
             tms = []
-            # Tms to be drawn as unreliable
-            badTms = []
-
-            for condition in names:
-                found = False
-                for well in self.plate.names:
-                    if self.wells[well].contents.salt == saltConcentration and self.wells[well].contents.name == condition[0] and self.wells[well].contents.pH == condition[1]:
-                        if (self.wells[well].Tm != None and len(self.plate.meanDict[well]) > 1 and self.wells[well].TmError == None) or self.wells[well].complex == True:
-                            tms.append(None)
-                            badTms.append(self.wells[well].Tm)
-                        else:
-                            tms.append(self.wells[well].Tm)
-                            badTms.append(None)
-                        found = True
-                        break
-                # If the particular combination of buffer, salt and pH is not found
-                if not found:
+            #the unreliable tms
+            complexTms = []
+            
+            for cv1,ph in cv1PhPairs:
+                #first check if have a well with the specified cv1, cv2, and ph
+                try:
+                    meanWell = self.contentsHash[(cv1, ph)][cv2]
+                    conditionExists = True
+                except KeyError:
+                    #given (condition var 1, ph) pair does not have a well with current condition var 2
+                    conditionExists = False
+                #now make sure we aren't looking at a control well, since we don't want to plot those
+                if conditionExists and meanWell.contents.isControl:
+                    conditionExists = False
+                
+                #if we found a condition, add it's tm to the right list, and a None to the other
+                if conditionExists:
+                    newTm = meanWell.tm
+                    if meanWell.isComplex:#TODO check when tms are unreliable (if estimate comes from only 1 ?)
+                        tms.append(None)
+                        complexTms.append(newTm)
+                        foundUnreliable = True
+                    else:
+                        tms.append(newTm)
+                        complexTms.append(None)
+                #otherwise, add Nones to both lists
+                else:
+                    newTm = None
                     tms.append(None)
-                    badTms.append(None)
-
-            # Figuring out the scale of the y axis for the summary graph
-            for val in tms:
-                if val != None:
-                    if val > maxi:
-                        maxi = val
-                    if val < mini:
-                        mini = val
-            for val in badTms:
-                if val != None:
-                    if val > maxi:
-                        maxi = val
-                    if val < mini:
-                        mini = val
-            # Handle for the legend
-            try:
-                handle, = plt.plot([x for x in range(len(labels))],tms,color=COLOURS[i],marker="o",linestyle="None")
-            except IndexError:
-                tkMessageBox.showerror("Error", "Only up to 24 types of each condition are supported.\n(there is no limit to the number of conditions)\n\ne.g. 6 different salt concentrations per buffer")
-                sys.exit(1)
-
-            plt.plot([x for x in range(len(labels))],badTms,color=COLOURS[i],marker="d",linestyle="None")
-            unreliableDrawn = False
-            if badTms:
-                unreliableDrawn = True
-            tmHandles.append(handle)
-
-        originalProteinMeanSd = rh.meanSd([self.originalPlate.wells[x].Tm for x in self.originalPlate.proteinAsSupplied if x not in self.delCurves])
+                    complexTms.append(None)
+                
+                #next we adjust the y axis min and max so that they fit the newly added tms
+                if newTm:
+                    #if this is the first Tm, change both the min and max to it
+                    if yAxisMin == 0 and yAxisMax == 0:
+                        yAxisMin = yAxisMax = newTm
+                    #otherwise update the y axis min or max according if required
+                    elif newTm < yAxisMin:
+                        yAxisMin = newTm
+                    elif newTm > yAxisMax:
+                        yAxisMax = newTm
+                
+            #plot the tms and the complex tms, and add the non-complex ones to the legend handles
+            handle, = plt.plot([x for x in range(len(xAxisConditionLabels))], tms, color=self.plate.cv2ColourDict[cv2], marker="o", linestyle="None")
+            plt.plot([x for x in range(len(xAxisConditionLabels))], complexTms, color=self.plate.cv2ColourDict[cv2], marker="d", linestyle="None")
+            legendHandles.append(handle)
         
-        
-        # Setting the scale of the y axis
-        if originalProteinMeanSd[0]!= None:
-            if(originalProteinMeanSd[0]-mini > maxi - originalProteinMeanSd[0]):
-                plt.axis([-1,len(labels),mini-5,2*originalProteinMeanSd[0]-mini +10])
-            else:
-                plt.axis([-1,len(labels),2*originalProteinMeanSd[0] - maxi-5,maxi + 10])
+        #set the min and max of the y axis, centre around protein as supplied Tm, if it's present
+        if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
+            #draw a horizontal dashed red line for the protein as supplied Tm
+            plt.axhline(suppliedProteinTm, 0, 1, linestyle="--", color="red")
+            #centre around protein as supplied Tm
+            distEitherSideOfSuppliedTm = max(math.fabs(suppliedProteinTm - yAxisMin), math.fabs(suppliedProteinTm - yAxisMax))
+            plt.axis([-1, len(xAxisConditionLabels), suppliedProteinTm - distEitherSideOfSuppliedTm - 5, suppliedProteinTm + distEitherSideOfSuppliedTm + 5])
         else:
-            plt.axis([-1,len(labels),mini-5,maxi + 5])
-        #padding at the top changes depending on how many different condition cvariable 2's there are (legend gets bigger)
-        plt.gcf().subplots_adjust(bottom=0.35, top=0.85 - 0.035*(int(len(Contents.salt)/3)))
+            #no protein as supplied Tm, just use calculated y axis min and max
+            plt.axis([-1, len(xAxisConditionLabels), yAxisMin - 5, yAxisMax + 5])
+            
+        #label the axes
         plt.ylabel('Tm')
-
-        # Drawing the Tm of the protein as supplied as a horizontal line on the summary graph
-        plt.axhline(originalProteinMeanSd[0],0,1,linestyle="--",color="red")
-        # Setting x axis labels
-        plt.xticks([x for x in range(len(labels))],labels,rotation="vertical")
-        # Putting the legend for the summary graph at the top, and show only 1 dot instead of 2
-        plt.legend(tmHandles,Contents.salt,loc='lower center', bbox_to_anchor=(0.5, 1),ncol=3, fancybox=True, shadow=False, numpoints=1)
-        # Saving the summary graph as an image and drawing it on the page
+        plt.xticks([x for x in range(len(xAxisConditionLabels))], xAxisConditionLabels, rotation="vertical")
+        
+        #change the padding above the graph when legend get bigger (i.e. there are more condition variable 2's)
+        plt.gcf().subplots_adjust(bottom=0.35, top=0.85 - 0.035*(int(len(uniqueCv2s)/3)))
+        #plot the legend
+        plt.legend(legendHandles, uniqueCv2s, loc='lower center', bbox_to_anchor=(0.5, 1), ncol=3, fancybox=True, shadow=False, numpoints=1)
+        
+        #save the graph and print it on the pdf
         imgdata = cStringIO.StringIO()
-        fig1.savefig(imgdata, format='png',dpi=180)
-        imgdata.seek(0)  # rewind the data
+        summaryGraphFigure.savefig(imgdata, format='png',dpi=180)
+        imgdata.seek(0)
         Image = ImageReader(imgdata)
-        pdf.drawImage(Image, cm, 4*cm, 16*cm, 11*cm)  
+        pdf.drawImage(Image, cm, 4*cm, 16*cm, 11*cm)
         plt.close()
 
-        pdf.setFont("Helvetica",10)
-        if unreliableDrawn:
+        #if there were any Tms computed as unreliable, print a warning above the graph
+        pdf.setFillColor("black")
+        if foundUnreliable:
             pdf.drawString(7.9*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
-        unreliableDrawn = False
+            #if supplied protein has dashed line drawn for Tm, label it
+        if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
+            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
+        
+            
+            
+        
+        
+        
+        
+        
+        #===================other pages plotting below
+        # Variables used to keep track of where to draw the current graph
+        xpos=2
+        
+        newpage = 1
+
+        if len(Contents.salt) < 6:
+            ySize = 9.2
+            ypos = 3
+            graphNum = 6
+            yNum = 3
+        elif len(Contents.salt) < 13:
+            ySize = 13.8
+            ypos = 2
+            graphNum = 4
+            yNum = 2
+        else:
+            ySize = 0
+            ypos = 1
+            graphNum = 2
+            yNum = 1
+
+        for sampleContentspH in Contents.name:
+            if (newpage-1) % graphNum == 0:
+                pdf.showPage()
+                pdf.setFont("Helvetica",9)
+                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are unable to be analysed (monotonic, saturated, in the noise, and outliers)")
+                pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
+                pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines have unreliable estimates for Tms")
+                pdf.setFont("Helvetica",12)
+            sampleContents = sampleContentspH[0]
+            curves = []
+            for well in self.originalPlate.names:
+                if self.originalPlate.wells[well].contents.name == sampleContents and self.originalPlate.wells[well].contents.pH == sampleContentspH[1]:
+                    curves.append(well)
+            complexDictionary = {}
+            meanWellDictionary = {}
+            for i, saltConcentration in enumerate(Contents.salt):
+                meanWellDictionary[i] = None
+                complexDictionary[i] = False
+                for well in curves:
+                    if self.originalPlate.wells[well].contents.salt == saltConcentration:
+                        if self.originalPlate.wells[well].complex:
+                            complexDictionary[i] = True
+                            
+                        #if curve is in delCurves, plot it dashed. Consists of monotonic curves, curves in the noise,
+                        #saturated (flat) curves, and replicate outlier curves
+                        if well in self.delCurves:
+                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                            , COLOURS[i],linestyle="--")
+                            
+                        #If the curve complex (unreliable Tm), plot it dotted. 
+                        #Consists of complex and Tms that are not steep enough
+                        elif self.originalPlate.wells[well].complex == True:
+                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                            , COLOURS[i],linestyle=":")
+                            
+                        #otherwise plot the graph normally
+                        else:
+                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
+                            , COLOURS[i])
+                            
+                        meanWellDictionary[i] = findKey(well,self.plate.meanDict)
+                        
+            plt.ylim(minYValue-paddingSize,maxYValue+paddingSize)
+            plt.gca().axes.get_yaxis().set_visible(False)
+            imgdata = cStringIO.StringIO()
+            fig3.savefig(imgdata, format='png',dpi=140)
+            imgdata.seek(0)  # rewind the data
+            Image = ImageReader(imgdata)
+            pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,23.5*cm - (ypos % yNum)*ySize*cm , 8*cm, 6*cm)
+            pdf.setFillColor("black")
+            pdf.setFont("Helvetica",12)
+            pdf.drawString(cm+(xpos % 2)*9.5*cm,23*cm - (ypos % yNum)*ySize*cm ,sampleContents + " (" + str(sampleContentspH[1])+")")
+            pdf.setFont("Helvetica",10)
+            pdf.drawString(cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Grouped by")
+            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Tm")
+            drawdpH = False
+            offset=0
+            for i in range(len(Contents.salt)):
+                if Contents.salt[i]:
+                    pdf.setFillColor(COLOURS[i])
+                    pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm,Contents.salt[i])
+                    if complexDictionary[i]:
+                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
+                            if self.wells[meanWellDictionary[i]].TmError != None:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
+                            else:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
+                        else:
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,"None")
+                    else:
+                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
+                            if self.wells[meanWellDictionary[i]].TmError != None:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
+                            else:
+                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
+                        else:
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,"None")
+                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None and self.wells[meanWellDictionary[i]].contents.pH != "":
+                        pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
+                        pdf.setFillColor("black")
+                        if drawdpH ==False:
+                            pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Adjusted pH at Tm")
+                            drawdpH = True
+                    offset += 1
+            drawdpH = False
+            xpos +=1
+            if newpage % 2 == 0:
+                ypos +=1
+            
+            newpage += 1 
+            plt.close()
+            fig3 = plt.figure(num=1,figsize=(5,4))
+
+       
+        plt.close()
+            
+            
+        
+        
+        
         
         
         
