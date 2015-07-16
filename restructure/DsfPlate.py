@@ -202,24 +202,27 @@ class DsfPlate:
             #carful not to loop over the same wells
             if wellName not in seen:
                 reps = self.repDict[wellName]
-                seen += reps
                 #every possible pair of replicates
                 pairs = combinations(reps, 2)
                 #initialise the distance matrix, as described in replicate handling
                 distMatrix = [[0 for x in range(len(reps))] for y in range(len(reps))]
                 for pair in pairs:
                     #calculate the distance between the pairs
-                    dist = rh.sqrdiff(self.wells[pair[0]].fluorescence, self.wells[pair[1]].fluorescence)
+                    dist = rh.aitchisonDistance(self.wells[pair[0]].fluorescence, self.wells[pair[1]].fluorescence)
                     #add the appropriate distance values to the distance matrix
                     distMatrix[reps.index(pair[0])][reps.index(pair[1])] = dist
                     distMatrix[reps.index(pair[1])][reps.index(pair[0])] = dist
                 #get list of replicates which are NOT outliers
                 keep = rh.discardBad(reps, distMatrix, SIMILARITY_THRESHOLD)
+                print keep
                 #add to the total list of outlier wells
                 for rep in reps:
+                    seen.append(rep)
                     if rep not in keep:
-                        outlierWells.append(wellName)
+                        outlierWells.append(rep)
         #go thraough all the outlier wells and set their outlier and discarded flags to true
+        print
+        print outlierWells
         for wellName in outlierWells:
             self.wells[wellName].setAsOutlier()
         return

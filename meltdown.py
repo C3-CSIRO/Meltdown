@@ -202,10 +202,13 @@ class DSFAnalysis:
                     distMatrix[reps.index(pair[0])][reps.index(pair[1])] = dist
                     distMatrix[reps.index(pair[1])][reps.index(pair[0])] = dist
                 keep = rh.discardBad(reps,distMatrix,SIMILARITY_THRESHOLD)
+                print keep
                 for rep in reps:
                     visited.append(rep)
                     if rep not in keep:
                         discard.append(rep)
+        print
+        print discard
         for well in discard:
             self.wells[well].fluorescence = None
             self.delCurves.append(well)

@@ -76,9 +76,10 @@ class DsfAnalysis:
                 #get mean tm and tm error (sd of tms)
                 tm, tmError = rh.meanSd([self.plate.wells[w].tm for w in reps if not self.plate.wells[w].isDiscarded])
                 complexMean = any([self.plate.wells[w].isComplex for w in reps if not self.plate.wells[w].isDiscarded])
+                repsNotDiscarded = sum([(not self.plate.wells[w].isDiscarded) for w in reps])
                 contents = self.plate.wells[wellName].contents
                 #create a mean well and add it to list
-                self.meanWells.append(MeanWell(tm, tmError, complexMean, reps, contents))
+                self.meanWells.append(MeanWell(tm, tmError, complexMean, reps, repsNotDiscarded, contents))
         return
     
     def __createMeanContentsHash(self):
@@ -95,6 +96,8 @@ class DsfAnalysis:
         return
     
     def __createControlsHash(self):
+        #TODO no dye and no protein will always fail, now that we use aitchisons distance and dont divide by length of curve
+        #NB they would always have passed before as threshold was set for not dividing by length and therefore massive (oops)
         #initialise the control results
         results = {"lysozyme": "Not Found",
                    "no dye": "Not Found",
@@ -130,7 +133,7 @@ class DsfAnalysis:
             #read in expected no dye control from file
             noDyeExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "\\data\\noDyeControl.csv"))
             #if the curves are within required distance from one another, the control is passed
-            if rh.sqrdiff(meanNoDyeCurve, noDyeExpected) < SIMILARITY_THRESHOLD:
+            if rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected) < SIMILARITY_THRESHOLD:
                 results["no dye"] = "Passed"
             else:
                 results["no dye"] = "Failed"
@@ -153,7 +156,7 @@ class DsfAnalysis:
             #read in the expected curve for the no protein control
             noProteinExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "\\data\\noProteinControl.csv"))
             #if the curves are within required distance from one another, the control is passed
-            if rh.sqrdiff(meanNoProteinCurve, noProteinExpected) < SIMILARITY_THRESHOLD:
+            if rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected) < SIMILARITY_THRESHOLD:
                 results["no protein"] = "Passed"
             else:
                 results["no protein"] = "Failed"
@@ -205,10 +208,10 @@ class DsfAnalysis:
             well = self.plate.wells[wellName]
             if well.isDiscarded:
                 #discarded curves are gray
-                plt.plot(well.temperatures, well.fluorescence, 'grey')
+                plt.plot(well.temperatures, well.fluorescence, 'g', linestyle="--")
             elif well.isComplex:
                 #complex curves are dashed green
-                plt.plot(well.temperatures, well.fluorescence, 'g', linestyle="--")
+                plt.plot(well.temperatures, well.fluorescence, 'g', linestyle=":")
             else:
                 #normal curves are just green
                 plt.plot(well.temperatures, well.fluorescence, 'g')
@@ -226,9 +229,10 @@ class DsfAnalysis:
         pdf.setFont("Helvetica",10)
         if len(self.plate.proteinAsSupplied) > 0:
             #null strings for ph and condition variable 2 in the contents hash, as that's how controls are read
-            suppliedProteinTm = self.contentsHash[('protein as supplied', '')][''].tm
-            suppliedProteinTmError = self.contentsHash[('protein as supplied', '')][''].tmError
-            if suppliedProteinTm != None and suppliedProteinTmError != None:
+            meanSuppliedProtein = self.contentsHash[('protein as supplied', '')]['']
+            suppliedProteinTm = meanSuppliedProtein.tm
+            suppliedProteinTmError = meanSuppliedProtein.tmError
+            if suppliedProteinTm != None and meanSuppliedProtein.replicatesNotDiscarded > 1:
                 pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = " +str(round(suppliedProteinTm,2))+"(+/-"+str(round(suppliedProteinTmError,2))+")")
             elif suppliedProteinTm != None:
                 pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = " +str(round(suppliedProteinTm,2)))
@@ -349,9 +353,6 @@ class DsfAnalysis:
                 except KeyError:
                     #given (condition var 1, ph) pair does not have a well with current condition var 2
                     conditionExists = False
-                #now make sure we aren't looking at a control well, since we don't want to plot those
-                if conditionExists and meanWell.contents.isControl:
-                    conditionExists = False
                 
                 #if we found a condition, add it's tm to the right list, and a None to the other
                 if conditionExists:
@@ -430,16 +431,31 @@ class DsfAnalysis:
         
         #===================other pages plotting below
         # Variables used to keep track of where to draw the current graph
+        overallWellNormalisedMin = overallWellNormalisedMax = 0
+        for well in self.plate.wells.values():
+            if overallWellNormalisedMin == 0 and overallWellNormalisedMax == 0:
+                overallWellNormalisedMin = overallWellNormalisedMax = well.wellNormalisedMin
+            
+            elif well.wellNormalisedMin < overallWellNormalisedMin:
+                overallWellNormalisedMin = well.wellNormalisedMin
+            elif well.wellNormalisedMax > overallWellNormalisedMax:
+                overallWellNormalisedMax = well.wellNormalisedMax
+        minYValue = overallWellNormalisedMin
+        maxYValue = overallWellNormalisedMax
+
+        paddingSize = (maxYValue - minYValue) * 0.05
+
+        fig3 = plt.figure(num=1,figsize=(5,4))
         xpos=2
         
         newpage = 1
 
-        if len(Contents.salt) < 6:
+        if len(uniqueCv2s) < 6:
             ySize = 9.2
             ypos = 3
             graphNum = 6
             yNum = 3
-        elif len(Contents.salt) < 13:
+        elif len(uniqueCv2s) < 13:
             ySize = 13.8
             ypos = 2
             graphNum = 4
@@ -450,47 +466,88 @@ class DsfAnalysis:
             graphNum = 2
             yNum = 1
 
-        for sampleContentspH in Contents.name:
+        for cv1, ph in cv1PhPairs:
             if (newpage-1) % graphNum == 0:
                 pdf.showPage()
                 pdf.setFont("Helvetica",9)
                 pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are unable to be analysed (monotonic, saturated, in the noise, and outliers)")
                 pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
                 pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines have unreliable estimates for Tms")
-                pdf.setFont("Helvetica",12)
-            sampleContents = sampleContentspH[0]
-            curves = []
-            for well in self.originalPlate.names:
-                if self.originalPlate.wells[well].contents.name == sampleContents and self.originalPlate.wells[well].contents.pH == sampleContentspH[1]:
-                    curves.append(well)
-            complexDictionary = {}
-            meanWellDictionary = {}
-            for i, saltConcentration in enumerate(Contents.salt):
-                meanWellDictionary[i] = None
-                complexDictionary[i] = False
-                for well in curves:
-                    if self.originalPlate.wells[well].contents.salt == saltConcentration:
-                        if self.originalPlate.wells[well].complex:
-                            complexDictionary[i] = True
-                            
-                        #if curve is in delCurves, plot it dashed. Consists of monotonic curves, curves in the noise,
-                        #saturated (flat) curves, and replicate outlier curves
-                        if well in self.delCurves:
-                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , COLOURS[i],linestyle="--")
-                            
-                        #If the curve complex (unreliable Tm), plot it dotted. 
-                        #Consists of complex and Tms that are not steep enough
-                        elif self.originalPlate.wells[well].complex == True:
-                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , COLOURS[i],linestyle=":")
-                            
-                        #otherwise plot the graph normally
+                pdf.setFont("Helvetica",10)
+            ##sampleContents = sampleContentspH[0]
+            ##curves = []
+            wellsWithCurrentCv1AndpH = []
+            wellNameGroups = [groupedMeanWell.replicates for groupedMeanWell in self.contentsHash[(cv1, ph)].values()]
+            wellNames = []
+            for group in wellNameGroups:
+                wellNames += group
+            #TODO here!
+            wellsWithCurrentCv1AndpH += [self.plate.wells[wellName] for wellName in wellNames]
+            
+            
+            ##complexDictionary = {}
+            ##meanWellDictionary = {}
+            tmPrintOffset = 0
+            hasDphdt = False
+            for cv2 in sorted(self.contentsHash[(cv1, ph)].keys()):
+                meanWell = self.contentsHash[(cv1, ph)][cv2]
+                if meanWell.contents.dphdt != '' and meanWell.contents.ph != '' and meanWell.tm != None:
+                    hasDphdt = True
+                
+                ##meanWellDictionary[i] = None
+                ##complexDictionary[i] = False
+                
+                ##if self.originalPlate.wells[well].complex:
+                ##    complexDictionary[i] = True
+                    
+                #if curve is in delCurves, plot it dashed. Consists of monotonic curves, curves in the noise,
+                #saturated (flat) curves, and replicate outlier curves
+                wells = [self.plate.wells[wellName] for wellName in meanWell.replicates]
+                for well in wells:
+                    if well.isDiscarded:
+                        plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2],linestyle="--")
+                        
+                    #If the curve complex (unreliable Tm), plot it dotted. 
+                    #Consists of complex and Tms that are not steep enough
+                    elif well.isComplex:
+                        plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2],linestyle=":")
+                        
+                    #otherwise plot the graph normally
+                    else:
+                        plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2])
+                        
+                    ##meanWellDictionary[i] = findKey(well,self.plate.meanDict)
+                
+                
+                pdf.setFillColor(self.plate.cv2ColourDict[cv2])
+                pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm,cv2)
+                if meanWell.isComplex:
+                    if meanWell.tm != None:
+                        if meanWell.replicatesNotDiscarded > 1:
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")^")
                         else:
-                            plt.plot(self.originalPlate.wells[well].temperatures,self.originalPlate.wells[well].fluorescence\
-                            , COLOURS[i])
-                            
-                        meanWellDictionary[i] = findKey(well,self.plate.meanDict)
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+"^")
+                    else:
+                        pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,"None")
+                else:
+                    if meanWell.tm != None:
+                        if meanWell.replicatesNotDiscarded > 1:
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")")
+                        else:
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2)))
+                    else:
+                        pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,"None")
+                
+                if hasDphdt:
+                    adjustedPh = str(round(float(meanWell.contents.ph)+(meanWell.contents.dphdt*(meanWell.tm-20)),2))
+                    pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm, adjustedPh)
+                
+                tmPrintOffset += 1
+            
+            if hasDphdt:
+                pdf.setFillColor("black")
+                pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Adjusted pH at Tm")
+                hasDphdt = False
                         
             plt.ylim(minYValue-paddingSize,maxYValue+paddingSize)
             plt.gca().axes.get_yaxis().set_visible(False)
@@ -501,40 +558,11 @@ class DsfAnalysis:
             pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,23.5*cm - (ypos % yNum)*ySize*cm , 8*cm, 6*cm)
             pdf.setFillColor("black")
             pdf.setFont("Helvetica",12)
-            pdf.drawString(cm+(xpos % 2)*9.5*cm,23*cm - (ypos % yNum)*ySize*cm ,sampleContents + " (" + str(sampleContentspH[1])+")")
+            pdf.drawString(cm+(xpos % 2)*9.5*cm,23*cm - (ypos % yNum)*ySize*cm ,cv1 + " (" + str(ph)+")")
             pdf.setFont("Helvetica",10)
             pdf.drawString(cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Grouped by")
             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Tm")
-            drawdpH = False
-            offset=0
-            for i in range(len(Contents.salt)):
-                if Contents.salt[i]:
-                    pdf.setFillColor(COLOURS[i])
-                    pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm,Contents.salt[i])
-                    if complexDictionary[i]:
-                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
-                            if self.wells[meanWellDictionary[i]].TmError != None:
-                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")^")
-                            else:
-                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+"^")
-                        else:
-                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,"None")
-                    else:
-                        if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].Tm != None:
-                            if self.wells[meanWellDictionary[i]].TmError != None:
-                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2))+" (+/-"+str(round(self.wells[meanWellDictionary[i]].TmError,2))+")")
-                            else:
-                                pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(self.wells[meanWellDictionary[i]].Tm,2)))
-                        else:
-                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,"None")
-                    if meanWellDictionary[i] != None and self.wells[meanWellDictionary[i]].contents.dpH != None and self.wells[meanWellDictionary[i]].contents.dpH != "" and self.wells[meanWellDictionary[i]].Tm != None and self.wells[meanWellDictionary[i]].contents.pH != None and self.wells[meanWellDictionary[i]].contents.pH != "":
-                        pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - offset*0.5*cm ,str(round(float(self.wells[meanWellDictionary[i]].contents.pH)+(self.wells[meanWellDictionary[i]].contents.dpH*(self.wells[meanWellDictionary[i]].Tm-20)),2)))
-                        pdf.setFillColor("black")
-                        if drawdpH ==False:
-                            pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Adjusted pH at Tm")
-                            drawdpH = True
-                    offset += 1
-            drawdpH = False
+            
             xpos +=1
             if newpage % 2 == 0:
                 ypos +=1
@@ -550,19 +578,7 @@ class DsfAnalysis:
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         #save the pdf    
         pdf.save()
         return

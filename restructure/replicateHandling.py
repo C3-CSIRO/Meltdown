@@ -57,14 +57,16 @@ def meanSd(listOfNumbers):
     return (moment1, np.sqrt(variance))
 
 
-def sqrdiff(list1,list2):
-    #iterate over the leth of the shorter list, to avoid any errors
-    N = min(len(list1), len(list2))
+def aitchisonDistance(list1,list2):
     sqrsum=0
-    for i in range(N):
+    #take logs so as to compute the aitchisons distance
+    list1 = [math.log(x) for x in list1]
+    list2 = [math.log(x) for x in list2]
+    #iterate over the lenght of the lists (lists must have same length)
+    for i in range(len(list1)):
         sqrsum+=math.pow(list1[i]-list2[i],2)
-    #return the square sum divided by the number of indexes we iterated over
-    return sqrsum / N
+    #return the sum
+    return sqrsum
 
 
 def discardBad(wellNamesList,matrix,thresh):
