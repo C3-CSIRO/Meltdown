@@ -321,11 +321,10 @@ class DsfAnalysis:
         
         
         #plotting the summary graph at the bottom of the first page
-        #gets a set of all the condition var 2s in the experiment (without repeats)
-        uniqueCv2s = set([cv2 for cv2Dict in self.contentsHash.values() for cv2 in cv2Dict.keys()])#TODO this should not include cv2's only found in controls
-        #gets a sorted by ph list of (condition var 1, ph) tuples. these are unique
-        cv1PhPairs = sorted(self.contentsHash.keys(), key=lambda x: x[1])#TODO this should not include controls
-        
+        #gets a set of all the condition var 2s in the experiment (without repeats), excluding ones only present in controls
+        uniqueCv2s = set([cv2 for cv2Dict in self.contentsHash.values() for cv2 in [key for key in cv2Dict.keys() if not cv2Dict[key].contents.isControl]])
+        #gets a sorted by ph list of (condition var 1, ph) tuples. these are unique, and do not include controls
+        cv1PhPairs = sorted([key for key in self.contentsHash.keys() if any([not meanWell.contents.isControl for meanWell in self.contentsHash[key].values()])], key=lambda x: x[1])
         
         #turns the tuples into string names to display on the x axis
         xAxisConditionLabels = [pair[0]+"("+str(pair[1])+")" for pair in cv1PhPairs]
@@ -401,7 +400,7 @@ class DsfAnalysis:
         plt.ylabel('Tm')
         plt.xticks([x for x in range(len(xAxisConditionLabels))], xAxisConditionLabels, rotation="vertical")
         
-        #change the padding above the graph when legend get bigger (i.e. there are more condition variable 2's)
+        #change the padding above the graph when legend gets bigger (i.e. there are more condition variable 2's)
         plt.gcf().subplots_adjust(bottom=0.35, top=0.85 - 0.035*(int(len(uniqueCv2s)/3)))
         #plot the legend
         plt.legend(legendHandles, uniqueCv2s, loc='lower center', bbox_to_anchor=(0.5, 1), ncol=3, fancybox=True, shadow=False, numpoints=1)
@@ -418,7 +417,7 @@ class DsfAnalysis:
         pdf.setFillColor("black")
         if foundUnreliable:
             pdf.drawString(7.9*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
-            #if supplied protein has dashed line drawn for Tm, label it
+        #if supplied protein has dashed line drawn for Tm, label it
         if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
             pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
         
@@ -430,22 +429,24 @@ class DsfAnalysis:
         
         
         #===================other pages plotting below
-        # Variables used to keep track of where to draw the current graph
+        #getting the y axis scale to be the same over all the boxes, finds appropriate min and max
         overallWellNormalisedMin = overallWellNormalisedMax = 0
         for well in self.plate.wells.values():
+            #found first value, initialise min and max to this
             if overallWellNormalisedMin == 0 and overallWellNormalisedMax == 0:
                 overallWellNormalisedMin = overallWellNormalisedMax = well.wellNormalisedMin
-            
-            elif well.wellNormalisedMin < overallWellNormalisedMin:
+            #adjust the min and max if we have found a new smallest, or highest, value
+            if well.wellNormalisedMin < overallWellNormalisedMin:
                 overallWellNormalisedMin = well.wellNormalisedMin
-            elif well.wellNormalisedMax > overallWellNormalisedMax:
+            if well.wellNormalisedMax > overallWellNormalisedMax:
                 overallWellNormalisedMax = well.wellNormalisedMax
+        #save for use when plotting
         minYValue = overallWellNormalisedMin
         maxYValue = overallWellNormalisedMax
-
+        #this is the added padding to the y axis when plotted
         paddingSize = (maxYValue - minYValue) * 0.05
 
-        fig3 = plt.figure(num=1,figsize=(5,4))
+        
         xpos=2
         
         newpage = 1
@@ -466,6 +467,8 @@ class DsfAnalysis:
             graphNum = 2
             yNum = 1
 
+        singleConditionFigure = plt.figure(num=1,figsize=(5,4))
+        
         for cv1, ph in cv1PhPairs:
             if (newpage-1) % graphNum == 0:
                 pdf.showPage()
@@ -552,7 +555,7 @@ class DsfAnalysis:
             plt.ylim(minYValue-paddingSize,maxYValue+paddingSize)
             plt.gca().axes.get_yaxis().set_visible(False)
             imgdata = cStringIO.StringIO()
-            fig3.savefig(imgdata, format='png',dpi=140)
+            singleConditionFigure.savefig(imgdata, format='png',dpi=140)
             imgdata.seek(0)  # rewind the data
             Image = ImageReader(imgdata)
             pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,23.5*cm - (ypos % yNum)*ySize*cm , 8*cm, 6*cm)
@@ -569,7 +572,7 @@ class DsfAnalysis:
             
             newpage += 1 
             plt.close()
-            fig3 = plt.figure(num=1,figsize=(5,4))
+            singleConditionFigure = plt.figure(num=1,figsize=(5,4))
 
        
         plt.close()

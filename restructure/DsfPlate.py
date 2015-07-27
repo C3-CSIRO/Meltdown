@@ -61,7 +61,7 @@ class DsfPlate:
             if 'Unnamed' in column:
                 data.pop(column)
         #remove any rows that are all blank (e.g. empty lines at the end of the file)
-        data.dropna(how='all', inplace=True)
+        data.drop(data.index[pd.isnull(data.index)], inplace=True)
         #replace any empty cells (default value NaN) to be empty strings ('')
         data.fillna(value='', inplace=True)
 
@@ -76,7 +76,7 @@ class DsfPlate:
             if 'Unnamed' in column:
                 contentsMap.pop(column)
         #remove any rows that are all blank (e.g. empty lines at the end of the file)
-        contentsMap.dropna(how='all', inplace=True)
+        contentsMap.drop(contentsMap.index[pd.isnull(contentsMap.index)], inplace=True)
         #replace any empty cells (default value NaN) to be empty strings ('')
         contentsMap.fillna(value='', inplace=True)
         #==================
@@ -122,8 +122,12 @@ class DsfPlate:
         return
     
     def __readContentsOfWell(self, contentsMap, wellName):
-        #get the well's row from the dataframe
-        contentsRow = contentsMap.xs(wellName)
+        #get the well's row from the contents map dataframe, if it's there
+        try:
+            contentsRow = contentsMap.xs(wellName)
+        except Exception as e:
+            raise MeltdownException('Could not find matching Contents Map row for "' + wellName + '"\n' + e.message)
+
         #get information from the row
         try:
             cv1 = contentsRow['Condition Variable 1']
@@ -168,9 +172,20 @@ class DsfPlate:
         return
     
     def __assignConditionVariable2Colours(self, contentsMap):
+        #get the control column from the contents map, if its there
+        try:
+            controlFlags = contentsMap['Control']
+        #if column is not there, make a list which marks none of the conditions as controls
+        except KeyError:
+            controlFlags = ['' for x in range(len(contentsMap['Condition Variable 2']))]
+        
         colourIndex=0
         #for each unseen condition variable 2, map the next colour in the COLOUR list
-        for cv2 in contentsMap['Condition Variable 2']:
+        for cv2,control in zip(contentsMap['Condition Variable 2'], controlFlags):
+            #don't add condition variable 2's that are only found in controls
+            if control:
+                continue
+            #check if unseen condition variable 2
             if cv2 not in self.cv2ColourDict.keys():
                 #limit to how many condition variable 2's there can be
                 if colourIndex == len(COLOURS):
@@ -214,15 +229,12 @@ class DsfPlate:
                     distMatrix[reps.index(pair[1])][reps.index(pair[0])] = dist
                 #get list of replicates which are NOT outliers
                 keep = rh.discardBad(reps, distMatrix, SIMILARITY_THRESHOLD)
-                print keep
                 #add to the total list of outlier wells
                 for rep in reps:
                     seen.append(rep)
                     if rep not in keep:
                         outlierWells.append(rep)
         #go thraough all the outlier wells and set their outlier and discarded flags to true
-        print
-        print outlierWells
         for wellName in outlierWells:
             self.wells[wellName].setAsOutlier()
         return

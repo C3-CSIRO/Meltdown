@@ -316,6 +316,9 @@ class DSFAnalysis:
         for well in self.originalPlate.names:
             #sets own mono instance variable to apropriate state
             self.originalPlate.wells[well].isMonotonic()
+            
+            print self.originalPlate.wells[well].name, self.originalPlate.wells[well].mono
+            
             if self.originalPlate.wells[well].mono == False and well not in self.delCurves:
                 self.originalPlate.wells[well].computeTm()
             #monotonic curves are now grouped with complex curves, and plotted as such
