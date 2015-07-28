@@ -1391,7 +1391,7 @@ def main():
     except:
         errors = open(RUNNING_LOCATION + "/error_log.txt",'w')
         etype, value, tb = sys.exc_info()
-        errrors.write(version+"\n")
+        errors.write(version+"\n")
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 
         root = Tkinter.Tk()
         root.withdraw()
