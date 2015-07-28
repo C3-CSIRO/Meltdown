@@ -77,7 +77,7 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 #read the settings.ini file and set the appropriate flags
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
 cfg = ConfigParser.ConfigParser()
-cfg.readfp(open(RUNNING_LOCATION + '\\settings.ini'))
+cfg.readfp(open(RUNNING_LOCATION + '/settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
@@ -295,7 +295,7 @@ class DSFAnalysis:
             self.originalPlate.wells[well].setUniqueMonoThresh(self.plate.monotonicThreshold)
 
         mydsf.removeInsignificant()
-        mydsf.computeTms()  1
+        mydsf.computeTms() 
         return
         
     def computeTms(self):
@@ -358,7 +358,7 @@ class DSFAnalysis:
         #test the control if the control is present in the plate
         if len(self.plate.noDye)>0:
             #get the curves to compare as series
-            noDyeExpected = pandas.Series.from_csv(RUNNING_LOCATION + "\\data\\noDyeControl.csv")
+            noDyeExpected = pandas.Series.from_csv(RUNNING_LOCATION + "/data/noDyeControl.csv")
             #indexed at 0 since control list has only one item
             noDyeReal = pandas.Series(self.plate.wells[self.plate.noDye[0]].fluorescence, self.plate.wells[self.plate.noDye[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
@@ -371,7 +371,7 @@ class DSFAnalysis:
         #test the control if the control is present in the plate
         if len(self.plate.noProtein)>0:
             #get the curves to compare as series
-            noProteinExpected = pandas.Series.from_csv(RUNNING_LOCATION + "\\data\\noProteinControl.csv")
+            noProteinExpected = pandas.Series.from_csv(RUNNING_LOCATION + "/data/noProteinControl.csv")
             #indexed at 0 since control list has only one item
             noProteinReal = pandas.Series(self.plate.wells[self.plate.noProtein[0]].fluorescence, self.plate.wells[self.plate.noProtein[0]].temperatures)
             #if the curves are within required distance from one another, the control is passed
@@ -409,7 +409,7 @@ class DSFAnalysis:
             pdf.drawString(cm,27*cm, "..."+self.name[-70:])
 
         pdf.setFont("Helvetica-Bold",12)
-        pdf.drawImage(RUNNING_LOCATION + "\\data\\CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
+        pdf.drawImage(RUNNING_LOCATION + "/data/CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
 
         # For finding the best Tm
         best = ""
@@ -1389,7 +1389,7 @@ def main():
             
         
     except:
-        errors = open(RUNNING_LOCATION + "\\error_log.txt",'w')
+        errors = open(RUNNING_LOCATION + "/error_log.txt",'w')
         etype, value, tb = sys.exc_info()
         errrors.write(version+"\n")
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 
