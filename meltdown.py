@@ -33,7 +33,7 @@
 # Additionally, given a suitable set of training data, the parameters used for outlier detection
 # and Tm calculationcan be recomputed.
 #
-global version = "1.1.0"
+version = "1.1.0"
 
 import math
 import pandas
