@@ -294,8 +294,8 @@ class DSFAnalysis:
             #sets the per-well monotonic threshold,
             self.originalPlate.wells[well].setUniqueMonoThresh(self.plate.monotonicThreshold)
 
-        mydsf.removeInsignificant()
-        mydsf.computeTms() 
+        self.removeInsignificant()
+        self.computeTms() 
         return
         
     def computeTms(self):
@@ -951,7 +951,7 @@ class DSFPlate:
             #populate the well dictionary of labels and values
             self.wells[name] = DSFWell(fluoroSeries, conditionNames[i], conditionSalts[i], conditionPhs[i], conditiondpHdT[i], conditionIsControl[i])
             
-        returns
+        return
               
 
 class DSFWell:
