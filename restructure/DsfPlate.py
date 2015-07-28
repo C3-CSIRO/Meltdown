@@ -235,6 +235,7 @@ class DsfPlate:
                     if rep not in keep:
                         outlierWells.append(rep)
         #go thraough all the outlier wells and set their outlier and discarded flags to true
+        print 'discarded: ', outlierWells
         for wellName in outlierWells:
             self.wells[wellName].setAsOutlier()
         return
@@ -279,6 +280,7 @@ class DsfPlate:
                 overallMaxNonNormalised = well.wellMax
         #calculate the plates monotonic threshold used the constant factor
         self.plateMonotonicThreshold = PLATE_MONOTONICITY_THRESHOLD_FACTOR * overallMaxNonNormalised
+        print 'plate monotonic threshold: ', self.plateMonotonicThreshold
         return
     
     def __computeNoiseThreshold(self):
@@ -288,7 +290,8 @@ class DsfPlate:
             return
         #otherwise, calculate th noise threshold from the constant factor
         meanNoProteinMonotonicThreshold, sd = rh.meanSd([self.wells[wellName].wellMonotonicThreshold for wellName in self.noProtein])
-        self.noiseThreshold = meanNoProteinMonotonicThreshold * NOISE_THRESHOLD_FACTOR
+        self.noiseThreshold = meanNoProteinMonotonicThreshold / NOISE_THRESHOLD_FACTOR
+        print 'plate noise threshold: ', self.noiseThreshold
         return
 
 
@@ -297,7 +300,7 @@ class DsfPlate:
 def main():
     root = Tkinter.Tk()
     root.withdraw()
-    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    tkMessageBox.showwarning("Inncorrect Usage", "Please read the instructions on how to run Meltdown")
     return
     
     

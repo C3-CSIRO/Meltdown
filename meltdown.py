@@ -77,7 +77,7 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
 #read the settings.ini file and set the appropriate flags
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
 cfg = ConfigParser.ConfigParser()
-cfg.readfp(open(RUNNING_LOCATION + '\\settings.ini'))
+cfg.readfp(open(RUNNING_LOCATION + '/settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
@@ -202,13 +202,11 @@ class DSFAnalysis:
                     distMatrix[reps.index(pair[0])][reps.index(pair[1])] = dist
                     distMatrix[reps.index(pair[1])][reps.index(pair[0])] = dist
                 keep = rh.discardBad(reps,distMatrix,SIMILARITY_THRESHOLD)
-                print keep
                 for rep in reps:
                     visited.append(rep)
                     if rep not in keep:
                         discard.append(rep)
-        print
-        print discard
+        print 'discarded: ', discard
         for well in discard:
             self.wells[well].fluorescence = None
             self.delCurves.append(well)
@@ -225,10 +223,12 @@ class DSFAnalysis:
         # Searching for curves that are in the noise
         if len(self.plate.noProtein) > 0:
             thresholdm, i = rh.meanSd([self.originalPlate.wells[x].monoThresh for x in self.plate.noProtein])
+            print 'plate noise threshold: ', thresholdm/1.15
             for well in self.originalPlate.wells:
                 if not self.originalPlate.wells[well].contents.isControl and well not in self.delCurves:
                     if self.originalPlate.wells[well].monoThresh > thresholdm/1.15:
                         #self.wells[well].fluorescence = None
+                        print "in the noise: ", well
                         self.delCurves.append(well)
 
         # Searching for curves that have overloaded the sensor
@@ -267,6 +267,7 @@ class DSFAnalysis:
                     else:
                         break
                 if well not in self.delCurves and count >= 10:
+                    print 'saturated: ', well
                     self.delCurves.append(well) 
         return
     
@@ -282,6 +283,7 @@ class DSFAnalysis:
         #this is the monotenicity threshold derived for these plate
         self.plate.monotonicThreshold = 0.0005 * self.overallMaxNonNormalised
         self.originalPlate.monotonicThreshold = self.plate.monotonicThreshold
+        print 'plate monotonic threshold: ', self.plate.monotonicThreshold
         
         #gets the maximum point out of all the normalised graphs
         #used when plotting the graphs
@@ -317,13 +319,12 @@ class DSFAnalysis:
             #sets own mono instance variable to apropriate state
             self.originalPlate.wells[well].isMonotonic()
             
-            print self.originalPlate.wells[well].name, self.originalPlate.wells[well].mono
-            
             if self.originalPlate.wells[well].mono == False and well not in self.delCurves:
                 self.originalPlate.wells[well].computeTm()
             #monotonic curves are now grouped with complex curves, and plotted as such
             elif self.originalPlate.wells[well].mono:
                 if well not in self.delCurves:
+                    print 'is monotonic: ', well
                     self.delCurves.append(well)
 
         for well in self.plate.names:

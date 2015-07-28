@@ -101,6 +101,7 @@ class DsfWell:
             if count >= LENGTH_OF_FLAT_CONSIDERED_SATURATED:
                 self.isSaturated = True
                 self.isDiscarded = True
+                print 'saturated: ', self.name
 
         return
     
@@ -138,6 +139,7 @@ class DsfWell:
         if decreasingMonotonic:
             self.isMonotonic = True
             self.isDiscarded = True
+            print 'monotonic: ', self.name
         else:
             self.isMonotonic = False
         return
@@ -150,6 +152,7 @@ class DsfWell:
         if self.wellMonotonicThreshold > noiseThreshold:
             self.isInTheNoise = True
             self.isDiscarded = True
+            print 'in the noise: ', self.name
         else:
             self.isInTheNoise = False
         return
@@ -294,7 +297,7 @@ class DsfWell:
 def main():
     root = Tkinter.Tk()
     root.withdraw()
-    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    tkMessageBox.showwarning("Inncorrect Usage", "Please read the instructions on how to run Meltdown")
     return
     
     

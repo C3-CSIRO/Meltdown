@@ -32,7 +32,7 @@ RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
 
 #open the settings.ini and set the appropriate flags
 cfg = ConfigParser.ConfigParser()
-cfg.readfp(open(RUNNING_LOCATION + '\\settings.ini'))
+cfg.readfp(open(RUNNING_LOCATION + '/settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
@@ -97,7 +97,7 @@ def main():
     except Exception:
         tkMessageBox.showerror("Error", "Unexpected error, please check the error log for more information")
         #save to the error log before finishing
-        errors = open(RUNNING_LOCATION + "\\error_log.txt",'w')
+        errors = open(RUNNING_LOCATION + "/error_log.txt",'w')
         etype, value, tb = sys.exc_info()
         errors.write("Version: "+VERSION+"\n")
         errors.write(''.join(traceback.format_exception(etype, value, tb, None))) 

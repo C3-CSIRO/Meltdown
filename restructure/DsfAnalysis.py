@@ -131,7 +131,7 @@ class DsfAnalysis:
             meanNoDyeCurve = [x/validCurvesInSum for x in meanNoDyeCurve]
             
             #read in expected no dye control from file
-            noDyeExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "\\data\\noDyeControl.csv"))
+            noDyeExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/data/noDyeControl.csv"))
             #if the curves are within required distance from one another, the control is passed
             if rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected) < SIMILARITY_THRESHOLD:
                 results["no dye"] = "Passed"
@@ -154,7 +154,7 @@ class DsfAnalysis:
             meanNoProteinCurve = [x/validCurvesInSum for x in meanNoProteinCurve]
             
             #read in the expected curve for the no protein control
-            noProteinExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "\\data\\noProteinControl.csv"))
+            noProteinExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/data/noProteinControl.csv"))
             #if the curves are within required distance from one another, the control is passed
             if rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected) < SIMILARITY_THRESHOLD:
                 results["no protein"] = "Passed"
@@ -186,6 +186,7 @@ class DsfAnalysis:
         return
     
     def generateReport(self, outputFilePath, version):
+        #===================# headings and image #===================#
         #initialise the output pdf and print the heading and name of experiment
         pdf = canvas.Canvas(outputFilePath,pagesize=A4)
         pdf.setFont("Helvetica-Bold",16)
@@ -198,22 +199,22 @@ class DsfAnalysis:
             pdf.drawString(cm,27*cm, self.name[:41] + '...')
 
         #put the csiro image in the top right
-        pdf.drawImage(RUNNING_LOCATION + "\\data\\CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
+        pdf.drawImage(RUNNING_LOCATION + "/data/CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
         
         
-        
+        #===================# protein as supplied graph and Tm #===================#
         #create a plot for the protein as supplied control, and plot the curves
         proteinAsSuppliedFigure = plt.figure(num=1,figsize=(5,4))
         for wellName in self.plate.proteinAsSupplied:
             well = self.plate.wells[wellName]
             if well.isDiscarded:
-                #discarded curves are gray
-                plt.plot(well.temperatures, well.fluorescence, 'g', linestyle="--")
-            elif well.isComplex:
-                #complex curves are dashed green
+                #discarded curves are dotted
                 plt.plot(well.temperatures, well.fluorescence, 'g', linestyle=":")
+            elif well.isComplex:
+                #complex curves are dashed
+                plt.plot(well.temperatures, well.fluorescence, 'g', linestyle="--")
             else:
-                #normal curves are just green
+                #normal curves are full lines
                 plt.plot(well.temperatures, well.fluorescence, 'g')
         #hide y axis, as RFU units are arbitrary
         plt.gca().axes.get_yaxis().set_visible(False)
@@ -242,7 +243,7 @@ class DsfAnalysis:
             pdf.drawString(cm,17.5*cm, "Protein as supplied: Not Found")
         
         
-        
+        #===================# first page summary box (top right) #===================#
         #drawing the summary box to the right of the protein as supplied plot
         pdf.rect(7.75*cm,18.05*cm,12*cm,5.4*cm)
         pdf.setFont("Helvetica-Bold",13)
@@ -302,7 +303,7 @@ class DsfAnalysis:
             pdf.drawString(8*cm,21.5*cm,"The summary graph appears to be unreliable")
 
         
-        
+        #===================# controls #===================#
         #print out the results of the controls that are checked for
         pdf.setFillColor("blue")
         pdf.setFont("Helvetica",10)
@@ -314,13 +315,7 @@ class DsfAnalysis:
         pdf.drawString(1*cm,15.5*cm,"No Protein Control: " + self.controlsHash["no protein"])
         
         
-        
-        
-        
-        
-        
-        
-        #plotting the summary graph at the bottom of the first page
+        #===================# first page summary graph #===================#
         #gets a set of all the condition var 2s in the experiment (without repeats), excluding ones only present in controls
         uniqueCv2s = set([cv2 for cv2Dict in self.contentsHash.values() for cv2 in [key for key in cv2Dict.keys() if not cv2Dict[key].contents.isControl]])
         #gets a sorted by ph list of (condition var 1, ph) tuples. these are unique, and do not include controls
@@ -391,10 +386,10 @@ class DsfAnalysis:
             plt.axhline(suppliedProteinTm, 0, 1, linestyle="--", color="red")
             #centre around protein as supplied Tm
             distEitherSideOfSuppliedTm = max(math.fabs(suppliedProteinTm - yAxisMin), math.fabs(suppliedProteinTm - yAxisMax))
-            plt.axis([-1, len(xAxisConditionLabels), suppliedProteinTm - distEitherSideOfSuppliedTm - 5, suppliedProteinTm + distEitherSideOfSuppliedTm + 5])
+            plt.axis([-1, len(xAxisConditionLabels), suppliedProteinTm - distEitherSideOfSuppliedTm - 1, suppliedProteinTm + distEitherSideOfSuppliedTm + 1])
         else:
             #no protein as supplied Tm, just use calculated y axis min and max
-            plt.axis([-1, len(xAxisConditionLabels), yAxisMin - 5, yAxisMax + 5])
+            plt.axis([-1, len(xAxisConditionLabels), yAxisMin - 1, yAxisMax + 1])
             
         #label the axes
         plt.ylabel('Tm')
@@ -416,19 +411,18 @@ class DsfAnalysis:
         #if there were any Tms computed as unreliable, print a warning above the graph
         pdf.setFillColor("black")
         if foundUnreliable:
-            pdf.drawString(7.9*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
+            pdf.drawString(5.9*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
         #if supplied protein has dashed line drawn for Tm, label it
         if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
-            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied") 
+            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied")
         
-            
-            
-        
+        #TODO print the highest Tm, it will be yAxisMax (can just save the meanWell thats the max in the same place)
         
         
-        
-        
-        #===================other pages plotting below
+        #===================# individual condition graphs #===================#
+        #start a new page
+        pdf.showPage()
+        pdf.setFont("Helvetica",10)
         #getting the y axis scale to be the same over all the boxes, finds appropriate min and max
         overallWellNormalisedMin = overallWellNormalisedMax = 0
         for well in self.plate.wells.values():
@@ -446,141 +440,135 @@ class DsfAnalysis:
         #this is the added padding to the y axis when plotted
         paddingSize = (maxYValue - minYValue) * 0.05
 
-        
+        #variables used for knowing where to plot the next graph
+        numberOfGraphsDrawn = 0
         xpos=2
-        
-        newpage = 1
-
+        #graph positions will depend on the number of condition variable 2's
         if len(uniqueCv2s) < 6:
+            #number of images to fit on a page
+            maxGraphsPerPage = 6
             ySize = 9.2
             ypos = 3
-            graphNum = 6
             yNum = 3
         elif len(uniqueCv2s) < 13:
+            maxGraphsPerPage = 4
             ySize = 13.8
             ypos = 2
-            graphNum = 4
             yNum = 2
         else:
+            maxGraphsPerPage = 2
             ySize = 0
             ypos = 1
-            graphNum = 2
             yNum = 1
-
-        singleConditionFigure = plt.figure(num=1,figsize=(5,4))
         
+        #first we loop the condition variable 1 / pH pairs
         for cv1, ph in cv1PhPairs:
-            if (newpage-1) % graphNum == 0:
-                pdf.showPage()
-                pdf.setFont("Helvetica",9)
-                pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are unable to be analysed (monotonic, saturated, in the noise, and outliers)")
-                pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
-                pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines have unreliable estimates for Tms")
-                pdf.setFont("Helvetica",10)
-            ##sampleContents = sampleContentspH[0]
-            ##curves = []
-            wellsWithCurrentCv1AndpH = []
-            wellNameGroups = [groupedMeanWell.replicates for groupedMeanWell in self.contentsHash[(cv1, ph)].values()]
-            wellNames = []
-            for group in wellNameGroups:
-                wellNames += group
-            #TODO here!
-            wellsWithCurrentCv1AndpH += [self.plate.wells[wellName] for wellName in wellNames]
-            
-            
-            ##complexDictionary = {}
-            ##meanWellDictionary = {}
+            #the plotting figure used for current cv1/ph image
+            singleConditionFigure = plt.figure(num=1,figsize=(5,4))
+            #start printing the tms at the top of the list, and assume no dph/dt is present for condition to begin with
             tmPrintOffset = 0
             hasDphdt = False
+            #loop condition variable 2's present for the cv1/ph pair
             for cv2 in sorted(self.contentsHash[(cv1, ph)].keys()):
+                #find the associated mean well
                 meanWell = self.contentsHash[(cv1, ph)][cv2]
-                if meanWell.contents.dphdt != '' and meanWell.contents.ph != '' and meanWell.tm != None:
-                    hasDphdt = True
                 
-                ##meanWellDictionary[i] = None
-                ##complexDictionary[i] = False
-                
-                ##if self.originalPlate.wells[well].complex:
-                ##    complexDictionary[i] = True
-                    
-                #if curve is in delCurves, plot it dashed. Consists of monotonic curves, curves in the noise,
-                #saturated (flat) curves, and replicate outlier curves
+                #plot the curve for the well
                 wells = [self.plate.wells[wellName] for wellName in meanWell.replicates]
                 for well in wells:
+                    #dotted line for discarded curves
                     if well.isDiscarded:
-                        plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2],linestyle="--")
-                        
-                    #If the curve complex (unreliable Tm), plot it dotted. 
-                    #Consists of complex and Tms that are not steep enough
-                    elif well.isComplex:
                         plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2],linestyle=":")
-                        
-                    #otherwise plot the graph normally
+                    #dashed line for complex curves
+                    elif well.isComplex:
+                        plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2],linestyle="--")
+                    #full line for normal curves
                     else:
                         plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2])
-                        
-                    ##meanWellDictionary[i] = findKey(well,self.plate.meanDict)
                 
-                
+                #print the tm calculated for the condition
                 pdf.setFillColor(self.plate.cv2ColourDict[cv2])
                 pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm,cv2)
+                #if condition was complex, append '^'
                 if meanWell.isComplex:
+                    #if Tm is calculabe, print it
                     if meanWell.tm != None:
+                        #if Tm estimate is from more than 1 replicate, print the Tm error aswell
                         if meanWell.replicatesNotDiscarded > 1:
                             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")^")
+                        #estimate from only one replicate, do not print Tm error
                         else:
                             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+"^")
+                    #no calculabe Tm, print 'None' instead
                     else:
                         pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,"None")
+                #not complex, append nothing
                 else:
+                    #if Tm is calculabe, print it
                     if meanWell.tm != None:
+                        #if Tm estimate is from more than 1 replicate, print the Tm error aswell
                         if meanWell.replicatesNotDiscarded > 1:
                             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")")
+                        #estimate from only one replicate, do not print Tm error
                         else:
                             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2)))
+                    #no calculabe Tm, print 'None' instead
                     else:
                         pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,"None")
                 
-                if hasDphdt:
+                #if any of the wells plotted on this graph will have a calculabe adjusted ph, calculate and print it
+                if meanWell.contents.dphdt != '' and meanWell.contents.ph != '' and meanWell.tm != None:
                     adjustedPh = str(round(float(meanWell.contents.ph)+(meanWell.contents.dphdt*(meanWell.tm-20)),2))
                     pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm, adjustedPh)
-                
+                    #set flag that at least one of the curves on this graph had its adjust ph calculated
+                    hasDphdt = True
+                #incrememnt the tm printing offset, for the next condition variable 2
                 tmPrintOffset += 1
             
-            if hasDphdt:
-                pdf.setFillColor("black")
-                pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Adjusted pH at Tm")
-                hasDphdt = False
-                        
+            #finalise the plot's axes
             plt.ylim(minYValue-paddingSize,maxYValue+paddingSize)
             plt.gca().axes.get_yaxis().set_visible(False)
+            #save the graph figure, and print it to the pdf
             imgdata = cStringIO.StringIO()
             singleConditionFigure.savefig(imgdata, format='png',dpi=140)
-            imgdata.seek(0)  # rewind the data
+            imgdata.seek(0)
             Image = ImageReader(imgdata)
             pdf.drawImage(Image, cm+(xpos % 2)*9.5*cm,23.5*cm - (ypos % yNum)*ySize*cm , 8*cm, 6*cm)
+            plt.close()
+            
+            #print the condition name, and headings for calculated data
             pdf.setFillColor("black")
             pdf.setFont("Helvetica",12)
             pdf.drawString(cm+(xpos % 2)*9.5*cm,23*cm - (ypos % yNum)*ySize*cm ,cv1 + " (" + str(ph)+")")
             pdf.setFont("Helvetica",10)
             pdf.drawString(cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Grouped by")
             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Tm")
+            #only print the adjusted ph heading, if one of the conditions has had it calculated for the current graph
+            if hasDphdt:
+                pdf.setFillColor("black")
+                pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22.5*cm - (ypos % yNum)*ySize*cm ,"Adjusted pH at Tm")
+                hasDphdt = False
             
+            #udpate the plotting position variables accordingly
             xpos +=1
-            if newpage % 2 == 0:
+            if numberOfGraphsDrawn % 2 == 1:
                 ypos +=1
+            numberOfGraphsDrawn += 1 
             
-            newpage += 1 
-            plt.close()
-            singleConditionFigure = plt.figure(num=1,figsize=(5,4))
+            #if we have started a new page, print the plotting descriptions at the bottom of the page
+            if numberOfGraphsDrawn % maxGraphsPerPage == 1:
+                pdf.setFont("Helvetica",9)
+                ##pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are unable to be analysed (monotonic, saturated, in the noise, and outliers)")
+                ##pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
+                pdf.drawString(cm, 0.9*cm,"Monotonic, saturated, in the noise, and outlier curves are dotted, and excluded from Tm calculations")
+                pdf.drawString(cm, 0.5*cm,"Curves drawn with dashed lines have unreliable Tm estimates")
+                ##pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines have unreliable estimates for Tms")
+                pdf.setFont("Helvetica",10)
 
-       
-        plt.close()
-            
-            
-        
-        
-        
+            #we have filled a page, move on to the next one
+            if numberOfGraphsDrawn % maxGraphsPerPage == 0:
+                #starts new page
+                pdf.showPage()
 
         #save the pdf    
         pdf.save()
@@ -589,7 +577,7 @@ class DsfAnalysis:
 def main():
     root = Tkinter.Tk()
     root.withdraw()
-    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    tkMessageBox.showwarning("Inncorrect Usage", "Please read the instructions on how to run Meltdown")
     return
     
     

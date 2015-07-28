@@ -139,7 +139,7 @@ def discardBad(wellNamesList,matrix,thresh):
 def main():
     root = Tkinter.Tk()
     root.withdraw()
-    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    tkMessageBox.showwarning("Inncorrect Usage", "Please read the instructions on how to run Meltdown")
     return
     
     
