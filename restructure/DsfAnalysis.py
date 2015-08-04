@@ -330,6 +330,8 @@ class DsfAnalysis:
         legendHandles = []
         #y axis min and max initialisations, these are changed based on the highest and lowest Tms
         yAxisMin = yAxisMax = 0
+        #save the meanwell which gives the highest Tm, and put this on the page
+        highestTmMeanWell = None
         #creates the graph figure
         summaryGraphFigure = plt.figure(num=1,figsize=(10,8))
         
@@ -369,11 +371,13 @@ class DsfAnalysis:
                     #if this is the first Tm, change both the min and max to it
                     if yAxisMin == 0 and yAxisMax == 0:
                         yAxisMin = yAxisMax = newTm
+                        highestTmMeanWell = meanWell
                     #otherwise update the y axis min or max according if required
                     elif newTm < yAxisMin:
                         yAxisMin = newTm
                     elif newTm > yAxisMax:
                         yAxisMax = newTm
+                        highestTmMeanWell = meanWell
                 
             #plot the tms and the complex tms, and add the non-complex ones to the legend handles
             handle, = plt.plot([x for x in range(len(xAxisConditionLabels))], tms, color=self.plate.cv2ColourDict[cv2], marker="o", linestyle="None")
@@ -416,7 +420,15 @@ class DsfAnalysis:
         if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
             pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied")
         
-        #TODO print the highest Tm, it will be yAxisMax (can just save the meanWell thats the max in the same place)
+        #if we found a highest Tm, print the condition that gave it, and it's Tm below the summary graph
+        if highestTmMeanWell:
+            pdf.setFont("Helvetica-Bold",12)
+            if highestTmMeanWell.tmError != None:
+                pdf.drawString(3*cm,2.6*cm,"Highest Tm = " + str(round(highestTmMeanWell.tm,2)) + " +/- " + str(round(highestTmMeanWell.tmError,2)))
+            else:
+                pdf.drawString(3*cm,2.6*cm,"Highest Tm = " + str(round(highestTmMeanWell.tm,2)))
+            pdf.drawString(3*cm,2*cm,"("+highestTmMeanWell.contents.cv1+" / "+highestTmMeanWell.contents.cv2+")")
+            pdf.setFont("Helvetica",12)
         
         
         #===================# individual condition graphs #===================#

@@ -138,7 +138,7 @@ class DsfPlate:
             cv2 = contentsRow['Condition Variable 2']
         except Exception as e:
             raise MeltdownException('Could not read "Condition Variable 2" column for "' + wellName + '" from contents map\n' + e.message)
-        
+        #TODO warnings for all non essential columns not found, and setting.ini setting to disable them
         #as ph, dphdt, and control columns are not essential, if they are ommited, values take empty strings
         try:
             ph = contentsRow['pH']
