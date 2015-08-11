@@ -3,13 +3,13 @@
 import Tkinter, tkMessageBox
 
 class MeanWell:
-    def __init__(self, tm, tmError, isComplex, replicates, replicatesNotDiscarded, contents):
+    def __init__(self, tm, tmError, isComplex, replicates, numReplicatesNotDiscarded, contents):
         #relevant info for a mean well
         self.tm = tm
         self.tmError = tmError
         self.isComplex = isComplex
         self.replicates = replicates
-        self.replicatesNotDiscarded = replicatesNotDiscarded
+        self.numReplicatesNotDiscarded = numReplicatesNotDiscarded
         self.contents = contents
         return
 

@@ -34,7 +34,7 @@ RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
 #largest tm error before the estimate is considered unreliable
 MAX_TM_ERROR_BEFORE_UNRELIABLE = 1.5
 
-
+#TODO fails to analyse normalised output
 class DsfAnalysis:
     def __init__(self, analysisName):
         #initialisations
@@ -76,10 +76,10 @@ class DsfAnalysis:
                 #get mean tm and tm error (sd of tms)
                 tm, tmError = rh.meanSd([self.plate.wells[w].tm for w in reps if not self.plate.wells[w].isDiscarded])
                 complexMean = any([self.plate.wells[w].isComplex for w in reps if not self.plate.wells[w].isDiscarded])
-                repsNotDiscarded = sum([(not self.plate.wells[w].isDiscarded) for w in reps])
+                numRepsNotDiscarded = sum([(not self.plate.wells[w].isDiscarded) for w in reps])
                 contents = self.plate.wells[wellName].contents
                 #create a mean well and add it to list
-                self.meanWells.append(MeanWell(tm, tmError, complexMean, reps, repsNotDiscarded, contents))
+                self.meanWells.append(MeanWell(tm, tmError, complexMean, reps, numRepsNotDiscarded, contents))
         return
     
     def __createMeanContentsHash(self):
@@ -233,7 +233,7 @@ class DsfAnalysis:
             meanSuppliedProtein = self.contentsHash[('protein as supplied', '')]['']
             suppliedProteinTm = meanSuppliedProtein.tm
             suppliedProteinTmError = meanSuppliedProtein.tmError
-            if suppliedProteinTm != None and meanSuppliedProtein.replicatesNotDiscarded > 1:
+            if suppliedProteinTm != None and meanSuppliedProtein.numReplicatesNotDiscarded > 1:
                 pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = " +str(round(suppliedProteinTm,2))+"(+/-"+str(round(suppliedProteinTmError,2))+")")
             elif suppliedProteinTm != None:
                 pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = " +str(round(suppliedProteinTm,2)))
@@ -353,7 +353,7 @@ class DsfAnalysis:
                 #if we found a condition, add it's tm to the right list, and a None to the other
                 if conditionExists:
                     newTm = meanWell.tm
-                    if meanWell.isComplex:#TODO check when tms are unreliable (if estimate comes from only 1 ?)
+                    if meanWell.isComplex or meanWell.numReplicatesNotDiscarded == 1:
                         tms.append(None)
                         complexTms.append(newTm)
                         foundUnreliable = True
@@ -506,7 +506,7 @@ class DsfAnalysis:
                     #if Tm is calculabe, print it
                     if meanWell.tm != None:
                         #if Tm estimate is from more than 1 replicate, print the Tm error aswell
-                        if meanWell.replicatesNotDiscarded > 1:
+                        if meanWell.numReplicatesNotDiscarded > 1:
                             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")^")
                         #estimate from only one replicate, do not print Tm error
                         else:
@@ -519,7 +519,7 @@ class DsfAnalysis:
                     #if Tm is calculabe, print it
                     if meanWell.tm != None:
                         #if Tm estimate is from more than 1 replicate, print the Tm error aswell
-                        if meanWell.replicatesNotDiscarded > 1:
+                        if meanWell.numReplicatesNotDiscarded > 1:
                             pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")")
                         #estimate from only one replicate, do not print Tm error
                         else:
