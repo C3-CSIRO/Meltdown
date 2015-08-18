@@ -89,25 +89,25 @@ class DsfPlate:
                 #controls have a ph and and condition variable 2 set to null string ('') so they are easier to find
                 wellContents.cv1 = wellContents.cv1.lower()
                 self.lysozyme.append(wellName)
-                wellContents.control = 1
+                wellContents.isControl = 1
                 wellContents.ph = ''
                 wellContents.cv2 = ''
             elif wellContents.cv1.lower() == NO_DYE:
                 wellContents.cv1 = wellContents.cv1.lower()
                 self.noDye.append(wellName)
-                wellContents.control = 1
+                wellContents.isControl = 1
                 wellContents.ph = ''
                 wellContents.cv2 = ''
             elif wellContents.cv1.lower() == PROTEIN_AS_SUPPLIED:
                 wellContents.cv1 = wellContents.cv1.lower()
                 self.proteinAsSupplied.append(wellName)
-                wellContents.control = 1
+                wellContents.isControl = 1
                 wellContents.ph = ''
                 wellContents.cv2 = ''
             elif wellContents.cv1.lower() == NO_PROTEIN:
                 wellContents.cv1 = wellContents.cv1.lower()
                 self.noProtein.append(wellName)
-                wellContents.control = 1
+                wellContents.isControl = 1
                 wellContents.ph = ''
                 wellContents.cv2 = ''
             
@@ -138,8 +138,6 @@ class DsfPlate:
             cv2 = contentsRow['Condition Variable 2']
         except Exception as e:
             raise MeltdownException('Could not read "Condition Variable 2" column for "' + wellName + '" from contents map\n' + e.message)
-        #TODO warnings for all non essential columns not found, and setting.ini setting to disable them
-        #TODO currently fails if you dont have a ph column, probs does for the rest too
         #as ph, dphdt, and control columns are not essential, if they are ommited, values take empty strings
         try:
             ph = contentsRow['pH']
@@ -205,10 +203,14 @@ class DsfPlate:
                 cmpWell = contentsMap.xs(comparedWellName)
                 #replicate defined as having same condition variables 1 and 2 as well as same ph
                 if well['Condition Variable 1'] == cmpWell['Condition Variable 1'] and\
-                well['Condition Variable 2'] == cmpWell['Condition Variable 2'] and\
-                well['pH'] == cmpWell['pH']:
-                    #found a replicate
-                    self.repDict[wellName].append(comparedWellName)
+                well['Condition Variable 2'] == cmpWell['Condition Variable 2']:
+                    try:
+                        if well['pH'] == cmpWell['pH']:
+                            #found a replicate: cv1, cv2, and ph all the same
+                            self.repDict[wellName].append(comparedWellName)
+                    except KeyError:
+                        #found a replicate: cv1, cv2 are the same, and ph column was not found
+                        self.repDict[wellName].append(comparedWellName)
         return
     
     def computeOutliers(self):

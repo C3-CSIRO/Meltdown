@@ -34,7 +34,6 @@ RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
 #largest tm error before the estimate is considered unreliable
 MAX_TM_ERROR_BEFORE_UNRELIABLE = 1.5
 
-#TODO fails to analyse normalised output
 class DsfAnalysis:
     def __init__(self, analysisName):
         #initialisations
@@ -273,8 +272,11 @@ class DsfAnalysis:
         pdf.drawString(8*cm,19.5*cm,"Average estimation of error is")
         if numOfTmErrors != 0:
             avgTmError = round(tmErrorSum/float(numOfTmErrors),1)
-        pdf.setFont("Helvetica-Bold",13)
-        pdf.drawString(14.1*cm,19.5*cm,str(avgTmError)+" C")
+            pdf.setFont("Helvetica-Bold",13)
+            pdf.drawString(14.1*cm,19.5*cm,str(avgTmError)+" C")
+        else:
+            pdf.setFont("Helvetica-Bold",13)
+            pdf.drawString(14.1*cm,19.5*cm,"N/A")
 
         #print whether the protein as supplied was well behaved
         pdf.setFont("Helvetica",13)

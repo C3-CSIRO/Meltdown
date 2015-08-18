@@ -146,7 +146,7 @@ class DsfWell:
     
     def computeInTheNoise(self, noiseThreshold):
         #no need to calculate if curve already discarded
-        if self.isDiscarded:
+        if self.isDiscarded or noiseThreshold == None:
             return
         #curve is in the noise, and should be discarded, if its monotonic threshold is greater than the noise threshold given
         if self.wellMonotonicThreshold > noiseThreshold:
