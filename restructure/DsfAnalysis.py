@@ -10,7 +10,7 @@ import Tkinter, tkMessageBox
 import cStringIO
 
 import replicateHandling as rh
-from DsfPlate import DsfPlate, LYSOZYME, SIMILARITY_THRESHOLD
+from DsfPlate import DsfPlate, LYSOZYME, PROTEIN_AS_SUPPLIED, SIMILARITY_THRESHOLD
 from MeanWell import MeanWell
 
 #reportlab needs to be installed separetly by anaconda, so a messagebox pops up alerting the user if it can't import
@@ -62,7 +62,7 @@ class DsfAnalysis:
         #create grouped hash for plotting
         self.__createMeanContentsHash()
         #check the controls on the plate
-        self.__createControlsHash()
+        self.__createControlsHash()#TODO if no protein fails, then all the noises are wrong
         return
     
     def __createMeanWells(self):
@@ -95,8 +95,6 @@ class DsfAnalysis:
         return
     
     def __createControlsHash(self):
-        #TODO no dye and no protein will always fail, now that we use aitchisons distance and dont divide by length of curve
-        #NB they would always have passed before as threshold was set for not dividing by length and therefore massive (oops)
         #initialise the control results
         results = {"lysozyme": "Not Found",
                    "no dye": "Not Found",
@@ -113,6 +111,7 @@ class DsfAnalysis:
                 results["lysozyme"] = "Passed"
             else:
                 results["lysozyme"] = "Failed"
+                print lysozymeMeanWell.tm
         
         #check if no dye control is present
         if len(self.plate.noDye)>0:
@@ -136,7 +135,8 @@ class DsfAnalysis:
                 results["no dye"] = "Passed"
             else:
                 results["no dye"] = "Failed"
-        
+            print'no dye diff to ideal: ', rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected)
+            
         #check if no protein control is present
         if len(self.plate.noProtein)>0:
             #create a mean curve out of the replicates that are not outliers
@@ -159,6 +159,7 @@ class DsfAnalysis:
                 results["no protein"] = "Passed"
             else:
                 results["no protein"] = "Failed"
+            print 'no protein diff to ideal: ',rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected)
         
         #save the results hash
         self.controlsHash = results
@@ -229,7 +230,7 @@ class DsfAnalysis:
         pdf.setFont("Helvetica",10)
         if len(self.plate.proteinAsSupplied) > 0:
             #null strings for ph and condition variable 2 in the contents hash, as that's how controls are read
-            meanSuppliedProtein = self.contentsHash[('protein as supplied', '')]['']
+            meanSuppliedProtein = self.contentsHash[(PROTEIN_AS_SUPPLIED, '')]['']
             suppliedProteinTm = meanSuppliedProtein.tm
             suppliedProteinTmError = meanSuppliedProtein.tmError
             if suppliedProteinTm != None and meanSuppliedProtein.numReplicatesNotDiscarded > 1:
@@ -501,6 +502,7 @@ class DsfAnalysis:
                         plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2])
                 
                 #print the tm calculated for the condition
+                pdf.setFont("Helvetica",10)
                 pdf.setFillColor(self.plate.cv2ColourDict[cv2])
                 pdf.drawString(cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm,cv2)
                 #if condition was complex, append '^'
@@ -572,8 +574,6 @@ class DsfAnalysis:
             #if we have started a new page, print the plotting descriptions at the bottom of the page
             if numberOfGraphsDrawn % maxGraphsPerPage == 1:
                 pdf.setFont("Helvetica",9)
-                ##pdf.drawString(cm, 1.3*cm,"Curves drawn with dashed lines are unable to be analysed (monotonic, saturated, in the noise, and outliers)")
-                ##pdf.drawString(cm, 0.9*cm,"and are excluded from Tm calculations")
                 pdf.drawString(cm, 0.9*cm,"Monotonic, saturated, in the noise, and outlier curves are dotted, and excluded from Tm calculations")
                 pdf.drawString(cm, 0.5*cm,"Curves drawn with dashed lines have unreliable Tm estimates")
                 ##pdf.drawString(cm, 0.5*cm,"Curves drawn with dotted lines have unreliable estimates for Tms")

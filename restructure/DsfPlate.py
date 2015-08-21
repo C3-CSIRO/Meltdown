@@ -20,13 +20,13 @@ COLOURS = ["Blue","DarkOrange","Green","Magenta","Cyan","Red",
             "DarkSlateGray","Olive","LightSeaGreen","DarkMagenta","Gold","Navy",
             "DarkRed","Lime","Indigo","MediumSpringGreen","DeepPink","Salmon",
             "Teal","DeepSkyBlue","DarkOliveGreen","Maroon","GoldenRod","MediumVioletRed"]
-            
+#TODO make sure these constants are k
 #discarding bad replicates threshold. calculated as mean difference between any two of 168 normalised lysozyme curves
-SIMILARITY_THRESHOLD = 1.72570084974
+SIMILARITY_THRESHOLD = 0.010718638818#1.72570084974
 #gives threshold for monotonicity in a non normalised melt curve when multiplied by highest fluorescence value on the plate
 PLATE_MONOTONICITY_THRESHOLD_FACTOR = 0.0005
 #gives the 'in the noise' threshold when multiplied by the mean monotonicity threshold of the 'no protein' control wells
-NOISE_THRESHOLD_FACTOR = 1.15
+NOISE_THRESHOLD_FACTOR = 1.05#1.15
 
 
 class DsfPlate:
@@ -64,7 +64,7 @@ class DsfPlate:
         data.drop(data.index[pd.isnull(data.index)], inplace=True)
         #replace any empty cells (default value NaN) to be empty strings ('')
         data.fillna(value='', inplace=True)
-
+        
         #==================read the in the contents map as a dataframe too
         try:
             contentsMap = pd.DataFrame.from_csv(contentsMapFilePath, sep='\t', index_col='Well')
@@ -286,7 +286,7 @@ class DsfPlate:
         print 'plate monotonic threshold: ', self.plateMonotonicThreshold
         return
     
-    def __computeNoiseThreshold(self):
+    def __computeNoiseThreshold(self):#TODO threshold is too high, too many things are getting culled
         #if no no protein controls, leave the noise threshold as None, and let this be handled in DsfWell
         if len(self.noProtein)==0:
             self.noiseThreshold = None

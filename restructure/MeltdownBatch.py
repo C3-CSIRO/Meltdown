@@ -72,6 +72,7 @@ def main():
                     experiment.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
                     
             except Exception as e:
+                print '*ERROR*'
                 print 'failed to analyse: ' + rfuFilepath.split('/')[-1] + '\n' + e.message
             
     #expected error, to do with reading input, will give descriptive messages

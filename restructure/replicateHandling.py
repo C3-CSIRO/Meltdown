@@ -62,11 +62,11 @@ def aitchisonDistance(list1,list2):
     #take logs so as to compute the aitchisons distance
     list1 = [math.log(x) for x in list1]
     list2 = [math.log(x) for x in list2]
-    #iterate over the lenght of the lists (lists must have same length)
-    for i in range(len(list1)):
+    #iterate over the lenght of the shorter list
+    for i in range(min(len(list1), len(list2))):
         sqrsum+=math.pow(list1[i]-list2[i],2)
-    #return the sum
-    return sqrsum
+    #return the average index square sum
+    return sqrsum / min(len(list1), len(list2))
 
 
 def discardBad(wellNamesList,matrix,thresh):
