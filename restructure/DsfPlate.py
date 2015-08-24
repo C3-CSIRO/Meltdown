@@ -26,7 +26,7 @@ SIMILARITY_THRESHOLD = 0.010718638818#1.72570084974
 #gives threshold for monotonicity in a non normalised melt curve when multiplied by highest fluorescence value on the plate
 PLATE_MONOTONICITY_THRESHOLD_FACTOR = 0.0005
 #gives the 'in the noise' threshold when multiplied by the mean monotonicity threshold of the 'no protein' control wells
-NOISE_THRESHOLD_FACTOR = 1.05#1.15
+NOISE_THRESHOLD_FACTOR = 1#1.15
 
 
 class DsfPlate:

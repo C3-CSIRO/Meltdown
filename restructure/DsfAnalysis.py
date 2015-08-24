@@ -41,7 +41,9 @@ class DsfAnalysis:
         self.plate = None
         self.meanWells = []
         self.contentsHash = {}
-        self.controlsHash = {}
+        self.controlsHash = {"lysozyme": "Not Found",
+                             "no dye": "Not Found",
+                             "no protein": "Not Found"}
         return
         
     def loadCurves(self, dataFilePath, contentsMapFilePath):
@@ -54,7 +56,10 @@ class DsfAnalysis:
         self.plate.computeOutliers()
         self.plate.computeSaturations()
         self.plate.computeMonotonicities()
-        self.plate.computeInTheNoises()
+        #no protein control must be done before computing in the noise, as if it fails, in the noise cannot be checked
+        self.__doNegativeControls()
+        if self.controlsHash["no protein"]=="Passed":
+            self.plate.computeInTheNoises()
         self.plate.computeTms()
         self.plate.computeComplexities()
         #create the mean wells of replicates on the plate
@@ -62,7 +67,7 @@ class DsfAnalysis:
         #create grouped hash for plotting
         self.__createMeanContentsHash()
         #check the controls on the plate
-        self.__createControlsHash()#TODO if no protein fails, then all the noises are wrong
+        self.__doPositiveControls()
         return
     
     def __createMeanWells(self):
@@ -94,25 +99,7 @@ class DsfAnalysis:
                 self.contentsHash[(contents.cv1,contents.ph)][contents.cv2] = well
         return
     
-    def __createControlsHash(self):
-        #initialise the control results
-        results = {"lysozyme": "Not Found",
-                   "no dye": "Not Found",
-                   "no protein": "Not Found"}
-        
-        #first check if lysozyme control is present on the plate
-        if len(self.plate.lysozyme)>0:
-            #get the mean well for the lysozyme control, it will have no ph, and no condition variable 2
-            lysozymeMeanWell = self.contentsHash[(LYSOZYME,'')]['']
-            
-            #lysozyme Tm check, only uses mean lysozyme Tm, hence indexing ([0])
-            if lysozymeMeanWell.tm > LYSOZYME_TM_THRESHOLD[0] - 2*LYSOZYME_TM_THRESHOLD[1] and\
-            lysozymeMeanWell.tm < LYSOZYME_TM_THRESHOLD[0] + 2*LYSOZYME_TM_THRESHOLD[1]:
-                results["lysozyme"] = "Passed"
-            else:
-                results["lysozyme"] = "Failed"
-                print lysozymeMeanWell.tm
-        
+    def __doNegativeControls(self):
         #check if no dye control is present
         if len(self.plate.noDye)>0:
             #create a mean curve out of the replicates that are not outliers
@@ -132,9 +119,9 @@ class DsfAnalysis:
             noDyeExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/data/noDyeControl.csv"))
             #if the curves are within required distance from one another, the control is passed
             if rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected) < SIMILARITY_THRESHOLD:
-                results["no dye"] = "Passed"
+                self.controlsHash["no dye"] = "Passed"
             else:
-                results["no dye"] = "Failed"
+                self.controlsHash["no dye"] = "Failed"
             print'no dye diff to ideal: ', rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected)
             
         #check if no protein control is present
@@ -156,13 +143,24 @@ class DsfAnalysis:
             noProteinExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/data/noProteinControl.csv"))
             #if the curves are within required distance from one another, the control is passed
             if rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected) < SIMILARITY_THRESHOLD:
-                results["no protein"] = "Passed"
+                self.controlsHash["no protein"] = "Passed"
             else:
-                results["no protein"] = "Failed"
+                self.controlsHash["no protein"] = "Failed"
             print 'no protein diff to ideal: ',rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected)
-        
-        #save the results hash
-        self.controlsHash = results
+        return
+    
+    def __doPositiveControls(self):
+        #first check if lysozyme control is present on the plate
+        if len(self.plate.lysozyme)>0:
+            #get the mean well for the lysozyme control, it will have no ph, and no condition variable 2
+            lysozymeMeanWell = self.contentsHash[(LYSOZYME,'')]['']
+            
+            #lysozyme Tm check, only uses mean lysozyme Tm, hence indexing ([0])
+            if lysozymeMeanWell.tm > LYSOZYME_TM_THRESHOLD[0] - 2*LYSOZYME_TM_THRESHOLD[1] and\
+            lysozymeMeanWell.tm < LYSOZYME_TM_THRESHOLD[0] + 2*LYSOZYME_TM_THRESHOLD[1]:
+                self.controlsHash["lysozyme"] = "Passed"
+            else:
+                self.controlsHash["lysozyme"] = "Failed"
         return
     
     def produceNormalisedOutput(self, filePath):
