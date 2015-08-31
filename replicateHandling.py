@@ -40,30 +40,33 @@ def meanSd(listOfNumbers):
     etotal=0
     e2total=0
     N=len(listOfNumbers)
+    #get the sums used to calculate the moments
     for item in listOfNumbers:
         if item !=None:
             etotal+=float(item)
             e2total+=math.pow(item,2)
         else:
             N -= 1
+    #empty list has no mean or sd
     if N == 0:
         return (None,None)
+    #calculate moments, and thus variance and sd
     moment1=etotal/N
     moment2=e2total/N
     variance = moment2 - math.pow(moment1,2)
     return (moment1, np.sqrt(variance))
 
-#TODO get rid of overlap, decide on whether to divide by len(index)
-def sqrdiff(series1,series2):
-    indexoverlap=[]
-    for x in series1.index:
-        if x in series2.index:
-            indexoverlap.append(x)
+
+def aitchisonDistance(list1,list2):
     sqrsum=0
-    for ind in indexoverlap:
-        sqrsum+=math.pow(series1[ind]-series2[ind],2)
-    
-    return sqrsum / len(indexoverlap)
+    #take logs so as to compute the aitchisons distance
+    list1 = [math.log(x) for x in list1]
+    list2 = [math.log(x) for x in list2]
+    #iterate over the lenght of the shorter list
+    for i in range(min(len(list1), len(list2))):
+        sqrsum+=math.pow(list1[i]-list2[i],2)
+    #return the average index square sum
+    return sqrsum / min(len(list1), len(list2))
 
 
 def discardBad(wellNamesList,matrix,thresh):
@@ -136,7 +139,7 @@ def discardBad(wellNamesList,matrix,thresh):
 def main():
     root = Tkinter.Tk()
     root.withdraw()
-    tkMessageBox.showwarning("Inncorrect Usage", "Please run the 'RunMeltdown.bat' file from the same directory")
+    tkMessageBox.showwarning("Inncorrect Usage", "Please read the instructions on how to run Meltdown")
     return
     
     

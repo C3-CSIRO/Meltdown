@@ -60,7 +60,7 @@ Running Meltdown
 	  correspond uniquely to a well name in the DSF results file
 
 
-	** If you need more help getting a DSF results file: **
+	** If you need more help getting a contents map: **
 	** There is a sample Contents Map file located in the "help" folder in meltdown's directory **
 
 
@@ -70,9 +70,9 @@ Running Meltdown
 	On Mac/Linux: running the "RunMeltdownUnix.command" file located in the meltdown folder downloaded from github
 
 
-4. 	A dialog will pop up asking you to select the "DSF Experiment results" and the 
+4. 	Dialogs will pop up asking you to select the "DSF Experiment results" and the 
 	"Contents Map". Select the appropriate files.
 
 
 5. 	Meltdown will now run. The results will be outputted to a .pdf file in
-	the directory where the pcrd file was exported.
+	the directory where the DSF experiments results file was located.
