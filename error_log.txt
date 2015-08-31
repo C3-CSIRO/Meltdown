@@ -1,7 +1,0 @@
-Version: 2.0.0
-Traceback (most recent call last):
-  File "Meltdown.py", line 69, in main
-    experiment.generateReport(name+".pdf", VERSION)
-  File "C:\Users\RIS01E\Documents\GitHub\Meltdown\restructure\DsfAnalysis.py", line 277, in generateReport
-    pdf.drawString(14.1*cm,19.5*cm,str(avgTmError)+" C")
-UnboundLocalError: local variable 'avgTmError' referenced before assignment

@@ -101,7 +101,7 @@ class DsfWell:
             if count >= LENGTH_OF_FLAT_CONSIDERED_SATURATED:
                 self.isSaturated = True
                 self.isDiscarded = True
-                print 'saturated: ', self.name
+                ##print 'saturated: ', self.name
 
         return
     
@@ -139,7 +139,7 @@ class DsfWell:
         if decreasingMonotonic:
             self.isMonotonic = True
             self.isDiscarded = True
-            print 'monotonic: ', self.name
+            ##print 'monotonic: ', self.name
         else:
             self.isMonotonic = False
         return
@@ -152,7 +152,7 @@ class DsfWell:
         if self.wellMonotonicThreshold > noiseThreshold:
             self.isInTheNoise = True
             self.isDiscarded = True
-            print 'in the noise: ', self.name
+            ##print 'in the noise: ', self.name
         else:
             self.isInTheNoise = False
         return

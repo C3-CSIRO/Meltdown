@@ -122,7 +122,7 @@ class DsfAnalysis:
                 self.controlsHash["no dye"] = "Passed"
             else:
                 self.controlsHash["no dye"] = "Failed"
-            print'no dye diff to ideal: ', rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected)
+            ##print'no dye diff to ideal: ', rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected)
             
         #check if no protein control is present
         if len(self.plate.noProtein)>0:
@@ -146,7 +146,7 @@ class DsfAnalysis:
                 self.controlsHash["no protein"] = "Passed"
             else:
                 self.controlsHash["no protein"] = "Failed"
-            print 'no protein diff to ideal: ',rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected)
+            ##print 'no protein diff to ideal: ',rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected)
         return
     
     def __doPositiveControls(self):
