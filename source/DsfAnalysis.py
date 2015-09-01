@@ -116,7 +116,7 @@ class DsfAnalysis:
             meanNoDyeCurve = [x/validCurvesInSum for x in meanNoDyeCurve]
             
             #read in expected no dye control from file
-            noDyeExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/data/noDyeControl.csv"))
+            noDyeExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/../data/noDyeControl.csv"))
             #if the curves are within required distance from one another, the control is passed
             if rh.aitchisonDistance(meanNoDyeCurve, noDyeExpected) < SIMILARITY_THRESHOLD:
                 self.controlsHash["no dye"] = "Passed"
@@ -140,7 +140,7 @@ class DsfAnalysis:
             meanNoProteinCurve = [x/validCurvesInSum for x in meanNoProteinCurve]
             
             #read in the expected curve for the no protein control
-            noProteinExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/data/noProteinControl.csv"))
+            noProteinExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/../data/noProteinControl.csv"))
             #if the curves are within required distance from one another, the control is passed
             if rh.aitchisonDistance(meanNoProteinCurve, noProteinExpected) < SIMILARITY_THRESHOLD:
                 self.controlsHash["no protein"] = "Passed"
@@ -197,7 +197,7 @@ class DsfAnalysis:
             pdf.drawString(cm,27*cm, self.name[:41] + '...')
 
         #put the csiro image in the top right
-        pdf.drawImage(RUNNING_LOCATION + "/data/CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
+        pdf.drawImage(RUNNING_LOCATION + "/../data/CSIRO_Grad_RGB_hr.jpg",17*cm,25.5*cm,3.5*cm,3.5*cm)
         
         
         #===================# protein as supplied graph and Tm #===================#
