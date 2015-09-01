@@ -188,7 +188,7 @@ class DsfAnalysis:
         #initialise the output pdf and print the heading and name of experiment
         pdf = canvas.Canvas(outputFilePath,pagesize=A4)
         pdf.setFont("Helvetica-Bold",16)
-        pdf.drawString(cm,28*cm,"MELTDOWN v" + version)
+        pdf.drawString(cm,28*cm,"MELTDOWN " + version)
         pdf.setFont("Helvetica",16)
         pdf.drawString(7*cm,28*cm,"Melt Curve Analysis")
         if len(self.name) < 40:

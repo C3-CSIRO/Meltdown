@@ -23,9 +23,10 @@ import sys, traceback
 
 from DsfAnalysis import DsfAnalysis
 from MeltdownException import MeltdownException
+import meltdownReleases
 
 #current version of meltdown, displayed in error logs
-VERSION = "2.0.0"
+VERSION = "v2.0.0"
 
 #the running location of this file
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
@@ -36,11 +37,20 @@ cfg.readfp(open(RUNNING_LOCATION + '/../settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
+CHECK_FOR_NEW_VERSION = cfg.getboolean('Running Options', 'CheckForNewVersion')
 
 def main():
     #opens up selection windows for user to use
     root = Tkinter.Tk()
     root.withdraw()
+    
+    if (CHECK_FOR_NEW_VERSION):
+        try:
+            if (meltdownReleases.checkIfLatestRelease(VERSION) == 0):
+                tkMessageBox.showinfo("New version availiable!","There is a newer version of Meltdown avaliable for download at\nhttps://github.com/C3-CSIRO/Meltdown")
+        except:
+            #if user doesn't have internet, or github is down, then errors will occur, and we skip the check
+            pass
     
     try:
         #choosing a dsf results data file
