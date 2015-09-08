@@ -32,6 +32,7 @@ class DsfWell:
         self.wellNormalisedMax = None 
         self.wellNormalisedMin = None
         self.tm = None
+        self.tm2 = None
         self.wellMonotonicThreshold = None
 
         self.isMonotonic = False
@@ -172,6 +173,10 @@ class DsfWell:
         #now that we have the derivative series, we can find the Tm
         lowestPoint = 0
         lowestPointIndex = None
+        #the second lowest point, when looking for 2 peaks
+        lowestPoint2 = 0
+        lowestPointIndex2 = None
+        
         #since the end of the melt curves is often very unpredictable, we only search for a Tm up to a point
         ignoreIndex = -int(len(seriesDeriv.index)*FRACTION_OF_CURVE_NOT_CHECKED_FOR_TM)
         #find the lowest point in the derivative series
