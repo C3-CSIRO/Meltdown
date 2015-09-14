@@ -13,8 +13,15 @@ def lowestPoints():
     lowestPoint2 = 10
     lowestPointIndex2 = None
     
+    upAfterMin = False
+    maxAfterMin = 0
+    
     for i, point in enumerate(y):
+        if lowestPointIndex != None and point > lowestPoint:
+            upAfterMin = True
+        
         if point <  lowestPoint:
+            
             lowestPoint = point
             lowestPointIndex = i
         
@@ -27,7 +34,48 @@ def lowestPoints():
     return
 
 
+def lowestPoints2():
+    x = [0,1,2,3,4,5,6,7,8,9]
+    y = [4,3,1,2,5,7,6,5,3,4]
+    plt.plot(x,y)
+    
+    mins = []
+    lowest = 10
+    indexOfLowest = None
+    
+    for i,point in zip(x,y):
+        if point < lowest:
+            lowest = point
+            indexOfLowest = i
+    
+    prev = y[indexOfLowest]
+    indexOfRightPeak = indexOfLowest
+    for i,point in enumerate(y[indexOfLowest:]):
+        if prev > point:
+            break
+        
+        indexOfRightPeak = i+indexOfLowest
+        prev = point
+        
+    prev = y[indexOfLowest]
+    indexOfLeftPeak = indexOfLowest
+    for i,point in enumerate(reversed(y[:indexOfLowest+1])):
+        if prev > point:
+            break
+        
+        indexOfLeftPeak = indexOfLowest-i
+        prev = point
+    
+    
+    print indexOfLeftPeak, indexOfLowest, indexOfRightPeak, lowest
+    plt.show()
+    
+    return
 
+def getMinAndPeaks(list_, startIndex, endIndex):
+    
+    
+    return
 
 
 
