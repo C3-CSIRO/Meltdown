@@ -33,17 +33,16 @@ def lowestPoints():
     
     return
 
-
+"""
 def lowestPoints2():
-    x = [0,1,2,3,4,5,6,7,8,9]
-    y = [4,3,1,2,5,7,6,5,3,4]
-    plt.plot(x,y)
+    y = [(x+5)*(x+2)*(x)*(x-2) for x in range(-40,40)]
+    plt.plot(range(-10,10),y)
     
     mins = []
     lowest = 10
     indexOfLowest = None
     
-    for i,point in zip(x,y):
+    for i,point in enumerate(y):
         if point < lowest:
             lowest = point
             indexOfLowest = i
@@ -70,12 +69,75 @@ def lowestPoints2():
     print indexOfLeftPeak, indexOfLowest, indexOfRightPeak, lowest
     plt.show()
     
+    return"""
+    
+    
+
+def plot(list_):
+    plt.plot(range(len(list_)), list_)
+    plt.show()
+    return
+    
+
+def getAllMins(list_):
+    
+    mins = []
+    getMinAndPeaks(list_, 0, len(list_)-1, mins)
+    print mins
+    
+    
+    return mins
+
+def getMinAndPeaks(list_, startIndex, endIndex, mins):
+    
+    print "start/end indices:", startIndex, endIndex
+    
+    if startIndex == endIndex:
+        return
+    
+    y = list_[startIndex: endIndex+1]
+    
+    lowest = y[0]
+    indexOfLowest = None
+    
+    for i,point in enumerate(y):
+        if point < lowest:
+            lowest = point
+            indexOfLowest = i
+    
+    if indexOfLowest == None:
+        return
+    
+    prev = y[indexOfLowest]
+    indexOfRightPeak = indexOfLowest
+    for i,point in enumerate(y[indexOfLowest:]):
+        if prev > point:
+            break
+        
+        indexOfRightPeak = i+indexOfLowest
+        prev = point
+        
+    prev = y[indexOfLowest]
+    indexOfLeftPeak = indexOfLowest
+    for i,point in enumerate(reversed(y[:indexOfLowest+1])):
+        if prev > point:
+            break
+        
+        indexOfLeftPeak = indexOfLowest-i
+        prev = point
+    
+    mins.append(indexOfLowest + startIndex)
+    
+    print "low points", indexOfLeftPeak + startIndex, indexOfLowest + startIndex, indexOfRightPeak + startIndex
+    
+    getMinAndPeaks(list_, startIndex, indexOfLeftPeak + startIndex, mins)
+    getMinAndPeaks(list_, indexOfRightPeak + startIndex, endIndex, mins)
+    
     return
 
-def getMinAndPeaks(list_, startIndex, endIndex):
-    
-    
-    return
+
+
+
 
 
 
