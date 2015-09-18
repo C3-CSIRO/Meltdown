@@ -78,12 +78,18 @@ def plot(list_):
     plt.show()
     return
     
+#=============================================================================#
+
+
+
+TM_STEEPNESS_THRESH = 1
+
 
 def getAllMins(list_):
     
     mins = []
     getMinAndPeaks(list_, 0, len(list_)-1, mins)
-    print mins
+    print "mins: ", mins
     
     
     return mins
@@ -98,38 +104,50 @@ def getMinAndPeaks(list_, startIndex, endIndex, mins):
     y = list_[startIndex: endIndex+1]
     
     lowest = y[0]
-    indexOfLowest = None
-    
+    indexOfLowest = 0
+    foundLowEnough = False
+    #find lowest point
     for i,point in enumerate(y):
+        #TODO check this
+        #on first loop, set first point as lowest
+        if point > lowest + TM_STEEPNESS_THRESH:
+            foundLowEnough = True
+        
         if point < lowest:
             lowest = point
             indexOfLowest = i
     
-    if indexOfLowest == None:
+    if not foundLowEnough:
+        print "no index of lowest found"
         return
     
-    prev = y[indexOfLowest]
+    #find peak to the right
+    potentialPeak = y[indexOfLowest]
     indexOfRightPeak = indexOfLowest
     for i,point in enumerate(y[indexOfLowest:]):
-        if prev > point:
+        if point < potentialPeak - TM_STEEPNESS_THRESH:
             break
-        
-        indexOfRightPeak = i+indexOfLowest
-        prev = point
-        
-    prev = y[indexOfLowest]
+        if point >= potentialPeak:
+            potentialPeak = point    
+            indexOfRightPeak = indexOfLowest + i
+    
+    
+    #find peak to the left
+    potentialPeak = y[indexOfLowest]
     indexOfLeftPeak = indexOfLowest
     for i,point in enumerate(reversed(y[:indexOfLowest+1])):
-        if prev > point:
+        if point < potentialPeak - TM_STEEPNESS_THRESH:
             break
-        
-        indexOfLeftPeak = indexOfLowest-i
-        prev = point
+        if point >= potentialPeak:
+            potentialPeak = point
+            indexOfLeftPeak = indexOfLowest-i
     
+    #add the min to the list
     mins.append(indexOfLowest + startIndex)
     
     print "low points", indexOfLeftPeak + startIndex, indexOfLowest + startIndex, indexOfRightPeak + startIndex
     
+    #find the next mins either side of the peaks
     getMinAndPeaks(list_, startIndex, indexOfLeftPeak + startIndex, mins)
     getMinAndPeaks(list_, indexOfRightPeak + startIndex, endIndex, mins)
     
@@ -138,6 +156,8 @@ def getMinAndPeaks(list_, startIndex, endIndex, mins):
 
 
 
+
+#=============================================================================#
 
 
 
