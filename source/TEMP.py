@@ -73,8 +73,8 @@ def lowestPoints2():
     
     
 
-def plot(list_):
-    plt.plot(range(len(list_)), list_)
+def plot(curve):
+    plt.plot(range(len(curve)), curve)
     plt.show()
     return
     
@@ -85,23 +85,23 @@ def plot(list_):
 TM_STEEPNESS_THRESH = 1
 
 
-def getAllMins(list_):
+def getAllMins(curve):
     
     mins = []
-    getMinAndPeaks(list_, 0, len(list_)-1, mins)
+    getMinAndPeaks(curve, 0, len(curve)-1, mins)
     print "mins: ", mins
     
     
     return mins
 
-def getMinAndPeaks(list_, startIndex, endIndex, mins):
+def getMinAndPeaks(curve, startIndex, endIndex, mins):
     
     print "start/end indices:", startIndex, endIndex
     
     if startIndex == endIndex:
         return
     
-    y = list_[startIndex: endIndex+1]
+    y = curve[startIndex: endIndex+1]
     
     lowest = y[0]
     indexOfLowest = 0
@@ -148,8 +148,8 @@ def getMinAndPeaks(list_, startIndex, endIndex, mins):
     print "low points", indexOfLeftPeak + startIndex, indexOfLowest + startIndex, indexOfRightPeak + startIndex
     
     #find the next mins either side of the peaks
-    getMinAndPeaks(list_, startIndex, indexOfLeftPeak + startIndex, mins)
-    getMinAndPeaks(list_, indexOfRightPeak + startIndex, endIndex, mins)
+    getMinAndPeaks(curve, startIndex, indexOfLeftPeak + startIndex, mins)
+    getMinAndPeaks(curve, indexOfRightPeak + startIndex, endIndex, mins)
     
     return
 

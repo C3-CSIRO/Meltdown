@@ -38,6 +38,7 @@ cfg.readfp(open(RUNNING_LOCATION + '/../settings.ini'))
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
 CHECK_FOR_NEW_VERSION = cfg.getboolean('Running Options', 'CheckForNewVersion')
+MAX_TMS = cfg.getint('Running Options', 'MaxTmsPerCurve')
 
 def main():
     #opens up selection windows for user to use
@@ -71,7 +72,7 @@ def main():
         experiment = DsfAnalysis(rfuFilepath.split('/')[-1])
         experiment.loadCurves(rfuFilepath,contentsMapFilepath)
         print 'analysing ...'
-        experiment.analyseCurves()
+        experiment.analyseCurves(MAX_TMS)
         
         # generating the report
         print 'generating report ...'

@@ -263,10 +263,10 @@ class DsfPlate:
             well.computeInTheNoise(self.noiseThreshold)
         return
     
-    def computeTms(self):
+    def computeTms(self, maxTms):
         #each well calculates its Tm on itself
         for well in self.wells.values():
-            well.computeTm()
+            well.computeTm(maxTms)
         return
     
     def computeComplexities(self):

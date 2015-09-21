@@ -10,7 +10,7 @@ import Tkinter, tkMessageBox
 import cStringIO
 
 import replicateHandling as rh
-from DsfPlate import DsfPlate, LYSOZYME, PROTEIN_AS_SUPPLIED, SIMILARITY_THRESHOLD
+from DsfPlate import DsfPlate, SIMILARITY_THRESHOLD#TODO not used with multiple tms, LYSOZYME, PROTEIN_AS_SUPPLIED
 from MeanWell import MeanWell
 
 #reportlab needs to be installed separetly by anaconda, so a messagebox pops up alerting the user if it can't import
@@ -51,7 +51,7 @@ class DsfAnalysis:
         self.plate = DsfPlate(dataFilePath, contentsMapFilePath)
         return
     
-    def analyseCurves(self):
+    def analyseCurves(self, maxTms):
         #perform analysis on the plate, note order here is important
         self.plate.computeOutliers()
         self.plate.computeSaturations()
@@ -60,7 +60,7 @@ class DsfAnalysis:
         self.__doNegativeControls()
         if self.controlsHash["no protein"]=="Passed":
             self.plate.computeInTheNoises()
-        self.plate.computeTms()
+        self.plate.computeTms(maxTms)
         self.plate.computeComplexities()
         #create the mean wells of replicates on the plate
         self.__createMeanWells()
@@ -77,13 +77,25 @@ class DsfAnalysis:
             if wellName not in seen:
                 reps = self.plate.repDict[wellName]
                 seen += reps
-                #get mean tm and tm error (sd of tms)
-                tm, tmError = rh.meanSd([self.plate.wells[w].tm for w in reps if not self.plate.wells[w].isDiscarded])
+                #TODO currently just ignoring that replicates might get different numbers of tms
+                tms = []
+                tmErrors = []
+                
+                numTmsFound = [len(self.plate.wells[w].tms) for w in reps if not self.plate.wells[w].isDiscarded]
+                if len(numTmsFound) > 0:
+                    minNumTmsFound = min(numTmsFound)
+                else:
+                    minNumTmsFound = 0
+                    
+                for i in range(minNumTmsFound):
+                    tm, tmError = rh.meanSd([self.plate.wells[w].tms[i] for w in reps if not self.plate.wells[w].isDiscarded])
+                    tms.append(tm)
+                    tmErrors.append(tmError)
                 complexMean = any([self.plate.wells[w].isComplex for w in reps if not self.plate.wells[w].isDiscarded])
                 numRepsNotDiscarded = sum([(not self.plate.wells[w].isDiscarded) for w in reps])
                 contents = self.plate.wells[wellName].contents
                 #create a mean well and add it to list
-                self.meanWells.append(MeanWell(tm, tmError, complexMean, reps, numRepsNotDiscarded, contents))
+                self.meanWells.append(MeanWell(tms, tmErrors, complexMean, reps, numRepsNotDiscarded, contents))
         return
     
     def __createMeanContentsHash(self):
@@ -150,6 +162,8 @@ class DsfAnalysis:
         return
     
     def __doPositiveControls(self):
+        #TODO disabled for multiple tms for time being
+        """
         #first check if lysozyme control is present on the plate
         if len(self.plate.lysozyme)>0:
             #get the mean well for the lysozyme control, it will have no ph, and no condition variable 2
@@ -161,6 +175,7 @@ class DsfAnalysis:
                 self.controlsHash["lysozyme"] = "Passed"
             else:
                 self.controlsHash["lysozyme"] = "Failed"
+        """
         return
     
     def produceNormalisedOutput(self, filePath):
@@ -224,6 +239,10 @@ class DsfAnalysis:
         pdf.drawImage(Image, 0, 18*cm, 8*cm, 6*cm)
         plt.close()
         
+        #TODO disabled for multiple tms for time being
+        suppliedProteinTm = None
+        suppliedProteinTmError = None
+        """
         #print the tm of the protein as supplied below its graph, if the control was found
         pdf.setFont("Helvetica",10)
         if len(self.plate.proteinAsSupplied) > 0:
@@ -239,6 +258,7 @@ class DsfAnalysis:
                 pdf.drawString(cm,17.5*cm, "Protein as supplied: Tm = N/A")
         else:
             pdf.drawString(cm,17.5*cm, "Protein as supplied: Not Found")
+        """
         
         
         #===================# first page summary box (top right) #===================#
@@ -253,7 +273,7 @@ class DsfAnalysis:
         numberOfNonControlFoundTms = 0
         for well in self.plate.wells.values():
             if not well.contents.isControl:
-                if well.tm != None:
+                if well.tms != []:
                     numberOfNonControlFoundTms += 1
                 numberOfNonControlWells += 1
         percentTmsFound = int(round(numberOfNonControlFoundTms/float(numberOfNonControlWells),2)*100)
@@ -264,10 +284,11 @@ class DsfAnalysis:
         #find the average calculated tm error from all mean replicate tm errors, and print it
         tmErrorSum = 0.0
         numOfTmErrors = 0
+        avgTmError = 0
         for well in self.meanWells:
-            if well.tmError != None:
-                tmErrorSum += well.tmError
-                numOfTmErrors += 1
+            if well.tmErrors != []:
+                tmErrorSum += sum([x for x in well.tmErrors if x != None])
+                numOfTmErrors += len([x for x in well.tmErrors if x != None])
         pdf.drawString(8*cm,19.5*cm,"Average estimation of error is")
         if numOfTmErrors != 0:
             avgTmError = round(tmErrorSum/float(numOfTmErrors),1)
@@ -286,7 +307,7 @@ class DsfAnalysis:
         if len(self.plate.proteinAsSupplied) > 0:
             for wellName in self.contentsHash[('protein as supplied', '')][''].replicates:
                 well = self.plate.wells[wellName]
-                if well.tm == None:
+                if not all(well.tms):
                     proteinAsSuppliedIswellBehaved = False
                     break
             if suppliedProteinTmError >= MAX_TM_ERROR_BEFORE_UNRELIABLE:
@@ -353,7 +374,12 @@ class DsfAnalysis:
                 
                 #if we found a condition, add it's tm to the right list, and a None to the other
                 if conditionExists:
-                    newTm = meanWell.tm
+                    #TODO temp current only add first tm to sumary graph
+                    try:
+                        newTm = meanWell.tms[0]
+                    except IndexError:
+                        newTm = None
+                    
                     if meanWell.isComplex or meanWell.numReplicatesNotDiscarded == 1:
                         tms.append(None)
                         complexTms.append(newTm)
@@ -421,8 +447,11 @@ class DsfAnalysis:
         if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
             pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied")
         
+        #TODO since only first tm is on graph, disable highest tm finding for now
         #if we found a highest Tm, print the condition that gave it, and it's Tm below the summary graph
         if highestTmMeanWell:
+            pass
+            """
             pdf.setFont("Helvetica-Bold",12)
             if highestTmMeanWell.tmError != None:
                 pdf.drawString(3*cm,2.6*cm,"Highest Tm = " + str(round(highestTmMeanWell.tm,2)) + " +/- " + str(round(highestTmMeanWell.tmError,2)))
@@ -430,6 +459,7 @@ class DsfAnalysis:
                 pdf.drawString(3*cm,2.6*cm,"Highest Tm = " + str(round(highestTmMeanWell.tm,2)))
             pdf.drawString(3*cm,2*cm,"("+highestTmMeanWell.contents.cv1+" / "+highestTmMeanWell.contents.cv2+")")
             pdf.setFont("Helvetica",12)
+            """
         
         
         #===================# individual condition graphs #===================#
@@ -506,36 +536,39 @@ class DsfAnalysis:
                 #if condition was complex, append '^'
                 if meanWell.isComplex:
                     #if Tm is calculabe, print it
-                    if meanWell.tm != None:
+                    if meanWell.tms != []:
                         #if Tm estimate is from more than 1 replicate, print the Tm error aswell
                         if meanWell.numReplicatesNotDiscarded > 1:
-                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")^")
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str([round(x,2) for x in meanWell.tms])+" (+/-"+str([round(x,2) for x in meanWell.tmErrors])+")^")
                         #estimate from only one replicate, do not print Tm error
                         else:
-                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+"^")
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str([round(x,2) for x in meanWell.tms])+"^")
                     #no calculabe Tm, print 'None' instead
                     else:
                         pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,"None")
                 #not complex, append nothing
                 else:
                     #if Tm is calculabe, print it
-                    if meanWell.tm != None:
+                    if meanWell.tms != []:
                         #if Tm estimate is from more than 1 replicate, print the Tm error aswell
                         if meanWell.numReplicatesNotDiscarded > 1:
-                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2))+" (+/-"+str(round(meanWell.tmError,2))+")")
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str([round(x,2) for x in meanWell.tms])+" (+/-"+str([round(x,2) for x in meanWell.tmErrors])+")")
                         #estimate from only one replicate, do not print Tm error
                         else:
-                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str(round(meanWell.tm,2)))
+                            pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,str([round(x,2) for x in meanWell.tms]))
                     #no calculabe Tm, print 'None' instead
                     else:
                         pdf.drawString(4.25*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm ,"None")
                 
+                #TODO disabled adjusted ph for multiple tms for now
+                """
                 #if any of the wells plotted on this graph will have a calculabe adjusted ph, calculate and print it
                 if meanWell.contents.dphdt != '' and meanWell.contents.ph != '' and meanWell.tm != None:
                     adjustedPh = str(round(float(meanWell.contents.ph)+(meanWell.contents.dphdt*(meanWell.tm-20)),2))
                     pdf.drawString(7*cm+(xpos % 2)*9.5*cm,22*cm - (ypos % yNum)*ySize*cm - tmPrintOffset*0.5*cm, adjustedPh)
                     #set flag that at least one of the curves on this graph had its adjust ph calculated
                     hasDphdt = True
+                """
                 #incrememnt the tm printing offset, for the next condition variable 2
                 tmPrintOffset += 1
             

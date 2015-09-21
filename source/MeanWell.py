@@ -5,8 +5,8 @@ import Tkinter, tkMessageBox
 class MeanWell:
     def __init__(self, tm, tmError, isComplex, replicates, numReplicatesNotDiscarded, contents):
         #relevant info for a mean well
-        self.tm = tm
-        self.tmError = tmError
+        self.tms = tm
+        self.tmErrors = tmError
         self.isComplex = isComplex
         self.replicates = replicates
         self.numReplicatesNotDiscarded = numReplicatesNotDiscarded

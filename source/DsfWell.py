@@ -19,6 +19,8 @@ SIGN_CHANGE_THRESH = 0.000001
 #curve is considered complex
 MAX_DIFFERENCE_BETWEEN_TMS_BEFORE_COMPLEX = 5
 
+TM_STEEPNESS_THRESH = 0.0001
+
 class DsfWell:
     def __init__(self,fluorescence,temperatures,name,contents):
         self.fluorescence = fluorescence
@@ -31,8 +33,7 @@ class DsfWell:
         self.wellMin = None
         self.wellNormalisedMax = None 
         self.wellNormalisedMin = None
-        self.tm = None
-        self.tm2 = None
+        self.tms = []
         self.wellMonotonicThreshold = None
 
         self.isMonotonic = False
@@ -158,7 +159,7 @@ class DsfWell:
             self.isInTheNoise = False
         return
     
-    def computeTm(self):
+    def computeTm(self, maxTms):
         #if well is monotonic, saturated, in the noise, or an outlier, then don't try to find its Tm
         if self.isDiscarded:
             return
@@ -170,12 +171,10 @@ class DsfWell:
         #the derivative series has one less index since there is one fewer differences than points
         seriesDeriv = pd.Series(dydx, x[:-1])
         
+        """
         #now that we have the derivative series, we can find the Tm
         lowestPoint = 0
         lowestPointIndex = None
-        #the second lowest point, when looking for 2 peaks
-        lowestPoint2 = 0
-        lowestPointIndex2 = None
         
         #since the end of the melt curves is often very unpredictable, we only search for a Tm up to a point
         ignoreIndex = -int(len(seriesDeriv.index)*FRACTION_OF_CURVE_NOT_CHECKED_FOR_TM)
@@ -184,45 +183,121 @@ class DsfWell:
             if seriesDeriv[ind]<lowestPoint:
                 lowestPoint = seriesDeriv[ind]
                 lowestPointIndex = ind
+        """
         
-        #if lowest point was found to be at the start or end of the checked derivative series, then no curve fit is required
-        if lowestPointIndex == seriesDeriv.index[0] or lowestPointIndex == seriesDeriv.index[ignoreIndex-1]:
-            self.tm = lowestPointIndex
-            return
+        mins = []
+        minIndeces = []
+        ignoreIndex = -int(len(seriesDeriv.index)*FRACTION_OF_CURVE_NOT_CHECKED_FOR_TM)
+        self._getAllMins(list(seriesDeriv)[:ignoreIndex], 0, len(list(seriesDeriv)[:ignoreIndex])-1, minIndeces, mins)
+        #turn the minimum indeces into temperature values for those mins
+        minIndeces = [seriesDeriv.index[ind] for ind in minIndeces]
+        
+        
+        
         #if no lowest point could be found, leave the Tm as none
-        if lowestPointIndex == None:
-            self.tm = None
+        if len(minIndeces) == 0:
+            self.tms = []
             #force curve to be complex if no Tm can be found, and it has not been discarded
             self.isComplex = True
             return
         
-        #get the index's either side of the lowest point
-        leftIndex = list(seriesDeriv.index)[list(seriesDeriv.index).index(lowestPointIndex) - 1]
-        rightIndex = list(seriesDeriv.index)[list(seriesDeriv.index).index(lowestPointIndex) + 1]
+        tms = sorted(zip(mins, minIndeces))
         
-        #matrices used to fit a parabola to the 3 points
-        Y=[seriesDeriv[leftIndex],
-           seriesDeriv[lowestPointIndex],
-           seriesDeriv[rightIndex]]
-           
-        A=[[leftIndex**2,   leftIndex,   1],
-           [lowestPointIndex**2, lowestPointIndex, 1],
-           [rightIndex**2,  rightIndex,  1]]
-           
-        #solves for b, in the form Y=Ab
-        (a,b,c) = np.linalg.solve(A,Y)
+        for height,lowestPointIndex in tms[:maxTms]:
+            #if lowest point was found to be at the start or end of the checked derivative series, then no curve fit is required
+            if lowestPointIndex == seriesDeriv.index[0] or lowestPointIndex == seriesDeriv.index[ignoreIndex-1]:
+                self.tms.append(lowestPointIndex)
+                continue
+            
+            
+            #get the index's either side of the lowest point
+            leftIndex = list(seriesDeriv.index)[list(seriesDeriv.index).index(lowestPointIndex) - 1]
+            rightIndex = list(seriesDeriv.index)[list(seriesDeriv.index).index(lowestPointIndex) + 1]
+            
+            #matrices used to fit a parabola to the 3 points
+            Y=[seriesDeriv[leftIndex],
+               seriesDeriv[lowestPointIndex],
+               seriesDeriv[rightIndex]]
+               
+            A=[[leftIndex**2,   leftIndex,   1],
+               [lowestPointIndex**2, lowestPointIndex, 1],
+               [rightIndex**2,  rightIndex,  1]]
+               
+            #solves for b, in the form Y=Ab
+            (a,b,c) = np.linalg.solve(A,Y)
+            
+            #initialise tm to left most point of relevant curve
+            tm=seriesDeriv[leftIndex]
+            tmFluorescence=0
+            #set tm to the lowest point on the fitted parabola rounded to nearest 0.01
+            for x in np.arange(leftIndex,rightIndex,0.01):
+                point = (a*(x**2) + b*x + c)
+                if point < tmFluorescence:
+                    tmFluorescence = point
+                    tm = x
+            #save the tm and exit
+            self.tms.append(tm)
         
-        #initialise tm to left most point of relevant curve
-        tm=seriesDeriv[leftIndex]
-        tmFluorescence=0
-        #set tm to the lowest point on the fitted parabola rounded to nearest 0.01
-        for x in np.arange(leftIndex,rightIndex,0.01):
-            point = (a*(x**2) + b*x + c)
-            if point < tmFluorescence:
-                tmFluorescence = point
-                tm = x
-        #save the tm and exit
-        self.tm = tm
+        self.tms.sort()
+        return
+    
+    def _getAllMins(self, curve, startIndex, endIndex, minIndeces, mins):
+        
+        ##print "start/end indices:", startIndex, endIndex
+        
+        if startIndex == endIndex:
+            return
+        
+        y = curve[startIndex: endIndex+1]
+        lowest = y[0]
+        indexOfLowest = 0
+        foundLowEnough = False
+        #find lowest point
+        for i,point in enumerate(y):
+            #TODO check this
+            #on first loop, set first point as lowest
+            if point > lowest + TM_STEEPNESS_THRESH:
+                foundLowEnough = True
+            
+            if point < lowest:
+                lowest = point
+                indexOfLowest = i
+        
+        if not foundLowEnough:
+            ##print "no index of lowest found"
+            return
+        
+        #find peak to the right
+        potentialPeak = y[indexOfLowest]
+        indexOfRightPeak = indexOfLowest
+        for i,point in enumerate(y[indexOfLowest:]):
+            if point < potentialPeak - TM_STEEPNESS_THRESH:
+                break
+            if point >= potentialPeak:
+                potentialPeak = point    
+                indexOfRightPeak = indexOfLowest + i
+        
+        
+        #find peak to the left
+        potentialPeak = y[indexOfLowest]
+        indexOfLeftPeak = indexOfLowest
+        for i,point in enumerate(reversed(y[:indexOfLowest+1])):
+            if point < potentialPeak - TM_STEEPNESS_THRESH:
+                break
+            if point >= potentialPeak:
+                potentialPeak = point
+                indexOfLeftPeak = indexOfLowest-i
+        
+        #add the min to the list
+        minIndeces.append(indexOfLowest + startIndex)
+        mins.append(lowest)
+        
+        ##print "low points", indexOfLeftPeak + startIndex, indexOfLowest + startIndex, indexOfRightPeak + startIndex
+        
+        #find the next mins either side of the peaks
+        self._getAllMins(curve, startIndex, indexOfLeftPeak + startIndex, minIndeces, mins)
+        self._getAllMins(curve, indexOfRightPeak + startIndex, endIndex, minIndeces, mins)
+        
         return
     
     def computeComplexity(self):
@@ -281,6 +356,10 @@ class DsfWell:
             self.isComplex = True
             return
         
+        if len(self.tms) > 1:
+            self.complex=True
+        #TODO disabled for multiple tms for now
+        """
         #other check for complex curve, uses another estimate for Tm
         averagePoint = (lowestPoint +highestPoint) / 2
         i = lowestIndex
@@ -289,6 +368,7 @@ class DsfWell:
         #if difference between previously calculated Tm, and new estimate is too large the curve is considered complex
         if math.fabs(self.temperatures[i] -self.tm) > MAX_DIFFERENCE_BETWEEN_TMS_BEFORE_COMPLEX:
             self.complex=True
+        """
         return
         
     def setAsOutlier(self):
