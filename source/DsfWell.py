@@ -19,7 +19,9 @@ SIGN_CHANGE_THRESH = 0.000001
 #curve is considered complex
 MAX_DIFFERENCE_BETWEEN_TMS_BEFORE_COMPLEX = 5
 
-TM_STEEPNESS_THRESH = 0.0001
+#multiple Tm threshold, the smaller the more sensitive the Tm finder is (more likely to find more)
+#original default was 0.0001
+TM_STEEPNESS_THRESH = 0.00004
 
 class DsfWell:
     def __init__(self,fluorescence,temperatures,name,contents):

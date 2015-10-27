@@ -1,7 +1,9 @@
 Version: v2.0.0
 Traceback (most recent call last):
-  File "source\Meltdown.py", line 80, in main
-    experiment.generateReport(name+".pdf", VERSION)
-  File "C:\Users\RIS01E\Documents\GitHub\Meltdown\source\DsfAnalysis.py", line 323, in generateReport
-    if not proteinAsSuppliedIswellBehaved or avgTmError >= MAX_TM_ERROR_BEFORE_UNRELIABLE:
-UnboundLocalError: local variable 'avgTmError' referenced before assignment
+  File "source\Meltdown.py", line 75, in main
+    experiment.analyseCurves(MAX_TMS)
+  File "C:\Users\RIS01E\Documents\GitHub\Meltdown\source\DsfAnalysis.py", line 60, in analyseCurves
+    self.__doNegativeControls()
+  File "C:\Users\RIS01E\Documents\GitHub\Meltdown\source\DsfAnalysis.py", line 152, in __doNegativeControls
+    meanNoProteinCurve = [x/validCurvesInSum for x in meanNoProteinCurve]
+ZeroDivisionError: integer division or modulo by zero
