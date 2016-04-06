@@ -10,7 +10,7 @@ import Tkinter, tkMessageBox
 import cStringIO
 
 import replicateHandling as rh
-from DsfPlate import DsfPlate, SIMILARITY_THRESHOLD#TODO not used with multiple tms, LYSOZYME, PROTEIN_AS_SUPPLIED
+from DsfPlate import DsfPlate, SIMILARITY_THRESHOLD#TODO not used with multiple tms:, LYSOZYME, PROTEIN_AS_SUPPLIED
 from MeanWell import MeanWell
 
 #reportlab needs to be installed separetly by anaconda, so a messagebox pops up alerting the user if it can't import
