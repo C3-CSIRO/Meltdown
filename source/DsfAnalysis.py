@@ -137,7 +137,12 @@ class DsfAnalysis:
                     meanNoProteinCurve = [x+y for x,y in zip(well.fluorescence, meanNoProteinCurve)]
                     validCurvesInSum += 1
             #divide sum to give average curve
-            meanNoProteinCurve = [x/validCurvesInSum for x in meanNoProteinCurve]
+            if validCurvesInSum != 0:
+                meanNoProteinCurve = [x/validCurvesInSum for x in meanNoProteinCurve]
+            #if all the curves are outliers, the control check fails
+            else:
+                self.controlsHash["no protein"] = "Failed"
+                return
             
             #read in the expected curve for the no protein control
             noProteinExpected = list(pd.Series.from_csv(RUNNING_LOCATION + "/../data/noProteinControl.csv"))
