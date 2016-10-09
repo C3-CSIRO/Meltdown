@@ -26,7 +26,7 @@ from MeltdownException import MeltdownException
 import meltdownReleases
 
 #current version of meltdown, displayed in error logs
-VERSION = "v2.0.1"
+VERSION = "v2.0.2"
 
 #the running location of this file
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
