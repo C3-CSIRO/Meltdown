@@ -1,2 +1,2 @@
-C:\Anaconda\python.exe source\MeltdownBatch.py
+C:\Anaconda\python.exe %~dp0\source\MeltdownBatch.py
 pause
