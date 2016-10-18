@@ -9,7 +9,7 @@ from DsfAnalysis import DsfAnalysis
 from MeltdownException import MeltdownException
 
 #current version of meltdown, displayed in error logs
-VERSION = "2.0.2"
+VERSION = "v2.0.3"
 
 #the running location of this file
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
