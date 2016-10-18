@@ -9,14 +9,14 @@ from DsfAnalysis import DsfAnalysis
 from MeltdownException import MeltdownException
 
 #current version of meltdown, displayed in error logs
-VERSION = "2.0.0"
+VERSION = "2.0.2"
 
 #the running location of this file
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
 
 #open the settings.ini and set the appropriate flags
 cfg = ConfigParser.ConfigParser()
-cfg.readfp(open(RUNNING_LOCATION + '/settings.ini'))
+cfg.readfp(open(RUNNING_LOCATION + '/../settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
