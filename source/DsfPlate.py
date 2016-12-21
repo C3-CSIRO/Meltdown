@@ -37,7 +37,7 @@ class DsfPlate:
         #initialise lists of control names
         self.lysozyme = []
         self.noDye = []
-        self.proteinAsSupplied = []
+        self.proteinAsSupplied = {}
         self.noProtein = []
         #initialise mapping of condition variable 2's to colour
         self.cv2ColourDict = {}
@@ -100,10 +100,14 @@ class DsfPlate:
                 wellContents.cv2 = ''
             elif wellContents.cv1.lower() == PROTEIN_AS_SUPPLIED:
                 wellContents.cv1 = wellContents.cv1.lower()
-                self.proteinAsSupplied.append(wellName)
+                wellContents.cv2 = wellContents.cv2.lower()
+                #can have multiple groupings of protein as supplied, save them in a dictionary of {condition variable 2 (how they're grouped) : list of wellNames}
+                if wellContents.cv2 not in self.proteinAsSupplied.keys():
+                    self.proteinAsSupplied[wellContents.cv2] = [wellName]
+                else:
+                    self.proteinAsSupplied[wellContents.cv2].append(wellName)
                 wellContents.isControl = 1
                 wellContents.ph = ''
-                wellContents.cv2 = ''
             elif wellContents.cv1.lower() == NO_PROTEIN:
                 wellContents.cv1 = wellContents.cv1.lower()
                 self.noProtein.append(wellName)
@@ -171,19 +175,9 @@ class DsfPlate:
         return
     
     def __assignConditionVariable2Colours(self, contentsMap):
-        #get the control column from the contents map, if its there
-        try:
-            controlFlags = contentsMap['Control']
-        #if column is not there, make a list which marks none of the conditions as controls
-        except KeyError:
-            controlFlags = ['' for x in range(len(contentsMap['Condition Variable 2']))]
-        
         colourIndex=0
         #for each unseen condition variable 2, map the next colour in the COLOUR list
-        for cv2,control in zip(contentsMap['Condition Variable 2'], controlFlags):
-            #don't add condition variable 2's that are only found in controls
-            if control:
-                continue
+        for cv2 in contentsMap['Condition Variable 2']:
             #check if unseen condition variable 2
             if cv2 not in self.cv2ColourDict.keys():
                 #limit to how many condition variable 2's there can be

@@ -208,17 +208,18 @@ class DsfAnalysis:
         #===================# protein as supplied graph and Tm #===================#
         #create a plot for the protein as supplied control, and plot the curves
         proteinAsSuppliedFigure = plt.figure(num=1,figsize=(5,4))
-        for wellName in self.plate.proteinAsSupplied:
-            well = self.plate.wells[wellName]
-            if well.isDiscarded:
-                #discarded curves are dotted
-                plt.plot(well.temperatures, well.fluorescence, 'g', linestyle=":")
-            elif well.isComplex:
-                #complex curves are dashed
-                plt.plot(well.temperatures, well.fluorescence, 'g', linestyle="--")
-            else:
-                #normal curves are full lines
-                plt.plot(well.temperatures, well.fluorescence, 'g')
+        for cv2 in self.plate.proteinAsSupplied.keys():
+            for wellName in self.plate.proteinAsSupplied[cv2]:
+                well = self.plate.wells[wellName]
+                if well.isDiscarded:
+                    #discarded curves are dotted
+                    plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2], linestyle=":")
+                elif well.isComplex:
+                    #complex curves are dashed
+                    plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2], linestyle="--")
+                else:
+                    #normal curves are full lines
+                    plt.plot(well.temperatures, well.fluorescence, self.plate.cv2ColourDict[cv2])
         #hide y axis, as RFU units are arbitrary
         plt.gca().axes.get_yaxis().set_visible(False)
         #put the image on the pdf
@@ -231,20 +232,46 @@ class DsfAnalysis:
         
         #print the tm of the protein as supplied below its graph, if the control was found
         pdf.setFont("Helvetica",10)
+        
+        suppliedProteinTms = {}
+        suppliedProteinTmErrors = {}
+        
         if len(self.plate.proteinAsSupplied) > 0:
-            #null strings for ph and condition variable 2 in the contents hash, as that's how controls are read
-            meanSuppliedProtein = self.contentsHash[(PROTEIN_AS_SUPPLIED, '')]['']
-            suppliedProteinTm = meanSuppliedProtein.tm
-            suppliedProteinTmError = meanSuppliedProtein.tmError
-            if suppliedProteinTm != None and meanSuppliedProtein.numReplicatesNotDiscarded > 1:
-                pdf.drawString(cm,17*cm, "Protein as supplied: Tm = " +str(round(suppliedProteinTm,2))+"(+/-"+str(round(suppliedProteinTmError,2))+")")
-            elif suppliedProteinTm != None:
-                pdf.drawString(cm,17*cm, "Protein as supplied: Tm = " +str(round(suppliedProteinTm,2)))
-            else:
-                pdf.drawString(cm,17*cm, "Protein as supplied: Tm = N/A")
+            offset = 17.5
+            pdf.drawString(cm,offset*cm, "Protein as supplied:")
+            for cv2 in self.plate.proteinAsSupplied.keys():
+                #null string for ph in the contents hash, as that's how controls are stored
+                meanSuppliedProtein = self.contentsHash[(PROTEIN_AS_SUPPLIED, '')][cv2]
+                #get tm/error of particular protein as supplied
+                suppliedProteinTm = meanSuppliedProtein.tm
+                suppliedProteinTmError = meanSuppliedProtein.tmError
+                
+                #save dict of tms and error, and the condition variable 2 they came from
+                suppliedProteinTms[meanSuppliedProtein.tm] = cv2
+                suppliedProteinTmErrors[meanSuppliedProtein.tmError] = cv2
+                
+                #print the next protein as supplied tm lower on the page
+                offset -= 0.5
+                
+                #set colour and print tm of current protein as supplied
+                pdf.setFillColor(self.plate.cv2ColourDict[cv2])
+                if suppliedProteinTm != None and meanSuppliedProtein.numReplicatesNotDiscarded > 1:
+                    pdf.drawString(cm,offset*cm, cv2 + " Tm = " +str(round(suppliedProteinTm,2))+"(+/-"+str(round(suppliedProteinTmError,2))+")")
+                elif suppliedProteinTm != None:
+                    pdf.drawString(cm,offset*cm, cv2 + " Tm = " +str(round(suppliedProteinTm,2)))
+                else:
+                    pdf.drawString(cm,offset*cm, cv2 + " Tm = N/A")
+            
+            #reset the colour to normal
+            pdf.setFillColor('black')
+                
         else:
             pdf.drawString(cm,17*cm, "Protein as supplied: Not Found")
         
+                
+        #if any protein as supplied has dashed line drawn for Tm, say what these lines are
+        if any(suppliedProteinTms.values()):
+            pdf.drawString(7.75*cm,15.5*cm,"Protein as supplied Tms are shown as dashed lines on graph below")
         
         #===================# first page summary box (top right) #===================#
         #drawing the summary box to the right of the protein as supplied plot
@@ -282,12 +309,13 @@ class DsfAnalysis:
             pdf.setFont("Helvetica-Bold",13)
             pdf.drawString(14.1*cm,19.5*cm,"N/A")
 
+        #TODO fix here
         #print whether the protein as supplied was well behaved
         proteinAsSuppliedAnyFailed = False
         proteinAsSuppliedLargeTmError = False
         #not well behaved if any protein as supplied replicate has no Tm, or the tm error of the group is too high
-        if len(self.plate.proteinAsSupplied) > 0:
-            for wellName in self.contentsHash[('protein as supplied', '')][''].replicates:
+        if len(self.plate.proteinAsSupplied.values()[0]) > 0:
+            for wellName in self.contentsHash[('protein as supplied', '')]['s1'].replicates:
                 well = self.plate.wells[wellName]
                 if well.tm == None:
                     proteinAsSuppliedAnyFailed = True
@@ -327,11 +355,11 @@ class DsfAnalysis:
         pdf.setFillColor("blue")
         pdf.setFont("Helvetica",10)
         # lysozyme Tm control check
-        pdf.drawString(1*cm,16*cm,"Lysozyme Control: " + self.controlsHash["lysozyme"])
+        pdf.drawString(7.75*cm,17*cm,"Lysozyme Control: " + self.controlsHash["lysozyme"])
         # no dye control check 
-        pdf.drawString(1*cm,15.5*cm,"No Dye Control: " + self.controlsHash["no dye"])
+        pdf.drawString(7.75*cm,16.5*cm,"No Dye Control: " + self.controlsHash["no dye"])
         # no protein control check
-        pdf.drawString(1*cm,15*cm,"No Protein Control: " + self.controlsHash["no protein"])
+        pdf.drawString(7.75*cm,16*cm,"No Protein Control: " + self.controlsHash["no protein"])
         
         
         #===================# first page summary graph #===================#
@@ -404,15 +432,31 @@ class DsfAnalysis:
             legendHandles.append(handle)
         
         #set the min and max of the y axis, centre around protein as supplied Tm, if it's present
-        if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
-            #draw a horizontal dashed red line for the protein as supplied Tm
-            plt.axhline(suppliedProteinTm, 0, 1, linestyle="--", color="red")
-            #centre around protein as supplied Tm
-            distEitherSideOfSuppliedTm = max(math.fabs(suppliedProteinTm - yAxisMin), math.fabs(suppliedProteinTm - yAxisMax))
-            plt.axis([-1, len(xAxisConditionLabels), suppliedProteinTm - distEitherSideOfSuppliedTm - 1, suppliedProteinTm + distEitherSideOfSuppliedTm + 1])
+        if len(self.plate.proteinAsSupplied) > 0:
+            mx = None
+            mn = None
+            for tm in suppliedProteinTms.keys():
+                if tm != None:
+                    #draw a horizontal dashed line for the each protein as supplied Tm (the appropriate colour)
+                    plt.axhline(tm, 0, 1, linestyle="--", color=self.plate.cv2ColourDict[suppliedProteinTms[tm]])
+                    
+                    #first non none protein as supplied tm, start looking for min and max protein as supplied tms
+                    if mx == None and mn == None:
+                        mx = tm
+                        mn = tm
+                    #update min and max protein as supplied tm
+                    elif tm > mx:
+                        mx = tm
+                    elif tm < mn:
+                        mn = tm
+            
+            #centre around protein as supplied Tms
+            plt.axis([-1, len(xAxisConditionLabels), min(mn, yAxisMin) - 1, max(mx, yAxisMax) + 1])
         else:
             #no protein as supplied Tm, just use calculated y axis min and max
             plt.axis([-1, len(xAxisConditionLabels), yAxisMin - 1, yAxisMax + 1])
+        
+            
             
         #label the axes
         plt.ylabel('Tm')
@@ -428,16 +472,13 @@ class DsfAnalysis:
         summaryGraphFigure.savefig(imgdata, format='png',dpi=180)
         imgdata.seek(0)
         Image = ImageReader(imgdata)
-        pdf.drawImage(Image, cm, 4*cm, 16*cm, 11*cm)
+        pdf.drawImage(Image, 2.5*cm, 4*cm, 16*cm, 11*cm)
         plt.close()
 
         #if there were any Tms computed as unreliable, print a warning above the graph
         pdf.setFillColor("black")
         if foundUnreliable:
-            pdf.drawString(5.9*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
-        #if supplied protein has dashed line drawn for Tm, label it
-        if len(self.plate.proteinAsSupplied) > 0 and suppliedProteinTm != None:
-            pdf.drawString(15.5*cm,10.4*cm,"Protein as supplied")
+            pdf.drawString(7.4*cm, 14.2*cm, "Tms drawn in diamonds may be unreliable")
         
         #if we found a highest Tm, print the condition that gave it, and it's Tm below the summary graph
         if highestTmMeanWell:
