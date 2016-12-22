@@ -296,7 +296,8 @@ class DsfAnalysis:
         tmErrorSum = 0.0
         numOfTmErrors = 0
         for well in self.meanWells:
-            if well.tmError != None:
+            #when finding avg error, dont consider controls EXCEPT for proteinas supplied control
+            if well.tmError != None and (not well.contents.isControl or well.contents.cv2 == PROTEIN_AS_SUPPLIED):
                 tmErrorSum += well.tmError
                 numOfTmErrors += 1
         pdf.drawString(8*cm,19.1*cm,"Average estimation error:")
@@ -410,15 +411,15 @@ class DsfAnalysis:
         
         #set the min and max of the y axis, centre around protein as supplied Tm, if it's present
         if len(self.plate.proteinAsSupplied) > 0:
-            mx = None
-            mn = None
+            mx = 0
+            mn = 0
             for tm in suppliedProteinTms.keys():
                 if tm != None:
                     #draw a horizontal dashed line for the each protein as supplied Tm (the appropriate colour)
                     plt.axhline(tm, 0, 1, linestyle="--", color=self.plate.cv2ColourDict[suppliedProteinTms[tm]])
                     
                     #first non none protein as supplied tm, start looking for min and max protein as supplied tms
-                    if mx == None and mn == None:
+                    if mx == 0 and mn == 0:
                         mx = tm
                         mn = tm
                     #update min and max protein as supplied tm
@@ -427,10 +428,10 @@ class DsfAnalysis:
                     elif tm < mn:
                         mn = tm
             
-            #centre around protein as supplied Tms
+            #centre around protein as supplied Tms if they exist
             plt.axis([-1, len(xAxisConditionLabels), min(mn, yAxisMin) - 1, max(mx, yAxisMax) + 1])
         else:
-            #no protein as supplied Tm, just use calculated y axis min and max
+            #no protein as supplied, just use calculated y axis min and max
             plt.axis([-1, len(xAxisConditionLabels), yAxisMin - 1, yAxisMax + 1])
         
             
