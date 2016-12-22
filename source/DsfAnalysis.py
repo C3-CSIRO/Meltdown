@@ -2,7 +2,6 @@
 
 import csv
 import os
-import math
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -235,9 +234,8 @@ class DsfAnalysis:
         
         suppliedProteinTms = {}
         suppliedProteinTmErrors = {}
-        
+        offset = 17.5
         if len(self.plate.proteinAsSupplied) > 0:
-            offset = 17.5
             pdf.drawString(cm,offset*cm, "Protein as supplied:")
             for cv2 in self.plate.proteinAsSupplied.keys():
                 #null string for ph in the contents hash, as that's how controls are stored
@@ -266,19 +264,20 @@ class DsfAnalysis:
             pdf.setFillColor('black')
                 
         else:
-            pdf.drawString(cm,17*cm, "Protein as supplied: Not Found")
+            pdf.drawString(cm,offset*cm, "Protein as supplied: Not Found")
         
                 
         #if any protein as supplied has dashed line drawn for Tm, say what these lines are
         if any(suppliedProteinTms.values()):
-            pdf.drawString(7.75*cm,15.5*cm,"Protein as supplied Tms are shown as dashed lines on graph below")
+            pdf.drawString(7.75*cm,16*cm,"Protein as supplied Tms are shown as dashed lines on graph below")
+            pdf.drawString(7.75*cm,15.5*cm,"(dashed lines are colour coded)")
         
         #===================# first page summary box (top right) #===================#
         #drawing the summary box to the right of the protein as supplied plot
-        pdf.rect(7.75*cm,17.55*cm,12*cm,5.9*cm)
+        pdf.rect(7.75*cm,18.6*cm,12*cm,4.8*cm)
         pdf.setFont("Helvetica-Bold",13)
-        pdf.drawString(8*cm,22.75*cm,"Full interpretation of the results requires you to look ")
-        pdf.drawString(8*cm,22.25*cm,"at the individual melt curves.")
+        pdf.drawString(8*cm,22.6*cm,"Full interpretation of the results requires you to look ")
+        pdf.drawString(8*cm,22.1*cm,"at the individual melt curves.")
         
         #find and print percentage of non control wells that were used in Tm calculations
         numberOfNonControlWells = 0
@@ -289,9 +288,9 @@ class DsfAnalysis:
                     numberOfNonControlFoundTms += 1
                 numberOfNonControlWells += 1
         percentTmsFound = int(round(numberOfNonControlFoundTms/float(numberOfNonControlWells),2)*100)
-        pdf.drawString(8*cm,20.5*cm,str(percentTmsFound)+"%")
+        pdf.drawString(17.6*cm,20.1*cm,str(percentTmsFound)+"%")
         pdf.setFont("Helvetica",13)
-        pdf.drawString(9.25*cm,20.5*cm,"of curves were used in Tm estimations")
+        pdf.drawString(8*cm,20.1*cm,"Curves used in Tm estimations (ideally 100%):")
         
         #find the average calculated tm error from all mean replicate tm errors, and print it
         tmErrorSum = 0.0
@@ -300,54 +299,32 @@ class DsfAnalysis:
             if well.tmError != None:
                 tmErrorSum += well.tmError
                 numOfTmErrors += 1
-        pdf.drawString(8*cm,19.5*cm,"Average estimation of error is")
+        pdf.drawString(8*cm,19.1*cm,"Average estimation error:")
         if numOfTmErrors != 0:
             avgTmError = round(tmErrorSum/float(numOfTmErrors),1)
             pdf.setFont("Helvetica-Bold",13)
-            pdf.drawString(14.1*cm,19.5*cm,str(avgTmError)+" C")
+            pdf.drawString(13.3*cm,19.1*cm,str(avgTmError)+"\xc2\xb0C")
         else:
             pdf.setFont("Helvetica-Bold",13)
-            pdf.drawString(14.1*cm,19.5*cm,"N/A")
+            pdf.drawString(13.3*cm,19.1*cm,"N/A")
 
-        #TODO fix here
-        #print whether the protein as supplied was well behaved
+        #whether summary graph is unreliable
         proteinAsSuppliedAnyFailed = False
-        proteinAsSuppliedLargeTmError = False
-        #not well behaved if any protein as supplied replicate has no Tm, or the tm error of the group is too high
-        if len(self.plate.proteinAsSupplied.values()[0]) > 0:
-            for wellName in self.contentsHash[('protein as supplied', '')]['s1'].replicates:
-                well = self.plate.wells[wellName]
-                if well.tm == None:
-                    proteinAsSuppliedAnyFailed = True
-                    break
-            if suppliedProteinTmError >= MAX_TM_ERROR_BEFORE_UNRELIABLE:
-                proteinAsSuppliedLargeTmError = True
-            #print outcome
-            #both one or more protein as supplied instances failed to get tm estimate, 
-            #and the tm error of the others is over the cuttoff
-            if proteinAsSuppliedAnyFailed and proteinAsSuppliedLargeTmError:
-                pdf.setFont("Helvetica-Bold",13)
-                pdf.drawString(8*cm,18.5*cm, "Protein as supplied is not well behaved")
-            #some of the protein as supplied instances failed to get a tm estimate
-            elif proteinAsSuppliedAnyFailed:
-                pdf.setFont("Helvetica-Bold",13)
-                pdf.drawString(8*cm,18.5*cm,"One or more Protein as supplied replicates has failed")
-                pdf.drawString(8*cm,18*cm,"to get a Tm estimate")
-            #the tm error of the protein as supplied was larger than the cuttoff
-            elif proteinAsSuppliedLargeTmError:
-                pdf.setFont("Helvetica-Bold",13)
-                pdf.drawString(8*cm,18.5*cm,"Tm spread in Protein as supplied replicates is")
-                pdf.drawString(8*cm,18*cm,"outside our cuttoff")
-            #protein as supplied seems fine
-            else:
-                #say nothing to avoid people overinterpreting
-                pass
-        else:
-            pdf.drawString(12.5*cm,18.5*cm,"not found")            
+        proteinAsSuppliedAnyLargeTmError = False
+        #check if any protein as supplied replicate has no Tm, or the tm error of the group is too high
+        if len(self.plate.proteinAsSupplied) > 0:
+            for cv2 in self.plate.proteinAsSupplied.keys():
+                for wellName in self.contentsHash[('protein as supplied', '')][cv2].replicates:
+                    well = self.plate.wells[wellName]
+                    if well.tm == None:
+                        proteinAsSuppliedAnyFailed = True
+                        break
+            if any([x >= MAX_TM_ERROR_BEFORE_UNRELIABLE for x in suppliedProteinTmErrors]):
+                proteinAsSuppliedAnyLargeTmError = True
         #whether or not we are considering the summary graph to be unreliable,
-        #depends on how protein as supplied behaved, and the average tm estimate error
-        if proteinAsSuppliedAnyFailed or proteinAsSuppliedLargeTmError or avgTmError >= MAX_TM_ERROR_BEFORE_UNRELIABLE:
-            pdf.drawString(8*cm,21.5*cm,"The summary graph appears to be unreliable")
+        #depends on how all the protein as supplieds behaved, and the average tm estimate error
+        if proteinAsSuppliedAnyFailed or proteinAsSuppliedAnyLargeTmError or avgTmError >= MAX_TM_ERROR_BEFORE_UNRELIABLE:
+            pdf.drawString(8*cm,21.1*cm,"The summary graph appears to be unreliable")
 
         
         #===================# controls #===================#
@@ -355,11 +332,11 @@ class DsfAnalysis:
         pdf.setFillColor("blue")
         pdf.setFont("Helvetica",10)
         # lysozyme Tm control check
-        pdf.drawString(7.75*cm,17*cm,"Lysozyme Control: " + self.controlsHash["lysozyme"])
+        pdf.drawString(7.75*cm,17.5*cm,"Lysozyme Control: " + self.controlsHash["lysozyme"])
         # no dye control check 
-        pdf.drawString(7.75*cm,16.5*cm,"No Dye Control: " + self.controlsHash["no dye"])
+        pdf.drawString(7.75*cm,17*cm,"No Dye Control: " + self.controlsHash["no dye"])
         # no protein control check
-        pdf.drawString(7.75*cm,16*cm,"No Protein Control: " + self.controlsHash["no protein"])
+        pdf.drawString(7.75*cm,16.5*cm,"No Protein Control: " + self.controlsHash["no protein"])
         
         
         #===================# first page summary graph #===================#
