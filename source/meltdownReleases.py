@@ -25,7 +25,7 @@ def checkIfLatestRelease(version):
     if newest_tag_nums[0] > version_nums[0] or \
        newest_tag_nums[1] > version_nums[1] or \
        newest_tag_nums[2] > version_nums[2]:
-           return newest_tag_nums
+           return newest_tag
     return None
 
 def getVersionNumbers(tag):

@@ -48,7 +48,7 @@ def main():
         try:
             newer_v = meltdownReleases.checkIfLatestRelease(VERSION)
             if newer_v:
-                tkMessageBox.showinfo("New version availiable!","Meltdown %s (currently using %s) is avaliable for download at\nhttps://github.com/C3-CSIRO/Meltdown" % (newer_v, VERSION))
+                tkMessageBox.showinfo("New version availiable!","Meltdown %s is avaliable for download at\nhttps://github.com/C3-CSIRO/Meltdown\n(currently using %s)" % (newer_v, VERSION))
         except:
             #if user doesn't have internet, or github is down, then errors will occur, and we skip the check
             pass
