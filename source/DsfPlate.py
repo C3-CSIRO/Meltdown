@@ -100,7 +100,7 @@ class DsfPlate:
                 wellContents.cv2 = ''
             elif wellContents.cv1.lower() == PROTEIN_AS_SUPPLIED:
                 wellContents.cv1 = wellContents.cv1.lower()
-                wellContents.cv2 = wellContents.cv2.lower()
+                wellContents.cv2 = wellContents.cv2
                 #can have multiple groupings of protein as supplied, save them in a dictionary of {condition variable 2 (how they're grouped) : list of wellNames}
                 if wellContents.cv2 not in self.proteinAsSupplied.keys():
                     self.proteinAsSupplied[wellContents.cv2] = [wellName]
