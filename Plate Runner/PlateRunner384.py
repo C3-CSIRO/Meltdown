@@ -3,7 +3,7 @@ import tkFileDialog
 import tkMessageBox
 import tkFont
 import ttk
-alph='ABCDEFGHIJKLMNOP'
+alph="ABCDEFGHIJKLMNOP"
 
 class PlateRunner:
 	def __init__(self, master):
