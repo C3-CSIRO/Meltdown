@@ -20,6 +20,7 @@ cfg.readfp(open(RUNNING_LOCATION + '/../settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
+CREATE_TM_DATA = cfg.getboolean("Extra Output", "ProduceTmData")
 
 def main():
     #opens up selection windows for user to use
@@ -70,6 +71,9 @@ def main():
                 if CREATE_NORMALISED_DATA:
                     #add -normalised to the end of the filename
                     experiment.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
+
+                if CREATE_TM_DATA:
+                    experiment.produceExportedTmData(rfuFilepath[:-4] + "-tms.txt")
                     
             except Exception as e:
                 print '*ERROR*'

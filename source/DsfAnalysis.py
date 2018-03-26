@@ -187,6 +187,23 @@ class DsfAnalysis:
                 #write to the file
                 fWriter.writerow(row)
         return
+
+    def produceExportedTmData(self, filePath):
+        #gets a sorted by ph list of (condition var 1, ph) tuples. these are unique, and do not include controls
+        cv1PhPairs = sorted([key for key in self.contentsHash.keys() if any([not meanWell.contents.isControl for meanWell in self.contentsHash[key].values()])], key=lambda x: x[1])
+
+        with open(filePath, 'w') as fp:
+            fWriter = csv.writer(fp, delimiter='\t')
+            fWriter.writerow(["Cv1 (ph)", "Cv2", "Mean Tm","Tm Error"])
+            #first we loop the condition variable 1 / pH pairs
+            for cv1, ph in cv1PhPairs:
+                #loop condition variable 2's present for the cv1/ph pair
+                for cv2 in sorted(self.contentsHash[(cv1, ph)].keys()):
+                    #find the associated mean well
+                    meanWell = self.contentsHash[(cv1, ph)][cv2]
+                    fWriter.writerow([cv1 + " (" + str(ph)+")", cv2, meanWell.tm, meanWell.tmError])
+        
+
     
     def generateReport(self, outputFilePath, version):
         #===================# headings and image #===================#
