@@ -25,11 +25,11 @@ from DsfAnalysis import DsfAnalysis
 from MeltdownException import MeltdownException
 import meltdownReleases
 
-#current version of meltdown, displayed in error logs
-VERSION = "v2.0.3"
-
 #the running location of this file
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
+#get the version number as a string
+with open(RUNNING_LOCATION + "/../VERSION.txt") as versionFile:
+    VERSION = versionFile.readline()
 
 #open the settings.ini and set the appropriate flags
 cfg = ConfigParser.ConfigParser()
@@ -37,6 +37,7 @@ cfg.readfp(open(RUNNING_LOCATION + '/../settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
+CREATE_TM_DATA = cfg.getboolean("Extra Output", "ProduceTmData")
 CHECK_FOR_NEW_VERSION = cfg.getboolean('Running Options', 'CheckForNewVersion')
 
 def main():
@@ -48,7 +49,7 @@ def main():
         try:
             newer_v = meltdownReleases.checkIfLatestRelease(VERSION)
             if newer_v:
-                tkMessageBox.showinfo("New version availiable!","Meltdown %s (currently using %s) is avaliable for download at\nhttps://github.com/C3-CSIRO/Meltdown" % (newer_v, VERSION))
+                tkMessageBox.showinfo("New version availiable!","Meltdown %s is avaliable for download at\nhttps://github.com/C3-CSIRO/Meltdown\n(currently using %s)" % (newer_v, VERSION))
         except:
             #if user doesn't have internet, or github is down, then errors will occur, and we skip the check
             pass
@@ -97,6 +98,10 @@ def main():
             #add -normalised to the end of the filename
             print 'creating normalised data ...'
             experiment.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
+
+        if CREATE_TM_DATA:
+            print "creating tm data ..."
+            experiment.produceExportedTmData(rfuFilepath[:-4] + "-tms.txt")
         
         print '*done*'
             
