@@ -37,6 +37,7 @@ cfg.readfp(open(RUNNING_LOCATION + '/../settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
+CREATE_TM_DATA = cfg.getboolean("Extra Output", "ProduceTmData")
 CHECK_FOR_NEW_VERSION = cfg.getboolean('Running Options', 'CheckForNewVersion')
 
 def main():
@@ -97,6 +98,10 @@ def main():
             #add -normalised to the end of the filename
             print 'creating normalised data ...'
             experiment.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
+
+        if CREATE_TM_DATA:
+            print "creating tm data ..."
+            experiment.produceExportedTmData(rfuFilepath[:-4] + "-tms.txt")
         
         print '*done*'
             
