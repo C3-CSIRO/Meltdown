@@ -9,7 +9,7 @@
 
 Installing Meldown
 ===============================================================================
-1.	Goto continuum.io/downloads and download the appropriate Anaconda 
+1.	Goto continuum.io/downloads and download the appropriate Anaconda (Python 2.7)
 	distribution for your computer (Windows/Mac/Linux).
 
 
@@ -20,7 +20,7 @@ Installing Meldown
 
 3.	Install ReportLab by
 	
-	a)  On Windows: Open a command prompt
+	a)  On Windows: Open Anaconda Prompt from start menu
 	    On Mac/Linux: Open a terminal
 	
 	b)  Type the command "conda install reportlab" and press enter.
@@ -48,7 +48,7 @@ Running Meltdown
 	If you are running a CFX machine, you can export directly to the supported format:
 		a)  Open the DSF .pcrd file that you want to analyse in the CFX Manager
 		b)  Export the pcrd file to text files (tab delimited);
-		c)  Ensure that you have updated you BioRad software to version 3.1 or later
+		c)  Ensure that you have updated your BioRad software to version 3.1 or later
 		d)  For version 3.1
 			Click the "Export" menu, select "Export All Data Sheets" and select
 			"Text (*.txt)"

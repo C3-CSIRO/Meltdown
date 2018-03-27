@@ -8,11 +8,11 @@ import sys, traceback
 from DsfAnalysis import DsfAnalysis
 from MeltdownException import MeltdownException
 
-#current version of meltdown, displayed in error logs
-VERSION = "v2.1.0"
-
 #the running location of this file
 RUNNING_LOCATION = os.path.dirname(os.path.realpath(__file__))
+#get the version number as a string
+with open(RUNNING_LOCATION + "/../VERSION.txt") as versionFile:
+    VERSION = versionFile.readline()
 
 #open the settings.ini and set the appropriate flags
 cfg = ConfigParser.ConfigParser()
@@ -20,7 +20,6 @@ cfg.readfp(open(RUNNING_LOCATION + '/../settings.ini'))
 #get options
 DELETE_INPUT_FILES = cfg.getboolean('Running Options', 'DeleteInputFiles')
 CREATE_NORMALISED_DATA = cfg.getboolean('Extra Output', 'ProduceNormalisedData')
-CREATE_TM_DATA = cfg.getboolean("Extra Output", "ProduceTmData")
 
 def main():
     #opens up selection windows for user to use
@@ -71,9 +70,6 @@ def main():
                 if CREATE_NORMALISED_DATA:
                     #add -normalised to the end of the filename
                     experiment.produceNormalisedOutput(rfuFilepath[:-4] + '-normalised.txt')
-
-                if CREATE_TM_DATA:
-                    experiment.produceExportedTmData(rfuFilepath[:-4] + "-tms.txt")
                     
             except Exception as e:
                 print '*ERROR*'
