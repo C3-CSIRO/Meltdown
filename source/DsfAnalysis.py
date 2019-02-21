@@ -484,6 +484,9 @@ class DsfAnalysis:
                 pdf.drawString(3*cm,2.6*cm,"Highest Tm = " + str(round(highestTmMeanWell.tm,2)))
             pdf.drawString(3*cm,2*cm,"("+highestTmMeanWell.contents.cv1+" / "+highestTmMeanWell.contents.cv2+")")
             pdf.setFont("Helvetica",12)
+
+        # Draw user supplied sample warning at the bottom of the page
+        pdf.drawCentredString(10.5*cm, 0.7*cm, "Sample supplied by customer, results apply to sample as received.")
         
         
         #===================# individual condition graphs #===================#
