@@ -1,97 +1,97 @@
-Well	Condition Variable 1	Condition Variable 2	pH	d(pH)/dT	Control			
-A1	Lysozyme				1			
-A2	Lysozyme				1			
-A3	Lysozyme				1			
-A4	Salt Only	50mM NaCl						
-A5	Salt Only	50mM NaCl						
-A6	Salt Only	50mM NaCl						
-A7	Salt Only	200mM NaCl						
-A8	Salt Only	200mM NaCl						
-A9	Salt Only	200mM NaCl						
-A10	No Dye				1			
-A11	No Dye				1			
-A12	No Dye				1			
-B1	sodium acetate - acetic acid	50mM NaCl	5					
-B2	sodium acetate - acetic acid	50mM NaCl	5					
-B3	sodium acetate - acetic acid	50mM NaCl	5					
-B4	sodium acetate - acetic acid	200mM NaCl	5					
-B5	sodium acetate - acetic acid	200mM NaCl	5					
-B6	sodium acetate - acetic acid	200mM NaCl	5					
-B7	piperazine	50mM NaCl	5.5	-0.01821				
-B8	piperazine	50mM NaCl	5.5	-0.01821				
-B9	piperazine	50mM NaCl	5.5	-0.01821				
-B10	piperazine	200mM NaCl	5.5	-0.01821				
-B11	piperazine	200mM NaCl	5.5	-0.01821				
-B12	piperazine	200mM NaCl	5.5	-0.01821				
-C1	sodium MES	50mM NaCl	6	-0.00775				
-C2	sodium MES	50mM NaCl	6	-0.00775				
-C3	sodium MES	50mM NaCl	6	-0.00775				
-C4	sodium MES	200mM NaCl	6	-0.00775				
-C5	sodium MES	200mM NaCl	6	-0.00775				
-C6	sodium MES	200mM NaCl	6	-0.00775				
-C7	trisodium citrate - citric acid	50mM NaCl	6	0.0039				
-C8	trisodium citrate - citric acid	50mM NaCl	6	0.0039				
-C9	trisodium citrate - citric acid	50mM NaCl	6	0.0039				
-C10	trisodium citrate - citric acid	200mM NaCl	6	0.0039				
-C11	trisodium citrate - citric acid	200mM NaCl	6	0.0039				
-C12	trisodium citrate - citric acid	200mM NaCl	6	0.0039				
-D1	bis-tris chloride	50mM NaCl	6.5	-0.013				
-D2	bis-tris chloride	50mM NaCl	6.5	-0.013				
-D3	bis-tris chloride	50mM NaCl	6.5	-0.013				
-D4	bis-tris chloride	200mM NaCl	6.5	-0.013				
-D5	bis-tris chloride	200mM NaCl	6.5	-0.013				
-D6	bis-tris chloride	200mM NaCl	6.5	-0.013				
-D7	ADA	50mM NaCl	6.5	-0.0035				
-D8	ADA	50mM NaCl	6.5	-0.0035				
-D9	ADA	50mM NaCl	6.5	-0.0035				
-D10	ADA	200mM NaCl	6.5	-0.0035				
-D11	ADA	200mM NaCl	6.5	-0.0035				
-D12	ADA	200mM NaCl	6.5	-0.0035				
-E1	imidazole	50mM NaCl	7	-0.017				
-E2	imidazole	50mM NaCl	7	-0.017				
-E3	imidazole	50mM NaCl	7	-0.017				
-E4	imidazole	200mM NaCl	7	-0.017				
-E5	imidazole	200mM NaCl	7	-0.017				
-E6	imidazole	200mM NaCl	7	-0.017				
-E7	sodium MOPS	50mM NaCl	7	-0.00825				
-E8	sodium MOPS	50mM NaCl	7	-0.00825				
-E9	sodium MOPS	50mM NaCl	7	-0.00825				
-E10	sodium MOPS	200mM NaCl	7	-0.00825				
-E11	sodium MOPS	200mM NaCl	7	-0.00825				
-E12	sodium MOPS	200mM NaCl	7	-0.00825				
-F1	sodium HEPES	50mM NaCl	7.5	-0.006				
-F2	sodium HEPES	50mM NaCl	7.5	-0.006				
-F3	sodium HEPES	50mM NaCl	7.5	-0.006				
-F4	sodium HEPES	200mM NaCl	7.5	-0.006				
-F5	sodium HEPES	200mM NaCl	7.5	-0.006				
-F6	sodium HEPES	200mM NaCl	7.5	-0.006				
-F7	Na2H/KH2 phosphate	50mM NaCl	7.5	0.0055				
-F8	Na2H/KH2 phosphate	50mM NaCl	7.5	0.0055				
-F9	Na2H/KH2 phosphate	50mM NaCl	7.5	0.0055				
-F10	Na2H/KH2 phosphate	200mM NaCl	7.5	0.0055				
-F11	Na2H/KH2 phosphate	200mM NaCl	7.5	0.0055				
-F12	Na2H/KH2 phosphate	200mM NaCl	7.5	0.0055				
-G1	tris chloride	50mM NaCl	8	-0.02025				
-G2	tris chloride	50mM NaCl	8	-0.02025				
-G3	tris chloride	50mM NaCl	8	-0.02025				
-G4	tris chloride	200mM NaCl	8	-0.02025				
-G5	tris chloride	200mM NaCl	8	-0.02025				
-G6	tris chloride	200mM NaCl	8	-0.02025				
-G7	glycyl-glycine	50mM NaCl	8.5	-0.01675				
-G8	glycyl-glycine	50mM NaCl	8.5	-0.01675				
-G9	glycyl-glycine	50mM NaCl	8.5	-0.01675				
-G10	glycyl-glycine	200mM NaCl	8.5	-0.01675				
-G11	glycyl-glycine	200mM NaCl	8.5	-0.01675				
-G12	glycyl-glycine	200mM NaCl	8.5	-0.01675				
-H1	Protein as supplied				1			
-H2	Protein as supplied				1			
-H3	Protein as supplied				1			
-H4	CHES	50mM NaCl	9	-0.012				
-H5	CHES	50mM NaCl	9	-0.012				
-H6	CHES	50mM NaCl	9	-0.012				
-H7	CHES	200mM NaCl	9	-0.012				
-H8	CHES	200mM NaCl	9	-0.012				
-H9	CHES	200mM NaCl	9	-0.012				
-H10	No Protein				1			
-H11	No Protein				1			
-H12	No Protein				1			
+Well	Condition Variable 1	Condition Variable 2	pH	d(pH)/dT	Control	Order
+A1	Lysozyme				1	
+A2	Lysozyme				1	
+A3	Lysozyme				1	
+A4	Salt Only	50mM NaCl				
+A5	Salt Only	50mM NaCl				
+A6	Salt Only	50mM NaCl				
+A7	Salt Only	200mM NaCl				
+A8	Salt Only	200mM NaCl				
+A9	Salt Only	200mM NaCl				
+A10	No Dye				1	
+A11	No Dye				1	
+A12	No Dye				1	
+B1	sodium acetate - acetic acid	50mM NaCl	5			
+B2	sodium acetate - acetic acid	50mM NaCl	5			
+B3	sodium acetate - acetic acid	50mM NaCl	5			
+B4	sodium acetate - acetic acid	200mM NaCl	5			
+B5	sodium acetate - acetic acid	200mM NaCl	5			
+B6	sodium acetate - acetic acid	200mM NaCl	5			
+B7	piperazine	50mM NaCl	5.5	-0.01821		
+B8	piperazine	50mM NaCl	5.5	-0.01821		
+B9	piperazine	50mM NaCl	5.5	-0.01821		
+B10	piperazine	200mM NaCl	5.5	-0.01821		
+B11	piperazine	200mM NaCl	5.5	-0.01821		
+B12	piperazine	200mM NaCl	5.5	-0.01821		
+C1	sodium MES	50mM NaCl	6	-0.00775		
+C2	sodium MES	50mM NaCl	6	-0.00775		
+C3	sodium MES	50mM NaCl	6	-0.00775		
+C4	sodium MES	200mM NaCl	6	-0.00775		
+C5	sodium MES	200mM NaCl	6	-0.00775		
+C6	sodium MES	200mM NaCl	6	-0.00775		
+C7	trisodium citrate - citric acid	50mM NaCl	6	0.0039		
+C8	trisodium citrate - citric acid	50mM NaCl	6	0.0039		
+C9	trisodium citrate - citric acid	50mM NaCl	6	0.0039		
+C10	trisodium citrate - citric acid	200mM NaCl	6	0.0039		
+C11	trisodium citrate - citric acid	200mM NaCl	6	0.0039		
+C12	trisodium citrate - citric acid	200mM NaCl	6	0.0039		
+D1	bis-tris chloride	50mM NaCl	6.5	-0.013		
+D2	bis-tris chloride	50mM NaCl	6.5	-0.013		
+D3	bis-tris chloride	50mM NaCl	6.5	-0.013		
+D4	bis-tris chloride	200mM NaCl	6.5	-0.013		
+D5	bis-tris chloride	200mM NaCl	6.5	-0.013		
+D6	bis-tris chloride	200mM NaCl	6.5	-0.013		
+D7	ADA	50mM NaCl	6.5	-0.0035		
+D8	ADA	50mM NaCl	6.5	-0.0035		
+D9	ADA	50mM NaCl	6.5	-0.0035		
+D10	ADA	200mM NaCl	6.5	-0.0035		
+D11	ADA	200mM NaCl	6.5	-0.0035		
+D12	ADA	200mM NaCl	6.5	-0.0035		
+E1	imidazole	50mM NaCl	7	-0.017		
+E2	imidazole	50mM NaCl	7	-0.017		
+E3	imidazole	50mM NaCl	7	-0.017		
+E4	imidazole	200mM NaCl	7	-0.017		
+E5	imidazole	200mM NaCl	7	-0.017		
+E6	imidazole	200mM NaCl	7	-0.017		
+E7	sodium MOPS	50mM NaCl	7	-0.00825		
+E8	sodium MOPS	50mM NaCl	7	-0.00825		
+E9	sodium MOPS	50mM NaCl	7	-0.00825		
+E10	sodium MOPS	200mM NaCl	7	-0.00825		
+E11	sodium MOPS	200mM NaCl	7	-0.00825		
+E12	sodium MOPS	200mM NaCl	7	-0.00825		
+F1	sodium HEPES	50mM NaCl	7.5	-0.006		
+F2	sodium HEPES	50mM NaCl	7.5	-0.006		
+F3	sodium HEPES	50mM NaCl	7.5	-0.006		
+F4	sodium HEPES	200mM NaCl	7.5	-0.006		
+F5	sodium HEPES	200mM NaCl	7.5	-0.006		
+F6	sodium HEPES	200mM NaCl	7.5	-0.006		
+F7	Na2H/KH2 phosphate	50mM NaCl	7.5	0.0055		
+F8	Na2H/KH2 phosphate	50mM NaCl	7.5	0.0055		
+F9	Na2H/KH2 phosphate	50mM NaCl	7.5	0.0055		
+F10	Na2H/KH2 phosphate	200mM NaCl	7.5	0.0055		
+F11	Na2H/KH2 phosphate	200mM NaCl	7.5	0.0055		
+F12	Na2H/KH2 phosphate	200mM NaCl	7.5	0.0055		
+G1	tris chloride	50mM NaCl	8	-0.02025		
+G2	tris chloride	50mM NaCl	8	-0.02025		
+G3	tris chloride	50mM NaCl	8	-0.02025		
+G4	tris chloride	200mM NaCl	8	-0.02025		
+G5	tris chloride	200mM NaCl	8	-0.02025		
+G6	tris chloride	200mM NaCl	8	-0.02025		
+G7	glycyl-glycine	50mM NaCl	8.5	-0.01675		
+G8	glycyl-glycine	50mM NaCl	8.5	-0.01675		
+G9	glycyl-glycine	50mM NaCl	8.5	-0.01675		
+G10	glycyl-glycine	200mM NaCl	8.5	-0.01675		
+G11	glycyl-glycine	200mM NaCl	8.5	-0.01675		
+G12	glycyl-glycine	200mM NaCl	8.5	-0.01675		
+H1	Protein as supplied				1	
+H2	Protein as supplied				1	
+H3	Protein as supplied				1	
+H4	CHES	50mM NaCl	9	-0.012		
+H5	CHES	50mM NaCl	9	-0.012		
+H6	CHES	50mM NaCl	9	-0.012		
+H7	CHES	200mM NaCl	9	-0.012		
+H8	CHES	200mM NaCl	9	-0.012		
+H9	CHES	200mM NaCl	9	-0.012		
+H10	No Protein				1	
+H11	No Protein				1	
+H12	No Protein				1	

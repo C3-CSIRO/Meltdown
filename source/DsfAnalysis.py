@@ -362,6 +362,8 @@ class DsfAnalysis:
         uniqueCv2s = set([cv2 for cv2Dict in self.contentsHash.values() for cv2 in [key for key in cv2Dict.keys() if not cv2Dict[key].contents.isControl]])
         #gets a sorted by ph list of (condition var 1, ph) tuples. these are unique, and do not include controls
         cv1PhPairs = sorted([key for key in self.contentsHash.keys() if any([not meanWell.contents.isControl for meanWell in self.contentsHash[key].values()])], key=lambda x: x[1])
+        # Sorts the summary graph giving priority to cv1, ph pairs that have a higher order
+        cv1PhPairs.sort(key=lambda x: self.contentsHash[x][self.contentsHash[x].keys()[0]].contents.order if len(self.contentsHash[x])>0 else 0, reverse=True)
         
         #turns the tuples into string names to display on the x axis
         xAxisConditionLabels = [pair[0]+"("+str(pair[1])+")" for pair in cv1PhPairs]
