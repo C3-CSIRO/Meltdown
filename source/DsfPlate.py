@@ -26,7 +26,8 @@ SIMILARITY_THRESHOLD = 0.010718638818#1.72570084974
 #gives threshold for monotonicity in a non normalised melt curve when multiplied by highest fluorescence value on the plate
 PLATE_MONOTONICITY_THRESHOLD_FACTOR = 0.0005
 #gives the 'in the noise' threshold when multiplied by the mean monotonicity threshold of the 'no protein' control wells
-NOISE_THRESHOLD_FACTOR = 1#1.15
+#TODO threshold is too high, too many things are getting culled, changed from 1 -> 0.5
+NOISE_THRESHOLD_FACTOR = 0.5
 
 
 class DsfPlate:
@@ -288,7 +289,7 @@ class DsfPlate:
         ##print 'plate monotonic threshold: ', self.plateMonotonicThreshold
         return
     
-    def __computeNoiseThreshold(self):#TODO threshold is too high, too many things are getting culled
+    def __computeNoiseThreshold(self):
         #if no no protein controls, leave the noise threshold as None, and let this be handled in DsfWell
         if len(self.noProtein)==0:
             self.noiseThreshold = None
