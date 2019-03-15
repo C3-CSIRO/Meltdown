@@ -164,8 +164,16 @@ class DsfPlate:
         except Exception as e:
             raise MeltdownException('Could not read "Control" column for "' + wellName + '" from contents map\n' + e.message)
         
+        try:
+            order = contentsRow['Order']
+            order = float(order)
+        except (KeyError, ValueError):
+            order = 0
+        except Exception as e:
+            raise MeltdownException('Could not read "Order" column for "' + wellName + '" from contents map\n' + e.message)
+        
         #create Contents object for the well
-        contents = Contents(cv1, cv2, ph, dphdt, control)
+        contents = Contents(cv1, cv2, ph, dphdt, control, order)
         return contents
     
     def __addWell(self, fluorescenceSeries, name, contents):

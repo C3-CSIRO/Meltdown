@@ -1,2 +1,3 @@
 *.pyc
 error_log.txt
+.vscode/settings.json

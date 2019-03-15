@@ -55,9 +55,10 @@ Running Meltdown
 
 2.	Prepare a Contents Map file in the correct format.
 	- Compulsory column headers (without quotes, case sensitive): "Well", "Condition Variable 1", "Condition Variable 2"
-	- Optional column headers: "pH", "d(pH)/dT", "Control"
+	- Optional column headers: "pH", "d(pH)/dT", "Control", "Order"
 	- Each row should describe the condition of a well in the DSF results file, and each well name under "Well" should
 	  correspond uniquely to a well name in the DSF results file
+	- Wells with a higher order will be shown first in the summary graph (wells with no value are assigned 0 by default)
 
 
 	** If you need more help getting a contents map: **
